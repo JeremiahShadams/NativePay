@@ -19,11 +19,18 @@ import {
   EyeOff,
   ChevronRight,
   RefreshCw,
+  ArrowUpDown,
+  Bot,
 } from 'lucide-react';
 import { CryptoAsset, TransactionRecord, PaymentRequest } from '../../types';
 import { PaymentHubModal } from '../payment/PaymentHubModal';
 import { QrScannerModal } from '../payment/QrScannerModal';
 import { PaymentApprovalSheet } from '../payment/PaymentApprovalSheet';
+import { AgentCopilotModal } from '../agent/AgentCopilotModal';
+import { ReceiveQrModal } from './ReceiveQrModal';
+import { SwapCryptoModal } from './SwapCryptoModal';
+import { TransactionDetailsModal } from './TransactionDetailsModal';
+import { CardsManagerModal } from './CardsManagerModal';
 import { sounds } from '../../utils/soundEffects';
 
 interface MainDashboardProps {
@@ -41,6 +48,12 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
 }) => {
   const [showPaymentHub, setShowPaymentHub] = useState(false);
   const [showQrDirect, setShowQrDirect] = useState(false);
+  const [showReceiveQr, setShowReceiveQr] = useState(false);
+  const [showSwapModal, setShowSwapModal] = useState(false);
+  const [showCardsManager, setShowCardsManager] = useState(false);
+  const [showCopilot, setShowCopilot] = useState(false);
+  const [selectedTx, setSelectedTx] = useState<TransactionRecord | null>(null);
+
   const [showCardDetails, setShowCardDetails] = useState(false);
   const [isCardFrozen, setIsCardFrozen] = useState(false);
   const [hideBalances, setHideBalances] = useState(false);
@@ -54,14 +67,51 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
     sounds.playSuccessChime();
   };
 
+  const handleSwap = (
+    fromSymbol: string,
+    toSymbol: string,
+    fromAmount: number,
+    toAmount: number
+  ) => {
+    sounds.playSuccessChime();
+    // Simulate swapped payment record
+    const swapTx: PaymentRequest = {
+      id: `swap-${Date.now()}`,
+      destination: {
+        type: 'crypto_wallet',
+        rawInput: `DEX Swap: ${fromSymbol} → ${toSymbol}`,
+        resolvedName: `Native Atomic Swapper`,
+        network: 'Native L2 Rollup',
+        riskScore: 'low',
+        isVerifiedMerchant: true,
+      },
+      amount: fromAmount,
+      currency: fromSymbol,
+      fiatEquivalent: fromAmount * (cryptoAssets.find((a) => a.symbol === fromSymbol)?.priceUsd || 1),
+      networkFeeUsd: 0.04,
+      estimatedSeconds: 1,
+      agentAnalysis: {
+        safetySummary: '0% slippage atomic swap executed on Native Rollup DEX.',
+        routeDetails: `Direct route: ${fromSymbol} -> ${toSymbol}`,
+        slippageEst: '0.00%',
+        counterpartyTrust: '100%',
+      },
+    };
+    onExecutePayment(swapTx);
+  };
+
   return (
     <View style={styles.container}>
       {/* Header Bar */}
       <View style={styles.topHeader}>
         <View style={styles.userProfileRow}>
-          <View style={styles.userAvatar}>
+          <TouchableOpacity
+            style={styles.userAvatar}
+            onPress={() => setShowCardsManager(true)}
+            activeOpacity={0.8}
+          >
             <Text style={styles.avatarText}>AS</Text>
-          </View>
+          </TouchableOpacity>
           <View>
             <View style={styles.tagBadgeRow}>
               <Text style={styles.handleText}>@alex</Text>
@@ -74,6 +124,18 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
         </View>
 
         <View style={styles.headerRightActions}>
+          {/* AI Copilot trigger */}
+          <TouchableOpacity
+            style={[styles.iconCircle, styles.copilotCircle]}
+            onPress={() => {
+              sounds.playKeyClick();
+              setShowCopilot(true);
+            }}
+            title="Open AI Copilot"
+          >
+            <Bot size={18} color="#60a5fa" />
+          </TouchableOpacity>
+
           <TouchableOpacity
             style={styles.iconCircle}
             onPress={() => {
@@ -121,10 +183,13 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
               <TrendingUp size={12} color="#10b981" />
               <Text style={styles.pnlText}>+$2,410.50 (+5.18%) 24h</Text>
             </View>
-            <View style={styles.agentStatusPill}>
+            <TouchableOpacity
+              style={styles.agentStatusPill}
+              onPress={() => setShowCopilot(true)}
+            >
               <Zap size={11} color="#60a5fa" />
-              <Text style={styles.agentStatusText}>AI Agent Guard Active</Text>
-            </View>
+              <Text style={styles.agentStatusText}>AI Copilot Active</Text>
+            </TouchableOpacity>
           </View>
         </View>
 
@@ -167,7 +232,7 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
             style={styles.actionButton}
             onPress={() => {
               sounds.playKeyClick();
-              setShowPaymentHub(true);
+              setShowReceiveQr(true);
             }}
             activeOpacity={0.8}
           >
@@ -177,12 +242,27 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
             <Text style={styles.actionButtonLabel}>Receive</Text>
           </TouchableOpacity>
 
+          {/* Swap */}
+          <TouchableOpacity
+            style={styles.actionButton}
+            onPress={() => {
+              sounds.playKeyClick();
+              setShowSwapModal(true);
+            }}
+            activeOpacity={0.8}
+          >
+            <View style={styles.actionIconWrapper}>
+              <ArrowUpDown size={20} color="#ffffff" />
+            </View>
+            <Text style={styles.actionButtonLabel}>Swap</Text>
+          </TouchableOpacity>
+
           {/* Cards */}
           <TouchableOpacity
             style={styles.actionButton}
             onPress={() => {
               sounds.playKeyClick();
-              setShowCardDetails(!showCardDetails);
+              setShowCardsManager(true);
             }}
             activeOpacity={0.8}
           >
@@ -193,74 +273,52 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
           </TouchableOpacity>
         </View>
 
-        {/* Interactive Native Metal Card Section */}
-        {showCardDetails && (
-          <View style={styles.metalCardContainer}>
-            <View
-              style={[
-                styles.nativeMetalCard,
-                isCardFrozen && styles.nativeMetalCardFrozen,
-              ]}
-            >
-              <View style={styles.cardHeader}>
-                <Text style={styles.cardBrandText}>Native</Text>
-                <View style={styles.cardChipRow}>
-                  <Text style={styles.cardContactless}>))))</Text>
-                  <View style={styles.cardChipGold} />
-                </View>
-              </View>
-
-              <View style={styles.cardMid}>
-                <Text style={styles.cardNumberText}>
-                  {isCardFrozen ? 'CARD FROZEN' : '4921  8820  1034  8824'}
-                </Text>
-              </View>
-
-              <View style={styles.cardFooter}>
-                <View>
-                  <Text style={styles.cardHolderLabel}>CARDHOLDER</Text>
-                  <Text style={styles.cardHolderName}>ALEX SMITH</Text>
-                </View>
-                <View style={{ alignItems: 'flex-end' }}>
-                  <Text style={styles.cardHolderLabel}>EXPIRES</Text>
-                  <Text style={styles.cardHolderName}>11/29</Text>
-                </View>
-              </View>
-            </View>
-
-            <View style={styles.cardControlsRow}>
-              <TouchableOpacity
-                style={styles.cardControlBtn}
-                onPress={() => setIsCardFrozen(!isCardFrozen)}
-              >
-                <ShieldCheck size={14} color={isCardFrozen ? '#ef4444' : '#60a5fa'} />
-                <Text style={styles.cardControlText}>
-                  {isCardFrozen ? 'Unfreeze Card' : 'Freeze Card'}
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.cardControlBtn}
-                onPress={() => setShowCardDetails(false)}
-              >
-                <Text style={styles.cardControlText}>Hide Card</Text>
-              </TouchableOpacity>
+        {/* Interactive Native Metal Card Banner */}
+        <TouchableOpacity
+          style={styles.metalCardPreview}
+          onPress={() => {
+            sounds.playKeyClick();
+            setShowCardsManager(true);
+          }}
+          activeOpacity={0.85}
+        >
+          <View style={styles.cardHeader}>
+            <Text style={styles.cardBrandText}>Native</Text>
+            <View style={styles.cardChipRow}>
+              <Text style={styles.cardContactless}>))))</Text>
+              <View style={styles.cardChipGold} />
             </View>
           </View>
-        )}
+
+          <View style={styles.cardMid}>
+            <Text style={styles.cardNumberText}>••••  ••••  ••••  8824</Text>
+          </View>
+
+          <View style={styles.cardFooter}>
+            <View>
+              <Text style={styles.cardHolderLabel}>CARDHOLDER</Text>
+              <Text style={styles.cardHolderName}>ALEX SMITH</Text>
+            </View>
+            <View style={{ alignItems: 'flex-end' }}>
+              <Text style={styles.cardHolderLabel}>TIER</Text>
+              <Text style={styles.cardTierHighlight}>SOLID TITANIUM</Text>
+            </View>
+          </View>
+        </TouchableOpacity>
 
         {/* AI Agent Capability Callout Banner */}
         <TouchableOpacity
           style={styles.agentBanner}
-          onPress={() => setShowPaymentHub(true)}
+          onPress={() => setShowCopilot(true)}
           activeOpacity={0.85}
         >
           <View style={styles.agentBannerIcon}>
-            <Sparkles size={20} color="#60a5fa" />
+            <Bot size={22} color="#60a5fa" />
           </View>
           <View style={styles.agentBannerContent}>
-            <Text style={styles.agentBannerTitle}>Native Autonomous Payment Agent</Text>
+            <Text style={styles.agentBannerTitle}>Native Autonomous Copilot</Text>
             <Text style={styles.agentBannerSub}>
-              Scan any QR invoice or paste an address. The agent prepares the optimal gas route and asks for your approval before signing.
+              Tell the agent who to pay or scan a QR code. It calculates optimal gas and asks for your biometric approval.
             </Text>
           </View>
           <ChevronRight size={18} color="#94a3b8" />
@@ -273,10 +331,10 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
             <TouchableOpacity
               onPress={() => {
                 sounds.playKeyClick();
-                setShowPaymentHub(true);
+                setShowSwapModal(true);
               }}
             >
-              <Text style={styles.sectionAction}>+ Trade</Text>
+              <Text style={styles.sectionAction}>+ Swap DEX</Text>
             </TouchableOpacity>
           </View>
 
@@ -287,7 +345,7 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
                 style={styles.cryptoRow}
                 onPress={() => {
                   sounds.playKeyClick();
-                  setShowPaymentHub(true);
+                  setShowSwapModal(true);
                 }}
                 activeOpacity={0.7}
               >
@@ -341,7 +399,15 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
 
           <View style={styles.txList}>
             {transactions.map((tx) => (
-              <View key={tx.id} style={styles.txRow}>
+              <TouchableOpacity
+                key={tx.id}
+                style={styles.txRow}
+                onPress={() => {
+                  sounds.playKeyClick();
+                  setSelectedTx(tx);
+                }}
+                activeOpacity={0.7}
+              >
                 <View style={styles.txIconWrapper}>
                   <Text style={styles.txIconText}>{tx.icon}</Text>
                 </View>
@@ -360,11 +426,9 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
                     {tx.type === 'received' ? '+' : '-'}
                     {tx.amount} {tx.currency}
                   </Text>
-                  <Text style={styles.txFiatText}>
-                    ${tx.fiatAmount.toFixed(2)}
-                  </Text>
+                  <Text style={styles.txFiatText}>${tx.fiatAmount.toFixed(2)}</Text>
                 </View>
-              </View>
+              </TouchableOpacity>
             ))}
           </View>
         </View>
@@ -421,7 +485,48 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
         }}
       />
 
-      {/* Quick Approval Sheet when scanning directly */}
+      {/* Receive QR Modal */}
+      <ReceiveQrModal
+        visible={showReceiveQr}
+        onClose={() => setShowReceiveQr(false)}
+        userHandle="@alex"
+      />
+
+      {/* Swap Modal */}
+      <SwapCryptoModal
+        visible={showSwapModal}
+        onClose={() => setShowSwapModal(false)}
+        cryptoAssets={cryptoAssets}
+        onExecuteSwap={handleSwap}
+      />
+
+      {/* Cards Manager Modal */}
+      <CardsManagerModal
+        visible={showCardsManager}
+        onClose={() => setShowCardsManager(false)}
+        userHandle="Alex Smith"
+      />
+
+      {/* AI Agent Copilot Conversational Console */}
+      <AgentCopilotModal
+        visible={showCopilot}
+        onClose={() => setShowCopilot(false)}
+        cryptoAssets={cryptoAssets}
+        onRequestApproval={(req) => setQrApprovalRequest(req)}
+      />
+
+      {/* Transaction Details Sheet */}
+      <TransactionDetailsModal
+        visible={!!selectedTx}
+        transaction={selectedTx}
+        onClose={() => setSelectedTx(null)}
+        onRepeatPayment={(tx) => {
+          sounds.playKeyClick();
+          setShowPaymentHub(true);
+        }}
+      />
+
+      {/* Quick Approval Sheet when scanning directly or via Copilot */}
       <PaymentApprovalSheet
         visible={!!qrApprovalRequest}
         paymentRequest={qrApprovalRequest}
@@ -512,6 +617,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.05)',
   },
+  copilotCircle: {
+    backgroundColor: 'rgba(37, 99, 235, 0.2)',
+    borderColor: 'rgba(59, 130, 246, 0.35)',
+  },
   scrollBody: {
     flex: 1,
     paddingHorizontal: 16,
@@ -584,7 +693,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginVertical: 18,
-    paddingHorizontal: 4,
+    paddingHorizontal: 2,
   },
   actionButton: {
     alignItems: 'center',
@@ -592,9 +701,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   actionIconWrapper: {
-    width: 52,
-    height: 52,
-    borderRadius: 26,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
     backgroundColor: 'rgba(255, 255, 255, 0.08)',
     justifyContent: 'center',
     alignItems: 'center',
@@ -603,43 +712,36 @@ const styles = StyleSheet.create({
   },
   aiActionButton: {},
   actionIconWrapperAi: {
-    width: 52,
-    height: 52,
-    borderRadius: 26,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
     backgroundColor: '#2563eb',
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#3b82f6',
-    shadowOffset: { width: 0, height: 6 },
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.6,
-    shadowRadius: 14,
+    shadowRadius: 12,
   },
   actionButtonLabel: {
     color: '#e2e8f0',
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: '600',
   },
-  metalCardContainer: {
-    marginBottom: 20,
-    alignItems: 'center',
-  },
-  nativeMetalCard: {
+  metalCardPreview: {
     width: '100%',
-    height: 190,
+    height: 170,
     borderRadius: 22,
     backgroundColor: '#0c0f18',
     borderWidth: 1.5,
-    borderColor: 'rgba(59, 130, 246, 0.4)',
-    padding: 20,
+    borderColor: 'rgba(59, 130, 246, 0.35)',
+    padding: 18,
     justifyContent: 'space-between',
     shadowColor: '#2563eb',
     shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.4,
-    shadowRadius: 20,
-  },
-  nativeMetalCardFrozen: {
-    borderColor: 'rgba(239, 68, 68, 0.4)',
-    opacity: 0.75,
+    shadowOpacity: 0.3,
+    shadowRadius: 18,
+    marginBottom: 18,
   },
   cardHeader: {
     flexDirection: 'row',
@@ -648,7 +750,7 @@ const styles = StyleSheet.create({
   },
   cardBrandText: {
     color: '#ffffff',
-    fontSize: 22,
+    fontSize: 20,
     fontWeight: '900',
     letterSpacing: -0.5,
   },
@@ -663,19 +765,19 @@ const styles = StyleSheet.create({
     transform: [{ rotate: '90deg' }],
   },
   cardChipGold: {
-    width: 36,
-    height: 26,
+    width: 32,
+    height: 24,
     borderRadius: 6,
     backgroundColor: '#d97706',
     borderWidth: 1,
     borderColor: '#f59e0b',
   },
   cardMid: {
-    marginVertical: 10,
+    marginVertical: 4,
   },
   cardNumberText: {
     color: '#cbd5e1',
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '600',
     letterSpacing: 2,
     fontFamily: 'monospace',
@@ -693,28 +795,15 @@ const styles = StyleSheet.create({
   },
   cardHolderName: {
     color: '#ffffff',
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: '700',
     marginTop: 2,
   },
-  cardControlsRow: {
-    flexDirection: 'row',
-    gap: 12,
-    marginTop: 10,
-  },
-  cardControlBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    backgroundColor: 'rgba(255, 255, 255, 0.06)',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 12,
-  },
-  cardControlText: {
-    color: '#94a3b8',
-    fontSize: 12,
-    fontWeight: '600',
+  cardTierHighlight: {
+    color: '#60a5fa',
+    fontSize: 11,
+    fontWeight: '800',
+    letterSpacing: 0.5,
   },
   agentBanner: {
     flexDirection: 'row',
@@ -728,9 +817,9 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   agentBannerIcon: {
-    width: 38,
-    height: 38,
-    borderRadius: 12,
+    width: 40,
+    height: 40,
+    borderRadius: 14,
     backgroundColor: 'rgba(37, 99, 235, 0.2)',
     justifyContent: 'center',
     alignItems: 'center',
@@ -913,4 +1002,3 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
 });
-
