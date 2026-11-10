@@ -501,7 +501,7 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontSize: 15,
     fontWeight: '500',
-    outlineStyle: 'none' as unknown as string,
+    outlineStyle: 'none' as any,
   },
   detectedPill: {
     flexDirection: 'row',
@@ -564,7 +564,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.08)',
-    outlineStyle: 'none' as unknown as string,
+    outlineStyle: 'none' as any,
   },
   curScroll: {
     flexDirection: 'row',

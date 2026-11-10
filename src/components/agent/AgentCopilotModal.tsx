@@ -529,7 +529,7 @@ const styles = StyleSheet.create({
     flex: 1,
     color: '#ffffff',
     fontSize: 14,
-    outlineStyle: 'none' as unknown as string,
+    outlineStyle: 'none' as any,
   },
   sendBtn: {
     width: 32,

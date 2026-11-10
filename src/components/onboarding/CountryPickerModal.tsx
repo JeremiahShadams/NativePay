@@ -133,7 +133,7 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontSize: 15,
     marginLeft: 8,
-    outlineStyle: 'none' as unknown as string,
+    outlineStyle: 'none' as any,
   },
   cancelBtn: {
     paddingHorizontal: 4,

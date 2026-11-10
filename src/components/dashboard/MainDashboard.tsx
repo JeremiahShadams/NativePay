@@ -131,7 +131,7 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
               sounds.playKeyClick();
               setShowCopilot(true);
             }}
-            title="Open AI Copilot"
+            accessibilityLabel="Open AI Copilot"
           >
             <Bot size={18} color="#60a5fa" />
           </TouchableOpacity>
@@ -142,7 +142,7 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
               sounds.playScanBeep();
               setShowQrDirect(true);
             }}
-            title="Scan QR Code"
+            accessibilityLabel="Scan QR Code"
           >
             <QrCode size={18} color="#ffffff" />
           </TouchableOpacity>
@@ -150,7 +150,7 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
           <TouchableOpacity
             style={styles.iconCircle}
             onPress={() => setHideBalances(!hideBalances)}
-            title="Toggle Balance Visibility"
+            accessibilityLabel="Toggle Balance Visibility"
           >
             {hideBalances ? (
               <EyeOff size={18} color="#94a3b8" />

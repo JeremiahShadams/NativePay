@@ -267,7 +267,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '700',
     letterSpacing: -0.3,
-    outlineStyle: 'none' as unknown as string,
+    outlineStyle: 'none' as any,
   },
   statusRow: {
     flexDirection: 'row',

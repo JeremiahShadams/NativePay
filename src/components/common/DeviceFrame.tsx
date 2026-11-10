@@ -26,7 +26,7 @@ export const DeviceFrame: React.FC<DeviceFrameProps> = ({
     const topInset = Platform.OS === 'android' ? (StatusBar.currentHeight || 24) : 44;
     return (
       <View style={[styles.nativeContainer, { paddingTop: topInset }]}>
-        <StatusBar barStyle="light-content" backgroundColor="#080a10" translucent />
+        <StatusBar barStyle="light-content" {...({ backgroundColor: '#080a10', translucent: true } as any)} />
         <View style={styles.nativeScreenInner}>{children}</View>
       </View>
     );
@@ -92,7 +92,7 @@ export const DeviceFrame: React.FC<DeviceFrameProps> = ({
           <TouchableOpacity
             onPress={onToggleFrame}
             style={styles.iconBtn}
-            title={isMobileFrame ? "Switch to Fullscreen" : "Switch to Mobile Frame"}
+            accessibilityLabel={isMobileFrame ? "Switch to Fullscreen" : "Switch to Mobile Frame"}
           >
             {isMobileFrame ? (
               <Monitor size={18} color="#94a3b8" />

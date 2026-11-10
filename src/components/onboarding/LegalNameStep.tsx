@@ -157,7 +157,7 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontSize: 16,
     fontWeight: '500',
-    outlineStyle: 'none' as unknown as string,
+    outlineStyle: 'none' as any,
   },
   hintText: {
     color: '#64748b',

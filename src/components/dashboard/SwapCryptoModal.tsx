@@ -309,7 +309,7 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontSize: 30,
     fontWeight: '800',
-    outlineStyle: 'none' as unknown as string,
+    outlineStyle: 'none' as any,
   },
   amountDisplayReceive: {
     flex: 1,
