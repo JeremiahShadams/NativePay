@@ -21,7 +21,7 @@ import {
   RefreshCw,
   ArrowUpDown,
   Bot,
-} from 'lucide-react';
+} from 'lucide-react-native';
 import { CryptoAsset, TransactionRecord, PaymentRequest } from '../../types';
 import { PaymentHubModal } from '../payment/PaymentHubModal';
 import { QrScannerModal } from '../payment/QrScannerModal';

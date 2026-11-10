@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { ArrowLeft, Sparkles, AlertCircle } from 'lucide-react';
+import { ArrowLeft, Sparkles, AlertCircle } from 'lucide-react-native';
 import { NumericKeypad } from '../common/NumericKeypad';
 import { OtpErrorModal } from './OtpErrorModal';
 import { sounds } from '../../utils/soundEffects';

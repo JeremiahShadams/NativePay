@@ -20,7 +20,7 @@ import {
   ShieldCheck,
   Check,
   AlertTriangle,
-} from 'lucide-react';
+} from 'lucide-react-native';
 import { PaymentDestination, PaymentRequest, CryptoAsset } from '../../types';
 import { QrScannerModal } from './QrScannerModal';
 import { PaymentApprovalSheet } from './PaymentApprovalSheet';

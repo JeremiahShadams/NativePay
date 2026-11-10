@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { Delete } from 'lucide-react';
+import { Delete } from 'lucide-react-native';
 import { sounds } from '../../utils/soundEffects';
 
 interface NumericKeypadProps {

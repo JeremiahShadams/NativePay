@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { ArrowLeft, ChevronRight, Zap, FileText, ShieldCheck } from 'lucide-react';
+import { ArrowLeft, ChevronRight, Zap, FileText, ShieldCheck } from 'lucide-react-native';
 import { sounds } from '../../utils/soundEffects';
 
 interface IdentityKycStepProps {

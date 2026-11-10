@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Modal, TouchableOpacity } from 'react-native';
-import { Camera, Zap, X, Flashlight, QrCode, Sparkles, Upload } from 'lucide-react';
+import { Camera, Zap, X, Flashlight, QrCode, Sparkles, Upload } from 'lucide-react-native';
 import { PaymentDestination } from '../../types';
 import { sounds } from '../../utils/soundEffects';
 

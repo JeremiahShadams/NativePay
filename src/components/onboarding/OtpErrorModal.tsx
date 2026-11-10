@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, Modal, TouchableOpacity } from 'react-native';
-import { X } from 'lucide-react';
+import { X } from 'lucide-react-native';
 import { sounds } from '../../utils/soundEffects';
 
 interface OtpErrorModalProps {

@@ -11,7 +11,7 @@ import {
   Zap,
   Smartphone,
   ChevronRight,
-} from 'lucide-react';
+} from 'lucide-react-native';
 import { sounds } from '../../utils/soundEffects';
 
 interface CardsManagerModalProps {
@@ -477,3 +477,4 @@ const styles = StyleSheet.create({
     fontWeight: '800',
   },
 });
+

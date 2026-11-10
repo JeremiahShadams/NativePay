@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
-import { ArrowLeft, Sparkles, Check, Zap, Shield, Globe, Award } from 'lucide-react';
+import { ArrowLeft, Sparkles, Check, Zap, Shield, Globe, Award } from 'lucide-react-native';
 import { sounds } from '../../utils/soundEffects';
 
 interface PlanSelectionStepProps {

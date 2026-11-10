@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { ArrowLeft, Sparkles, ShieldCheck } from 'lucide-react';
+import { ArrowLeft, Sparkles, ShieldCheck } from 'lucide-react-native';
 import { sounds } from '../../utils/soundEffects';
 
 interface PrivacyStepProps {

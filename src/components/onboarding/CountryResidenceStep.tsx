@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { ArrowLeft, ChevronDown } from 'lucide-react';
+import { ArrowLeft, ChevronDown } from 'lucide-react-native';
 import { CountryPickerModal } from './CountryPickerModal';
 import { COUNTRIES, Country } from '../../data/countries';
 import { sounds } from '../../utils/soundEffects';

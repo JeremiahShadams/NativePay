@@ -1,6 +1,6 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Platform, SafeAreaView, StatusBar } from 'react-native';
-import { Smartphone, Monitor, Sparkles } from 'lucide-react';
+import { View, Text, StyleSheet, TouchableOpacity, Platform, StatusBar } from 'react-native';
+import { Smartphone, Monitor, Sparkles } from 'lucide-react-native';
 
 interface DeviceFrameProps {
   children: React.ReactNode;
@@ -23,11 +23,12 @@ export const DeviceFrame: React.FC<DeviceFrameProps> = ({
 }) => {
   // On real native mobile devices (Expo Go on iOS or Android), render native full screen!
   if (Platform.OS !== 'web') {
+    const topInset = Platform.OS === 'android' ? (StatusBar.currentHeight || 24) : 44;
     return (
-      <SafeAreaView style={styles.nativeContainer}>
-        <StatusBar barStyle="light-content" backgroundColor="#080a10" />
+      <View style={[styles.nativeContainer, { paddingTop: topInset }]}>
+        <StatusBar barStyle="light-content" backgroundColor="#080a10" translucent />
         <View style={styles.nativeScreenInner}>{children}</View>
-      </SafeAreaView>
+      </View>
     );
   }
 

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
-import { ArrowLeft, Check, Camera, Sparkles } from 'lucide-react';
+import { ArrowLeft, Check, Camera, Sparkles } from 'lucide-react-native';
 import { sounds } from '../../utils/soundEffects';
 
 interface ProfileTagStepProps {

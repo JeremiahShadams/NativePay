@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Modal, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { ShieldCheck, Zap, ArrowRight, Check, X, Lock, Fingerprint } from 'lucide-react';
+import { ShieldCheck, Zap, ArrowRight, Check, X, Lock, Fingerprint } from 'lucide-react-native';
 import { PaymentRequest } from '../../types';
 import { sounds } from '../../utils/soundEffects';
 

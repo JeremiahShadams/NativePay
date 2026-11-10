@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
-import { Sparkles, ShieldCheck, Zap, ArrowRight } from 'lucide-react';
+import { Sparkles, ShieldCheck, Zap, ArrowRight } from 'lucide-react-native';
 import { sounds } from '../../utils/soundEffects';
 
 interface StorySlidesProps {

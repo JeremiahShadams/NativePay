@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { ArrowLeft, Bell, Zap, Shield } from 'lucide-react';
+import { ArrowLeft, Bell, Zap, Shield } from 'lucide-react-native';
 import { sounds } from '../../utils/soundEffects';
 
 interface InstantNotificationsStepProps {

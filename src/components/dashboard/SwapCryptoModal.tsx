@@ -18,7 +18,7 @@ import {
   ChevronDown,
   ShieldCheck,
   TrendingUp,
-} from 'lucide-react';
+} from 'lucide-react-native';
 import { CryptoAsset } from '../../types';
 import { sounds } from '../../utils/soundEffects';
 

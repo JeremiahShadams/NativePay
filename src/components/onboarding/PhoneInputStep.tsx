@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { ArrowLeft, X } from 'lucide-react';
+import { ArrowLeft, X } from 'lucide-react-native';
 import { NumericKeypad } from '../common/NumericKeypad';
 import { CountryPickerModal } from './CountryPickerModal';
 import { PhoneConfirmModal } from './PhoneConfirmModal';

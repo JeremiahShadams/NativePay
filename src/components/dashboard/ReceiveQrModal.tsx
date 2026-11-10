@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Modal, TouchableOpacity, ScrollView } from 'react-native';
-import { X, Copy, Check, QrCode, Share2, Sparkles, ShieldCheck } from 'lucide-react';
+import { X, Copy, Check, QrCode, Share2, Sparkles, ShieldCheck } from 'lucide-react-native';
 import { sounds } from '../../utils/soundEffects';
 
 interface ReceiveQrModalProps {

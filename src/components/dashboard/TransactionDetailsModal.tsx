@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Modal, TouchableOpacity } from 'react-native';
-import { X, CheckCircle2, Copy, Check, ExternalLink, ArrowRight, ShieldCheck, Zap } from 'lucide-react';
+import { X, CheckCircle2, Copy, Check, ExternalLink, ArrowRight, ShieldCheck, Zap } from 'lucide-react-native';
 import { TransactionRecord } from '../../types';
 import { sounds } from '../../utils/soundEffects';
 
@@ -282,3 +282,4 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
 });
+

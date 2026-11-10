@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Modal, TextInput, TouchableOpacity, ScrollView } from 'react-native';
-import { Search, X } from 'lucide-react';
+import { Search, X } from 'lucide-react-native';
 import { COUNTRIES, Country } from '../../data/countries';
 import { sounds } from '../../utils/soundEffects';
 

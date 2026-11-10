@@ -19,7 +19,7 @@ import {
   User,
   ArrowRight,
   CheckCircle2,
-} from 'lucide-react';
+} from 'lucide-react-native';
 import { PaymentRequest, CryptoAsset } from '../../types';
 import { sounds } from '../../utils/soundEffects';
 
