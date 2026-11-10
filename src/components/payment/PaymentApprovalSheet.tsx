@@ -42,10 +42,10 @@ export const PaymentApprovalSheet: React.FC<PaymentApprovalSheetProps> = ({
           {/* Grab Pill */}
           <View style={styles.dragPill} />
 
-          {/* Agent Header Tag */}
+          {/* Security & Route Badge */}
           <View style={styles.agentHeaderBadge}>
-            <Zap size={14} color="#60a5fa" />
-            <Text style={styles.agentBadgeText}>Autonomous Agent • User Approval Required</Text>
+            <ShieldCheck size={14} color="#34c759" />
+            <Text style={styles.agentBadgeText}>Security & Route Verified • User Authorization Required</Text>
           </View>
 
           {/* Amount Display */}
@@ -89,23 +89,23 @@ export const PaymentApprovalSheet: React.FC<PaymentApprovalSheetProps> = ({
             </View>
 
             <View style={styles.detailRow}>
-              <Text style={styles.detailLabel}>Estimated Gas Fee</Text>
+              <Text style={styles.detailLabel}>Network Fee</Text>
               <Text style={styles.feeText}>${networkFeeUsd.toFixed(2)} USD</Text>
             </View>
           </View>
 
           {/* Agent Safety Report */}
           <View style={styles.safetyReportBox}>
-            <ShieldCheck size={20} color="#10b981" />
+            <ShieldCheck size={18} color="#34c759" />
             <View style={styles.safetyTextWrap}>
-              <Text style={styles.safetyTitle}>AI Risk Score: 0.01% (Safe)</Text>
+              <Text style={styles.safetyTitle}>Verified Counterparty</Text>
               <Text style={styles.safetyDesc}>
-                {agentAnalysis.safetySummary || 'No malicious smart contracts or blacklists detected.'}
+                {agentAnalysis.safetySummary || 'No malicious contracts or fraud blacklists detected.'}
               </Text>
             </View>
           </View>
 
-          {/* Action Area: Slide or Biometric Approval */}
+          {/* Action Area: Authorize or Cancel */}
           <View style={styles.actionButtonsCol}>
             <TouchableOpacity
               style={styles.approveButton}
@@ -116,12 +116,12 @@ export const PaymentApprovalSheet: React.FC<PaymentApprovalSheetProps> = ({
               {isApproving ? (
                 <View style={styles.approvingRow}>
                   <ActivityIndicator color="#000000" />
-                  <Text style={styles.approvingText}>Agent Executing Payment...</Text>
+                  <Text style={styles.approvingText}>Broadcasting Payment...</Text>
                 </View>
               ) : (
                 <View style={styles.buttonContentRow}>
                   <Fingerprint size={20} color="#000000" />
-                  <Text style={styles.approveButtonText}>Approve & Execute Payment</Text>
+                  <Text style={styles.approveButtonText}>Authorize Payment</Text>
                 </View>
               )}
             </TouchableOpacity>
@@ -135,7 +135,7 @@ export const PaymentApprovalSheet: React.FC<PaymentApprovalSheetProps> = ({
               disabled={isApproving}
               activeOpacity={0.7}
             >
-              <Text style={styles.cancelButtonText}>Cancel & Reject</Text>
+              <Text style={styles.cancelButtonText}>Cancel</Text>
             </TouchableOpacity>
           </View>
         </View>
