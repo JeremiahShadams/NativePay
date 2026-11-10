@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
-import { ArrowLeft, Check, Camera, Sparkles } from 'lucide-react-native';
+import { ArrowLeft, Check, Camera } from 'lucide-react-native';
 import { sounds } from '../../utils/soundEffects';
 
 interface ProfileTagStepProps {
@@ -108,26 +108,6 @@ export const ProfileTagStep: React.FC<ProfileTagStepProps> = ({ onBack, onContin
           )}
           <Text style={styles.counterText}>{cleanHandle.length}/32</Text>
         </View>
-
-        {/* Suggestion Chips */}
-        <View style={styles.suggestionsContainer}>
-          <Text style={styles.suggestionTitle}>Suggestions:</Text>
-          <View style={styles.suggestionRow}>
-            {suggestions.map((s) => (
-              <TouchableOpacity
-                key={s}
-                style={styles.suggestionChip}
-                onPress={() => {
-                  sounds.playKeyClick();
-                  setHandle(s);
-                }}
-              >
-                <Sparkles size={11} color="#60a5fa" />
-                <Text style={styles.suggestionChipText}>@{s}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-        </View>
       </View>
 
       {/* Continue CTA */}
@@ -148,7 +128,7 @@ export const ProfileTagStep: React.FC<ProfileTagStepProps> = ({ onBack, onContin
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#080a10',
+    backgroundColor: '#000000',
     justifyContent: 'space-between',
     paddingHorizontal: 20,
     paddingBottom: 20,

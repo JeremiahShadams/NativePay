@@ -28,9 +28,8 @@ export const PhoneConfirmModal: React.FC<PhoneConfirmModalProps> = ({
           </View>
 
           {/* Subtitle */}
-          <Text style={styles.promptTitle}>Is this number correct?</Text>
           <Text style={styles.promptSubtitle}>
-            We'll send you a confirmation code there
+            Is this number correct? We’ll send you a confirmation code there
           </Text>
 
           {/* Action Buttons */}
@@ -73,74 +72,68 @@ const styles = StyleSheet.create({
   },
   sheetCard: {
     width: '100%',
-    maxWidth: 350,
-    backgroundColor: '#161c2c',
-    borderRadius: 28,
+    maxWidth: 340,
+    backgroundColor: '#2c2c2e',
+    borderRadius: 32,
     padding: 24,
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.08)',
     shadowColor: '#000000',
     shadowOffset: { width: 0, height: 16 },
-    shadowOpacity: 0.7,
+    shadowOpacity: 0.8,
     shadowRadius: 30,
+    elevation: 20,
   },
   phoneBadgeRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 16,
-    gap: 8,
+    marginBottom: 12,
+    gap: 10,
   },
   flagIcon: {
-    fontSize: 22,
+    fontSize: 24,
   },
   phoneNumberText: {
     color: '#ffffff',
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: '700',
     letterSpacing: -0.3,
   },
-  promptTitle: {
-    color: '#ffffff',
-    fontSize: 16,
-    fontWeight: '600',
-    marginBottom: 4,
-    textAlign: 'center',
-  },
   promptSubtitle: {
-    color: '#94a3b8',
-    fontSize: 13,
+    color: '#8e8e93',
+    fontSize: 15,
     textAlign: 'center',
+    lineHeight: 22,
     marginBottom: 24,
+    paddingHorizontal: 8,
   },
   btnColumn: {
     width: '100%',
-    gap: 10,
+    gap: 12,
   },
   confirmBtn: {
     width: '100%',
-    height: 50,
+    height: 54,
     backgroundColor: '#ffffff',
-    borderRadius: 25,
+    borderRadius: 27,
     justifyContent: 'center',
     alignItems: 'center',
   },
   confirmBtnText: {
     color: '#000000',
-    fontSize: 16,
+    fontSize: 17,
     fontWeight: '700',
   },
   goBackBtn: {
     width: '100%',
-    height: 48,
-    backgroundColor: 'rgba(255, 255, 255, 0.08)',
-    borderRadius: 24,
+    height: 54,
+    backgroundColor: '#3a3a3c',
+    borderRadius: 27,
     justifyContent: 'center',
     alignItems: 'center',
   },
   goBackBtnText: {
     color: '#ffffff',
-    fontSize: 15,
+    fontSize: 17,
     fontWeight: '600',
   },
 });

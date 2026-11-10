@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { ArrowLeft, ChevronRight, Zap, FileText, ShieldCheck } from 'lucide-react-native';
+import { ArrowLeft, ChevronRight, Zap, FileText } from 'lucide-react-native';
 import { sounds } from '../../utils/soundEffects';
 
 interface IdentityKycStepProps {
@@ -30,9 +30,6 @@ export const IdentityKycStep: React.FC<IdentityKycStepProps> = ({
       {/* Main Content */}
       <View style={styles.content}>
         <Text style={styles.title}>Verify your identity</Text>
-        <Text style={styles.subtitle}>
-          Select your preferred verification method to unlock instant crypto swaps and global banking.
-        </Text>
 
         <View style={styles.cardsColumn}>
           {/* Option 1: Fast ID */}
@@ -46,7 +43,7 @@ export const IdentityKycStep: React.FC<IdentityKycStepProps> = ({
           >
             <View style={styles.methodHeader}>
               <View style={styles.iconCircleFast}>
-                <Zap size={22} color="#60a5fa" />
+                <Zap size={20} color="#000000" />
               </View>
               <View style={styles.methodTextContainer}>
                 <Text style={styles.methodTitle}>Verify using Fast ID</Text>
@@ -54,11 +51,11 @@ export const IdentityKycStep: React.FC<IdentityKycStepProps> = ({
                   Instant and hassle free verification using Government Database
                 </Text>
                 <View style={styles.fasterBadge}>
-                  <Zap size={11} color="#ffffff" />
-                  <Text style={styles.fasterBadgeText}>Faster • 30 seconds</Text>
+                  <Zap size={11} color="#000000" />
+                  <Text style={styles.fasterBadgeText}>Faster</Text>
                 </View>
               </View>
-              <ChevronRight size={20} color="#94a3b8" />
+              <ChevronRight size={20} color="#8e8e93" />
             </View>
           </TouchableOpacity>
 
@@ -73,25 +70,17 @@ export const IdentityKycStep: React.FC<IdentityKycStepProps> = ({
           >
             <View style={styles.methodHeader}>
               <View style={styles.iconCircleDocs}>
-                <FileText size={22} color="#94a3b8" />
+                <FileText size={20} color="#8e8e93" />
               </View>
               <View style={styles.methodTextContainer}>
                 <Text style={styles.methodTitle}>Verify using documents</Text>
                 <Text style={styles.methodDesc}>
-                  Enter your details and upload your documents (Passport / ID / Driver's License)
+                  Enter your details and upload your documents (Passport / ID / Driver's Permit) to complete verification
                 </Text>
               </View>
-              <ChevronRight size={20} color="#94a3b8" />
+              <ChevronRight size={20} color="#8e8e93" />
             </View>
           </TouchableOpacity>
-        </View>
-
-        {/* Security Assurance Footer */}
-        <View style={styles.securityNote}>
-          <ShieldCheck size={18} color="#10b981" />
-          <Text style={styles.securityNoteText}>
-            256-bit bank-grade biometric encryption. Your identity documents never leave your encrypted enclave.
-          </Text>
         </View>
       </View>
     </View>
@@ -101,7 +90,7 @@ export const IdentityKycStep: React.FC<IdentityKycStepProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#080a10',
+    backgroundColor: '#000000',
     paddingHorizontal: 20,
     paddingBottom: 24,
   },
@@ -182,17 +171,17 @@ const styles = StyleSheet.create({
   fasterBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#2563eb',
+    backgroundColor: '#ffffff',
     alignSelf: 'flex-start',
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 12,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 14,
     marginTop: 6,
     gap: 4,
   },
   fasterBadgeText: {
-    color: '#ffffff',
-    fontSize: 11,
+    color: '#000000',
+    fontSize: 12,
     fontWeight: '700',
   },
   securityNote: {

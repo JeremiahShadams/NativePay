@@ -96,10 +96,6 @@ export const PurposeTagsStep: React.FC<PurposeTagsStepProps> = ({ onBack, onCont
           We need to know this for regulatory reasons. And also, we're curious!
         </Text>
 
-        {/* Wealth & AI Section */}
-        <Text style={styles.sectionHeader}>Crypto & Intelligence</Text>
-        <View style={styles.tagsWrap}>{wealthCrypto.map(renderTag)}</View>
-
         {/* Everyday Needs Section */}
         <Text style={styles.sectionHeader}>Everyday needs</Text>
         <View style={styles.tagsWrap}>{everydayNeeds.map(renderTag)}</View>
@@ -107,6 +103,10 @@ export const PurposeTagsStep: React.FC<PurposeTagsStepProps> = ({ onBack, onCont
         {/* Global Spending Section */}
         <Text style={styles.sectionHeader}>Global spending</Text>
         <View style={styles.tagsWrap}>{globalSpending.map(renderTag)}</View>
+
+        {/* Crypto & Wealth Section */}
+        <Text style={styles.sectionHeader}>Wealth & Crypto</Text>
+        <View style={styles.tagsWrap}>{wealthCrypto.map(renderTag)}</View>
 
         <View style={{ height: 20 }} />
       </ScrollView>
@@ -131,7 +131,7 @@ export const PurposeTagsStep: React.FC<PurposeTagsStepProps> = ({ onBack, onCont
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#080a10',
+    backgroundColor: '#000000',
     justifyContent: 'space-between',
     paddingHorizontal: 20,
     paddingBottom: 20,

@@ -10,8 +10,8 @@ import { sounds } from './utils/soundEffects';
 
 export const App: React.FC = () => {
   const [isMobileFrame, setIsMobileFrame] = useState(true);
-  const [currentView, setCurrentView] = useState<'onboarding' | 'dashboard'>('dashboard');
-  const [onboardingStep, setOnboardingStep] = useState<OnboardingStep>('stories');
+  const [currentView, setCurrentView] = useState<'onboarding' | 'dashboard'>('onboarding');
+  const [onboardingStep, setOnboardingStep] = useState<OnboardingStep>('splash');
 
   const [cryptoAssets, setCryptoAssets] = useState<CryptoAsset[]>(INITIAL_CRYPTO_ASSETS);
   const [transactions, setTransactions] = useState<TransactionRecord[]>(INITIAL_TRANSACTIONS);
@@ -56,6 +56,8 @@ export const App: React.FC = () => {
       return 'Native App & AI Payment Agent';
     }
     switch (onboardingStep) {
+      case 'splash':
+        return 'Native Minimalist Splash (Screen 0)';
       case 'stories':
         return 'Revolut-Style Welcome Stories (Screens 0-3)';
       case 'phone_input':
@@ -127,7 +129,7 @@ export const App: React.FC = () => {
 const styles = StyleSheet.create({
   appContainer: {
     flex: 1,
-    backgroundColor: '#080a10',
+    backgroundColor: '#000000',
   },
 });
 

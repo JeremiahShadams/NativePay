@@ -26,7 +26,7 @@ export const DeviceFrame: React.FC<DeviceFrameProps> = ({
     const topInset = Platform.OS === 'android' ? (StatusBar.currentHeight || 24) : 44;
     return (
       <View style={[styles.nativeContainer, { paddingTop: topInset }]}>
-        <StatusBar barStyle="light-content" {...({ backgroundColor: '#080a10', translucent: true } as any)} />
+        <StatusBar barStyle="light-content" {...({ backgroundColor: '#000000', translucent: true } as any)} />
         <View style={styles.nativeScreenInner}>{children}</View>
       </View>
     );
@@ -160,11 +160,11 @@ export const DeviceFrame: React.FC<DeviceFrameProps> = ({
 const styles = StyleSheet.create({
   nativeContainer: {
     flex: 1,
-    backgroundColor: '#080a10',
+    backgroundColor: '#000000',
   },
   nativeScreenInner: {
     flex: 1,
-    backgroundColor: '#080a10',
+    backgroundColor: '#000000',
   },
   outerWrapper: {
     flex: 1,

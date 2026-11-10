@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { ArrowLeft, Sparkles, ShieldCheck } from 'lucide-react-native';
+import { ArrowLeft } from 'lucide-react-native';
 import { sounds } from '../../utils/soundEffects';
 
 interface PrivacyStepProps {
@@ -37,14 +37,14 @@ export const PrivacyStep: React.FC<PrivacyStepProps> = ({ onBack, onContinue }) 
           }}
           activeOpacity={0.8}
         >
-          <View style={[styles.toggleTrack, isEnabled && styles.toggleTrackActive]}>
-            <View style={[styles.toggleThumb, isEnabled && styles.toggleThumbActive]} />
+          <View style={[styles.toggleTrack, isEnabled ? styles.toggleTrackActive : styles.toggleTrackInactive]}>
+            <View style={[styles.toggleThumb, isEnabled ? styles.toggleThumbActive : styles.toggleThumbInactive]} />
           </View>
         </TouchableOpacity>
 
-        <Text style={styles.title}>INTELLIGENT AI & RELEVANT OFFERS</Text>
+        <Text style={styles.title}>GET USEFUL ADS ONLY</Text>
         <Text style={styles.subtitle}>
-          Native uses localized machine learning and zero-knowledge intelligence to optimize your crypto swap routes, detect phishing contracts, and bring you customized cashback rates.
+          We use online ads to show you ways to get more from your money. To make sure we only show you relevant ads, we need you to allow Native to track your device activity. You can allow or deny this on the next screen.
         </Text>
 
         <TouchableOpacity
@@ -75,7 +75,7 @@ export const PrivacyStep: React.FC<PrivacyStepProps> = ({ onBack, onContinue }) 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#080a10',
+    backgroundColor: '#000000',
     justifyContent: 'space-between',
     paddingHorizontal: 20,
     paddingBottom: 20,
@@ -102,28 +102,30 @@ const styles = StyleSheet.create({
     marginBottom: 36,
   },
   toggleTrack: {
-    width: 100,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: '#1e293b',
-    padding: 6,
+    width: 104,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: '#ffffff',
+    padding: 5,
     justifyContent: 'center',
-    borderWidth: 2,
-    borderColor: 'rgba(255, 255, 255, 0.1)',
   },
   toggleTrackActive: {
-    backgroundColor: '#2563eb',
-    borderColor: '#3b82f6',
+    backgroundColor: '#ffffff',
+  },
+  toggleTrackInactive: {
+    backgroundColor: '#3a3a3c',
   },
   toggleThumb: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#ffffff',
-    transform: [{ translateX: 0 }],
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: '#000000',
   },
   toggleThumbActive: {
     transform: [{ translateX: 44 }],
+  },
+  toggleThumbInactive: {
+    transform: [{ translateX: 0 }],
   },
   title: {
     color: '#ffffff',

@@ -68,6 +68,7 @@ export interface TransactionRecord {
 }
 
 export type OnboardingStep =
+  | 'splash'
   | 'stories'
   | 'phone_input'
   | 'phone_confirm_modal'

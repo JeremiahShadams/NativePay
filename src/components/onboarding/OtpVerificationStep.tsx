@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { ArrowLeft, Sparkles, AlertCircle } from 'lucide-react-native';
+import { ArrowLeft } from 'lucide-react-native';
 import { NumericKeypad } from '../common/NumericKeypad';
 import { OtpErrorModal } from './OtpErrorModal';
 import { sounds } from '../../utils/soundEffects';
@@ -134,26 +134,6 @@ export const OtpVerificationStep: React.FC<OtpVerificationStepProps> = ({
             </TouchableOpacity>
           )}
         </View>
-
-        {/* Helpful Testing Chips */}
-        <View style={styles.testChipsContainer}>
-          <Text style={styles.testLabel}>Quick Test Shortcuts:</Text>
-          <View style={styles.chipsRow}>
-            <TouchableOpacity style={styles.testChip} onPress={fillCorrectCode}>
-              <Sparkles size={13} color="#60a5fa" />
-              <Text style={styles.testChipText}>Auto-Fill Code (824-915)</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.testChip, styles.testChipError]}
-              onPress={fillErrorCode}
-            >
-              <AlertCircle size={13} color="#f87171" />
-              <Text style={[styles.testChipText, { color: '#f87171' }]}>
-                Test Error Modal (000-000)
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
       </View>
 
       {/* Numeric Keypad */}
@@ -180,7 +160,7 @@ export const OtpVerificationStep: React.FC<OtpVerificationStepProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#080a10',
+    backgroundColor: '#000000',
     justifyContent: 'space-between',
   },
   topNav: {

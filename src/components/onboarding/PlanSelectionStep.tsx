@@ -188,7 +188,7 @@ export const PlanSelectionStep: React.FC<PlanSelectionStepProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#080a10',
+    backgroundColor: '#000000',
     justifyContent: 'space-between',
     paddingHorizontal: 20,
     paddingBottom: 20,

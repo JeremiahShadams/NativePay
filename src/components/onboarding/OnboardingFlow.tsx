@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { OnboardingStep } from '../../types';
+import { SplashScreen } from './SplashScreen';
 import { StorySlides } from './StorySlides';
 import { PhoneInputStep } from './PhoneInputStep';
 import { OtpVerificationStep } from './OtpVerificationStep';
@@ -26,7 +27,7 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({
   currentStep: externalStep,
   onStepChange,
 }) => {
-  const [internalStep, setInternalStep] = useState<OnboardingStep>('stories');
+  const [internalStep, setInternalStep] = useState<OnboardingStep>('splash');
   const [userPhone, setUserPhone] = useState('+1 (650) 213-7390');
   const [, setUserName] = useState('Alex Smith');
   const [, setUserHandle] = useState('@alex');
@@ -40,6 +41,10 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({
 
   return (
     <View style={styles.container}>
+      {step === 'splash' && (
+        <SplashScreen onFinish={() => goTo('stories')} />
+      )}
+
       {step === 'stories' && (
         <StorySlides
           onCreateAccount={() => goTo('phone_input')}
@@ -134,7 +139,7 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#080a10',
+    backgroundColor: '#000000',
   },
 });
 

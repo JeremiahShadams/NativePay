@@ -7,26 +7,25 @@ import {
   ScrollView,
 } from 'react-native';
 import {
-  Zap,
   QrCode,
   ArrowUpRight,
-  ArrowDownLeft,
-  CreditCard,
-  Sparkles,
-  ShieldCheck,
-  TrendingUp,
+  Plus,
+  RefreshCw,
+  MoreHorizontal,
+  Search,
   Eye,
   EyeOff,
-  ChevronRight,
-  RefreshCw,
-  ArrowUpDown,
-  Bot,
+  ChevronDown,
+  TrendingUp,
+  CreditCard,
+  Lock,
+  Unlock,
+  Check,
 } from 'lucide-react-native';
 import { CryptoAsset, TransactionRecord, PaymentRequest } from '../../types';
 import { PaymentHubModal } from '../payment/PaymentHubModal';
 import { QrScannerModal } from '../payment/QrScannerModal';
 import { PaymentApprovalSheet } from '../payment/PaymentApprovalSheet';
-import { AgentCopilotModal } from '../agent/AgentCopilotModal';
 import { ReceiveQrModal } from './ReceiveQrModal';
 import { SwapCryptoModal } from './SwapCryptoModal';
 import { TransactionDetailsModal } from './TransactionDetailsModal';
@@ -46,16 +45,13 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
   onExecutePayment,
   onOpenOnboardingTour,
 }) => {
+  const [activeTab, setActiveTab] = useState<'accounts' | 'cards' | 'crypto' | 'vaults'>('accounts');
   const [showPaymentHub, setShowPaymentHub] = useState(false);
   const [showQrDirect, setShowQrDirect] = useState(false);
   const [showReceiveQr, setShowReceiveQr] = useState(false);
   const [showSwapModal, setShowSwapModal] = useState(false);
   const [showCardsManager, setShowCardsManager] = useState(false);
-  const [showCopilot, setShowCopilot] = useState(false);
   const [selectedTx, setSelectedTx] = useState<TransactionRecord | null>(null);
-
-  const [showCardDetails, setShowCardDetails] = useState(false);
-  const [isCardFrozen, setIsCardFrozen] = useState(false);
   const [hideBalances, setHideBalances] = useState(false);
   const [qrApprovalRequest, setQrApprovalRequest] = useState<PaymentRequest | null>(null);
 
@@ -74,24 +70,23 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
     toAmount: number
   ) => {
     sounds.playSuccessChime();
-    // Simulate swapped payment record
     const swapTx: PaymentRequest = {
       id: `swap-${Date.now()}`,
       destination: {
         type: 'crypto_wallet',
-        rawInput: `DEX Swap: ${fromSymbol} → ${toSymbol}`,
-        resolvedName: `Native Atomic Swapper`,
-        network: 'Native L2 Rollup',
+        rawInput: `Exchange: ${fromSymbol} → ${toSymbol}`,
+        resolvedName: `Native Instant Exchange`,
+        network: 'Native Rollup',
         riskScore: 'low',
         isVerifiedMerchant: true,
       },
       amount: fromAmount,
       currency: fromSymbol,
       fiatEquivalent: fromAmount * (cryptoAssets.find((a) => a.symbol === fromSymbol)?.priceUsd || 1),
-      networkFeeUsd: 0.04,
+      networkFeeUsd: 0.02,
       estimatedSeconds: 1,
       agentAnalysis: {
-        safetySummary: '0% slippage atomic swap executed on Native Rollup DEX.',
+        safetySummary: 'Instant currency exchange executed via Native liquidity pool.',
         routeDetails: `Direct route: ${fromSymbol} -> ${toSymbol}`,
         slippageEst: '0.00%',
         counterpartyTrust: '100%',
@@ -102,299 +97,256 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
 
   return (
     <View style={styles.container}>
-      {/* Header Bar */}
+      {/* Top Revolut V10 Navigation Bar */}
       <View style={styles.topHeader}>
-        <View style={styles.userProfileRow}>
-          <TouchableOpacity
-            style={styles.userAvatar}
-            onPress={() => setShowCardsManager(true)}
-            activeOpacity={0.8}
-          >
-            <Text style={styles.avatarText}>AS</Text>
-          </TouchableOpacity>
-          <View>
-            <View style={styles.tagBadgeRow}>
-              <Text style={styles.handleText}>@alex</Text>
-              <View style={styles.metalPill}>
-                <Text style={styles.metalPillText}>METAL</Text>
-              </View>
-            </View>
-            <Text style={styles.statusSub}>Verified Resident • US</Text>
+        {/* User Avatar & Tag */}
+        <TouchableOpacity
+          style={styles.userProfileBtn}
+          onPress={onOpenOnboardingTour}
+          activeOpacity={0.8}
+        >
+          <View style={styles.avatarCircle}>
+            <Text style={styles.avatarInitials}>AS</Text>
           </View>
-        </View>
+          <View style={styles.userMeta}>
+            <Text style={styles.userHandle}>@alex</Text>
+            <View style={styles.tierPill}>
+              <Text style={styles.tierPillText}>METAL</Text>
+            </View>
+          </View>
+        </TouchableOpacity>
 
+        {/* Right Action Icons: Search, QR Scanner, Visibility */}
         <View style={styles.headerRightActions}>
-          {/* AI Copilot trigger */}
           <TouchableOpacity
-            style={[styles.iconCircle, styles.copilotCircle]}
-            onPress={() => {
-              sounds.playKeyClick();
-              setShowCopilot(true);
-            }}
-            accessibilityLabel="Open AI Copilot"
-          >
-            <Bot size={18} color="#60a5fa" />
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.iconCircle}
+            style={styles.headerIconBtn}
             onPress={() => {
               sounds.playScanBeep();
               setShowQrDirect(true);
             }}
             accessibilityLabel="Scan QR Code"
+            activeOpacity={0.7}
           >
-            <QrCode size={18} color="#ffffff" />
+            <QrCode size={19} color="#ffffff" />
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={styles.iconCircle}
+            style={styles.headerIconBtn}
             onPress={() => setHideBalances(!hideBalances)}
             accessibilityLabel="Toggle Balance Visibility"
+            activeOpacity={0.7}
           >
             {hideBalances ? (
-              <EyeOff size={18} color="#94a3b8" />
+              <EyeOff size={19} color="#8e8e93" />
             ) : (
-              <Eye size={18} color="#ffffff" />
+              <Eye size={19} color="#ffffff" />
             )}
           </TouchableOpacity>
         </View>
       </View>
 
       <ScrollView style={styles.scrollBody} showsVerticalScrollIndicator={false}>
-        {/* Balance Card */}
-        <View style={styles.balanceContainer}>
-          <Text style={styles.balanceLabel}>Total Net Worth</Text>
-          <View style={styles.balanceAmountRow}>
-            <Text style={styles.currencySymbol}>$</Text>
-            <Text style={styles.balanceMainAmount}>
+        {/* Balance Hero Section */}
+        <View style={styles.balanceSection}>
+          <TouchableOpacity style={styles.accountDropdown} activeOpacity={0.7}>
+            <Text style={styles.accountDropdownText}>🇺🇸 USD • Personal</Text>
+            <ChevronDown size={14} color="#8e8e93" />
+          </TouchableOpacity>
+
+          <View style={styles.balanceMainRow}>
+            <Text style={styles.balanceMainText}>
               {hideBalances
                 ? '••••••••'
-                : totalBalanceUsd.toLocaleString('en-US', {
+                : `$${totalBalanceUsd.toLocaleString('en-US', {
                     minimumFractionDigits: 2,
                     maximumFractionDigits: 2,
-                  })}
+                  })}`}
             </Text>
           </View>
 
-          {/* 24h P&L Pill */}
           <View style={styles.pnlRow}>
-            <View style={styles.pnlBadge}>
-              <TrendingUp size={12} color="#10b981" />
-              <Text style={styles.pnlText}>+$2,410.50 (+5.18%) 24h</Text>
-            </View>
+            <TrendingUp size={13} color="#34c759" />
+            <Text style={styles.pnlText}>+$2,410.50 (5.2%) this month</Text>
+          </View>
+        </View>
+
+        {/* Primary Action Buttons (Revolut 4-Pill Row) */}
+        <View style={styles.actionsRow}>
+          {/* Add money */}
+          <View style={styles.actionItem}>
             <TouchableOpacity
-              style={styles.agentStatusPill}
-              onPress={() => setShowCopilot(true)}
+              style={styles.actionCircle}
+              onPress={() => {
+                sounds.playKeyClick();
+                setShowReceiveQr(true);
+              }}
+              activeOpacity={0.8}
             >
-              <Zap size={11} color="#60a5fa" />
-              <Text style={styles.agentStatusText}>AI Copilot Active</Text>
+              <Plus size={22} color="#ffffff" strokeWidth={2.5} />
             </TouchableOpacity>
-          </View>
-        </View>
-
-        {/* Quick Actions Bar */}
-        <View style={styles.quickActionsBar}>
-          {/* Main AI Payment Button */}
-          <TouchableOpacity
-            style={[styles.actionButton, styles.aiActionButton]}
-            onPress={() => {
-              sounds.playKeyClick();
-              setShowPaymentHub(true);
-            }}
-            activeOpacity={0.8}
-          >
-            <View style={styles.actionIconWrapperAi}>
-              <Zap size={22} color="#ffffff" />
-            </View>
-            <Text style={[styles.actionButtonLabel, { color: '#60a5fa', fontWeight: '700' }]}>
-              Pay with AI
-            </Text>
-          </TouchableOpacity>
-
-          {/* Scan QR */}
-          <TouchableOpacity
-            style={styles.actionButton}
-            onPress={() => {
-              sounds.playScanBeep();
-              setShowQrDirect(true);
-            }}
-            activeOpacity={0.8}
-          >
-            <View style={styles.actionIconWrapper}>
-              <QrCode size={20} color="#ffffff" />
-            </View>
-            <Text style={styles.actionButtonLabel}>Scan QR</Text>
-          </TouchableOpacity>
-
-          {/* Receive */}
-          <TouchableOpacity
-            style={styles.actionButton}
-            onPress={() => {
-              sounds.playKeyClick();
-              setShowReceiveQr(true);
-            }}
-            activeOpacity={0.8}
-          >
-            <View style={styles.actionIconWrapper}>
-              <ArrowDownLeft size={20} color="#ffffff" />
-            </View>
-            <Text style={styles.actionButtonLabel}>Receive</Text>
-          </TouchableOpacity>
-
-          {/* Swap */}
-          <TouchableOpacity
-            style={styles.actionButton}
-            onPress={() => {
-              sounds.playKeyClick();
-              setShowSwapModal(true);
-            }}
-            activeOpacity={0.8}
-          >
-            <View style={styles.actionIconWrapper}>
-              <ArrowUpDown size={20} color="#ffffff" />
-            </View>
-            <Text style={styles.actionButtonLabel}>Swap</Text>
-          </TouchableOpacity>
-
-          {/* Cards */}
-          <TouchableOpacity
-            style={styles.actionButton}
-            onPress={() => {
-              sounds.playKeyClick();
-              setShowCardsManager(true);
-            }}
-            activeOpacity={0.8}
-          >
-            <View style={styles.actionIconWrapper}>
-              <CreditCard size={20} color="#ffffff" />
-            </View>
-            <Text style={styles.actionButtonLabel}>Cards</Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* Interactive Native Metal Card Banner */}
-        <TouchableOpacity
-          style={styles.metalCardPreview}
-          onPress={() => {
-            sounds.playKeyClick();
-            setShowCardsManager(true);
-          }}
-          activeOpacity={0.85}
-        >
-          <View style={styles.cardHeader}>
-            <Text style={styles.cardBrandText}>Native</Text>
-            <View style={styles.cardChipRow}>
-              <Text style={styles.cardContactless}>))))</Text>
-              <View style={styles.cardChipGold} />
-            </View>
+            <Text style={styles.actionLabel}>Add money</Text>
           </View>
 
-          <View style={styles.cardMid}>
-            <Text style={styles.cardNumberText}>••••  ••••  ••••  8824</Text>
-          </View>
-
-          <View style={styles.cardFooter}>
-            <View>
-              <Text style={styles.cardHolderLabel}>CARDHOLDER</Text>
-              <Text style={styles.cardHolderName}>ALEX SMITH</Text>
-            </View>
-            <View style={{ alignItems: 'flex-end' }}>
-              <Text style={styles.cardHolderLabel}>TIER</Text>
-              <Text style={styles.cardTierHighlight}>SOLID TITANIUM</Text>
-            </View>
-          </View>
-        </TouchableOpacity>
-
-        {/* AI Agent Capability Callout Banner */}
-        <TouchableOpacity
-          style={styles.agentBanner}
-          onPress={() => setShowCopilot(true)}
-          activeOpacity={0.85}
-        >
-          <View style={styles.agentBannerIcon}>
-            <Bot size={22} color="#60a5fa" />
-          </View>
-          <View style={styles.agentBannerContent}>
-            <Text style={styles.agentBannerTitle}>Native Autonomous Copilot</Text>
-            <Text style={styles.agentBannerSub}>
-              Tell the agent who to pay or scan a QR code. It calculates optimal gas and asks for your biometric approval.
-            </Text>
-          </View>
-          <ChevronRight size={18} color="#94a3b8" />
-        </TouchableOpacity>
-
-        {/* Crypto Assets List */}
-        <View style={styles.sectionContainer}>
-          <View style={styles.sectionHeaderRow}>
-            <Text style={styles.sectionTitle}>Crypto Assets</Text>
+          {/* Transfer (Autonomous Payment Agent Entrypoint) */}
+          <View style={styles.actionItem}>
             <TouchableOpacity
+              style={[styles.actionCircle, styles.actionCircleActive]}
+              onPress={() => {
+                sounds.playKeyClick();
+                setShowPaymentHub(true);
+              }}
+              activeOpacity={0.8}
+            >
+              <ArrowUpRight size={22} color="#ffffff" strokeWidth={2.5} />
+            </TouchableOpacity>
+            <Text style={[styles.actionLabel, { color: '#ffffff', fontWeight: '700' }]}>
+              Transfer
+            </Text>
+          </View>
+
+          {/* Exchange */}
+          <View style={styles.actionItem}>
+            <TouchableOpacity
+              style={styles.actionCircle}
               onPress={() => {
                 sounds.playKeyClick();
                 setShowSwapModal(true);
               }}
+              activeOpacity={0.8}
             >
-              <Text style={styles.sectionAction}>+ Swap DEX</Text>
+              <RefreshCw size={20} color="#ffffff" strokeWidth={2.2} />
             </TouchableOpacity>
+            <Text style={styles.actionLabel}>Exchange</Text>
           </View>
 
-          <View style={styles.cryptoList}>
-            {cryptoAssets.map((asset) => (
-              <TouchableOpacity
-                key={asset.id}
-                style={styles.cryptoRow}
-                onPress={() => {
-                  sounds.playKeyClick();
-                  setShowSwapModal(true);
-                }}
-                activeOpacity={0.7}
-              >
-                <View style={styles.cryptoIconCol}>
-                  <View style={[styles.cryptoIconCircle, { borderColor: asset.color }]}>
-                    <Text style={[styles.cryptoIconSymbol, { color: asset.color }]}>
-                      {asset.icon}
-                    </Text>
-                  </View>
-                  <View>
-                    <Text style={styles.assetName}>{asset.name}</Text>
-                    <Text style={styles.assetNetwork}>{asset.network}</Text>
-                  </View>
-                </View>
-
-                <View style={styles.cryptoValCol}>
-                  <Text style={styles.assetFiatVal}>
-                    {hideBalances
-                      ? '••••'
-                      : `$${asset.fiatValue.toLocaleString('en-US', {
-                          minimumFractionDigits: 2,
-                          maximumFractionDigits: 2,
-                        })}`}
-                  </Text>
-                  <View style={styles.assetSubRow}>
-                    <Text style={styles.assetCryptoBal}>
-                      {asset.balance} {asset.symbol}
-                    </Text>
-                    <Text
-                      style={[
-                        styles.changeText,
-                        { color: asset.change24h >= 0 ? '#10b981' : '#ef4444' },
-                      ]}
-                    >
-                      {asset.change24h >= 0 ? '+' : ''}
-                      {asset.change24h}%
-                    </Text>
-                  </View>
-                </View>
-              </TouchableOpacity>
-            ))}
+          {/* Details / Cards */}
+          <View style={styles.actionItem}>
+            <TouchableOpacity
+              style={styles.actionCircle}
+              onPress={() => {
+                sounds.playKeyClick();
+                setShowCardsManager(true);
+              }}
+              activeOpacity={0.8}
+            >
+              <CreditCard size={20} color="#ffffff" strokeWidth={2} />
+            </TouchableOpacity>
+            <Text style={styles.actionLabel}>Cards</Text>
           </View>
         </View>
 
-        {/* Recent Transactions List */}
-        <View style={styles.sectionContainer}>
+        {/* Segmented Filter Tabs: Accounts | Cards | Crypto | Vaults */}
+        <View style={styles.segmentedRow}>
+          {(['accounts', 'cards', 'crypto', 'vaults'] as const).map((tab) => (
+            <TouchableOpacity
+              key={tab}
+              style={[styles.segmentBtn, activeTab === tab && styles.segmentBtnActive]}
+              onPress={() => {
+                sounds.playKeyClick();
+                setActiveTab(tab);
+              }}
+              activeOpacity={0.8}
+            >
+              <Text
+                style={[
+                  styles.segmentText,
+                  activeTab === tab && styles.segmentTextActive,
+                ]}
+              >
+                {tab.charAt(0).toUpperCase() + tab.slice(1)}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        {/* Tab Content: Cards Preview if Cards selected */}
+        {activeTab === 'cards' && (
+          <TouchableOpacity
+            style={styles.cardPreviewBanner}
+            onPress={() => setShowCardsManager(true)}
+            activeOpacity={0.85}
+          >
+            <View style={styles.cardPreviewHeader}>
+              <Text style={styles.cardPreviewBrand}>Native</Text>
+              <Text style={styles.cardPreviewTier}>TITANIUM METAL</Text>
+            </View>
+            <View style={styles.cardPreviewNumber}>
+              <Text style={styles.cardPreviewMask}>••••  ••••  ••••  8824</Text>
+            </View>
+            <View style={styles.cardPreviewFooter}>
+              <Text style={styles.cardPreviewHolder}>ALEX SMITH</Text>
+              <Text style={styles.cardPreviewExp}>12/28</Text>
+            </View>
+          </TouchableOpacity>
+        )}
+
+        {/* Crypto & Cash Holdings Section */}
+        {(activeTab === 'accounts' || activeTab === 'crypto') && (
+          <View style={styles.sectionBlock}>
+            <View style={styles.sectionHeaderRow}>
+              <Text style={styles.sectionTitle}>Holdings</Text>
+              <TouchableOpacity
+                onPress={() => setShowSwapModal(true)}
+                activeOpacity={0.7}
+              >
+                <Text style={styles.sectionActionText}>See all</Text>
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.assetList}>
+              {cryptoAssets.map((asset) => (
+                <TouchableOpacity
+                  key={asset.id}
+                  style={styles.assetRow}
+                  onPress={() => {
+                    sounds.playKeyClick();
+                    setShowPaymentHub(true);
+                  }}
+                  activeOpacity={0.7}
+                >
+                  <View style={[styles.assetIconCircle, { backgroundColor: asset.color }]}>
+                    <Text style={styles.assetSymbolEmoji}>{asset.icon}</Text>
+                  </View>
+
+                  <View style={styles.assetDetails}>
+                    <Text style={styles.assetName}>{asset.name}</Text>
+                    <Text style={styles.assetSub}>
+                      ${asset.priceUsd.toLocaleString()} •{' '}
+                      <Text
+                        style={{
+                          color: asset.change24h >= 0 ? '#34c759' : '#ff3b30',
+                        }}
+                      >
+                        {asset.change24h >= 0 ? '+' : ''}
+                        {asset.change24h}%
+                      </Text>
+                    </Text>
+                  </View>
+
+                  <View style={styles.assetBalanceCol}>
+                    <Text style={styles.assetFiat}>
+                      {hideBalances
+                        ? '••••'
+                        : `$${asset.fiatValue.toLocaleString('en-US', {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          })}`}
+                    </Text>
+                    <Text style={styles.assetAmount}>
+                      {asset.balance} {asset.symbol}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
+        )}
+
+        {/* Recent Transactions Feed */}
+        <View style={styles.sectionBlock}>
           <View style={styles.sectionHeaderRow}>
-            <Text style={styles.sectionTitle}>Recent Activity</Text>
-            <Text style={styles.sectionSubCount}>{transactions.length} total</Text>
+            <Text style={styles.sectionTitle}>Transactions</Text>
+            <Text style={styles.sectionActionText}>All</Text>
           </View>
 
           <View style={styles.txList}>
@@ -408,91 +360,96 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
                 }}
                 activeOpacity={0.7}
               >
-                <View style={styles.txIconWrapper}>
-                  <Text style={styles.txIconText}>{tx.icon}</Text>
+                <View style={styles.txIconCircle}>
+                  <Text style={styles.txArrowIcon}>
+                    {tx.type === 'received' ? '↙' : tx.type === 'swapped' ? '⇄' : '↗'}
+                  </Text>
                 </View>
-                <View style={styles.txInfo}>
-                  <Text style={styles.txTitle}>{tx.title}</Text>
-                  <Text style={styles.txSub}>{tx.subtitle}</Text>
-                  <Text style={styles.txTime}>{tx.timestamp}</Text>
+
+                <View style={styles.txInfoCol}>
+                  <Text style={styles.txTitle} numberOfLines={1}>
+                    {tx.title}
+                  </Text>
+                  <Text style={styles.txSubtitle} numberOfLines={1}>
+                    {tx.timestamp} • {tx.subtitle}
+                  </Text>
                 </View>
+
                 <View style={styles.txAmountCol}>
                   <Text
                     style={[
                       styles.txAmountText,
-                      { color: tx.type === 'received' ? '#10b981' : '#ffffff' },
+                      { color: tx.type === 'received' ? '#34c759' : '#ffffff' },
                     ]}
                   >
-                    {tx.type === 'received' ? '+' : '-'}
+                    {tx.type === 'received' ? '+' : '-'}${tx.fiatAmount.toFixed(2)}
+                  </Text>
+                  <Text style={styles.txCurrencySub}>
                     {tx.amount} {tx.currency}
                   </Text>
-                  <Text style={styles.txFiatText}>${tx.fiatAmount.toFixed(2)}</Text>
                 </View>
               </TouchableOpacity>
             ))}
           </View>
         </View>
 
-        {/* Replay Onboarding Flow Button */}
-        <TouchableOpacity
-          style={styles.replayFlowButton}
-          onPress={onOpenOnboardingTour}
-          activeOpacity={0.8}
-        >
-          <RefreshCw size={15} color="#94a3b8" />
-          <Text style={styles.replayFlowText}>
-            Tour Revolut-Inspired Onboarding Experience (All 24 Screens)
-          </Text>
-        </TouchableOpacity>
-
-        <View style={{ height: 30 }} />
+        <View style={{ height: 40 }} />
       </ScrollView>
 
-      {/* Payment Hub Modal */}
+      {/* Autonomous Payment Hub Modal (Supports QR Scan, EVM, Solana, BTC, IBAN) */}
       <PaymentHubModal
         visible={showPaymentHub}
         onClose={() => setShowPaymentHub(false)}
-        cryptoAssets={cryptoAssets}
         onExecutePayment={handleExecutePayment}
+        cryptoAssets={cryptoAssets}
       />
 
-      {/* Direct QR Scanner */}
+      {/* Direct QR Scanner Camera Simulation */}
       <QrScannerModal
         visible={showQrDirect}
         onClose={() => setShowQrDirect(false)}
-        onQrDetected={(dest, amt, cur) => {
+        onQrDetected={(destination, amount = 25, currency = 'USDC') => {
           setShowQrDirect(false);
-          const parsedAmt = amt || 0.15;
-          const currency = cur || 'ETH';
-          const asset = cryptoAssets.find((a) => a.symbol === currency);
-          const fiatVal = parsedAmt * (asset ? asset.priceUsd : 1);
-
-          setQrApprovalRequest({
+          const req: PaymentRequest = {
             id: `pay-${Date.now()}`,
-            destination: dest,
-            amount: parsedAmt,
+            destination,
+            amount,
             currency,
-            fiatEquivalent: fiatVal,
-            networkFeeUsd: 0.12,
+            fiatEquivalent: amount,
+            networkFeeUsd: 0.04,
             estimatedSeconds: 2,
             agentAnalysis: {
-              safetySummary: 'Counterparty verified. Zero fraudulent activity identified.',
-              routeDetails: 'Instant Layer-2 atomic settlement.',
+              safetySummary: 'Verified merchant counterparty. Direct low-gas L2 route.',
+              routeDetails: `${currency} on ${destination.network || 'Native L2'}`,
               slippageEst: '0.00%',
-              counterpartyTrust: '100%',
+              counterpartyTrust: '99.9%',
             },
-          });
+          };
+          setQrApprovalRequest(req);
         }}
       />
 
-      {/* Receive QR Modal */}
+      {/* Autonomous Agent Explicit Approval Sheet */}
+      {qrApprovalRequest && (
+        <PaymentApprovalSheet
+          visible={true}
+          paymentRequest={qrApprovalRequest}
+          onApprove={() => {
+            handleExecutePayment(qrApprovalRequest);
+            setQrApprovalRequest(null);
+          }}
+          onReject={() => setQrApprovalRequest(null)}
+        />
+      )}
+
+      {/* Receive / Deposit Modal */}
       <ReceiveQrModal
         visible={showReceiveQr}
         onClose={() => setShowReceiveQr(false)}
         userHandle="@alex"
       />
 
-      {/* Swap Modal */}
+      {/* Instant Swapper */}
       <SwapCryptoModal
         visible={showSwapModal}
         onClose={() => setShowSwapModal(false)}
@@ -500,19 +457,11 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
         onExecuteSwap={handleSwap}
       />
 
-      {/* Cards Manager Modal */}
+      {/* Cards Manager */}
       <CardsManagerModal
         visible={showCardsManager}
         onClose={() => setShowCardsManager(false)}
-        userHandle="Alex Smith"
-      />
-
-      {/* AI Agent Copilot Conversational Console */}
-      <AgentCopilotModal
-        visible={showCopilot}
-        onClose={() => setShowCopilot(false)}
-        cryptoAssets={cryptoAssets}
-        onRequestApproval={(req) => setQrApprovalRequest(req)}
+        userHandle="@alex"
       />
 
       {/* Transaction Details Sheet */}
@@ -521,20 +470,9 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
         transaction={selectedTx}
         onClose={() => setSelectedTx(null)}
         onRepeatPayment={(tx) => {
-          sounds.playKeyClick();
+          setSelectedTx(null);
           setShowPaymentHub(true);
         }}
-      />
-
-      {/* Quick Approval Sheet when scanning directly or via Copilot */}
-      <PaymentApprovalSheet
-        visible={!!qrApprovalRequest}
-        paymentRequest={qrApprovalRequest}
-        onApprove={(req) => {
-          setQrApprovalRequest(null);
-          handleExecutePayment(req);
-        }}
-        onReject={() => setQrApprovalRequest(null)}
       />
     </View>
   );
@@ -543,462 +481,340 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#080a10',
+    backgroundColor: '#000000',
   },
   topHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 20,
+    paddingHorizontal: 18,
     paddingTop: 8,
     paddingBottom: 12,
   },
-  userProfileRow: {
+  userProfileBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
+    gap: 10,
   },
-  userAvatar: {
-    width: 42,
-    height: 42,
-    borderRadius: 21,
-    backgroundColor: '#2563eb',
+  avatarCircle: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    backgroundColor: '#1c1c1e',
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 1.5,
-    borderColor: '#3b82f6',
   },
-  avatarText: {
+  avatarInitials: {
     color: '#ffffff',
-    fontSize: 15,
-    fontWeight: '800',
+    fontSize: 14,
+    fontWeight: '700',
   },
-  tagBadgeRow: {
+  userMeta: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
   },
-  handleText: {
+  userHandle: {
     color: '#ffffff',
     fontSize: 16,
     fontWeight: '700',
   },
-  metalPill: {
-    backgroundColor: 'rgba(245, 158, 11, 0.2)',
+  tierPill: {
+    backgroundColor: '#2c2c2e',
     paddingHorizontal: 6,
     paddingVertical: 2,
-    borderRadius: 6,
-    borderWidth: 1,
-    borderColor: 'rgba(245, 158, 11, 0.3)',
+    borderRadius: 4,
   },
-  metalPillText: {
-    color: '#f59e0b',
+  tierPillText: {
+    color: '#ffffff',
     fontSize: 9,
     fontWeight: '800',
     letterSpacing: 0.5,
-  },
-  statusSub: {
-    color: '#64748b',
-    fontSize: 11,
-    fontWeight: '500',
   },
   headerRightActions: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
   },
-  iconCircle: {
+  headerIconBtn: {
     width: 38,
     height: 38,
     borderRadius: 19,
-    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    backgroundColor: '#1c1c1e',
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.05)',
-  },
-  copilotCircle: {
-    backgroundColor: 'rgba(37, 99, 235, 0.2)',
-    borderColor: 'rgba(59, 130, 246, 0.35)',
   },
   scrollBody: {
     flex: 1,
-    paddingHorizontal: 16,
+    paddingHorizontal: 18,
   },
-  balanceContainer: {
-    paddingVertical: 14,
+
+  // Balance Hero
+  balanceSection: {
     alignItems: 'center',
+    paddingVertical: 20,
   },
-  balanceLabel: {
-    color: '#94a3b8',
+  accountDropdown: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    backgroundColor: '#1c1c1e',
+    borderRadius: 16,
+    marginBottom: 12,
+  },
+  accountDropdownText: {
+    color: '#8e8e93',
     fontSize: 13,
     fontWeight: '600',
-    marginBottom: 4,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
   },
-  balanceAmountRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    justifyContent: 'center',
+  balanceMainRow: {
+    marginBottom: 6,
   },
-  currencySymbol: {
-    color: 'rgba(255, 255, 255, 0.6)',
-    fontSize: 24,
-    fontWeight: '700',
-    marginTop: 4,
-    marginRight: 2,
-  },
-  balanceMainAmount: {
+  balanceMainText: {
     color: '#ffffff',
-    fontSize: 38,
-    fontWeight: '900',
+    fontSize: 42,
+    fontWeight: '800',
     letterSpacing: -1,
   },
   pnlRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-    marginTop: 8,
-  },
-  pnlBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(16, 185, 129, 0.12)',
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 12,
-    gap: 4,
+    gap: 5,
   },
   pnlText: {
-    color: '#10b981',
-    fontSize: 12,
-    fontWeight: '700',
-  },
-  agentStatusPill: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(37, 99, 235, 0.12)',
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 12,
-    gap: 4,
-  },
-  agentStatusText: {
-    color: '#60a5fa',
-    fontSize: 11,
-    fontWeight: '700',
-  },
-  quickActionsBar: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginVertical: 18,
-    paddingHorizontal: 2,
-  },
-  actionButton: {
-    alignItems: 'center',
-    gap: 6,
-    flex: 1,
-  },
-  actionIconWrapper: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: 'rgba(255, 255, 255, 0.08)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.08)',
-  },
-  aiActionButton: {},
-  actionIconWrapperAi: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: '#2563eb',
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#3b82f6',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.6,
-    shadowRadius: 12,
-  },
-  actionButtonLabel: {
-    color: '#e2e8f0',
-    fontSize: 11,
+    color: '#34c759',
+    fontSize: 13,
     fontWeight: '600',
   },
-  metalCardPreview: {
-    width: '100%',
-    height: 170,
-    borderRadius: 22,
-    backgroundColor: '#0c0f18',
-    borderWidth: 1.5,
-    borderColor: 'rgba(59, 130, 246, 0.35)',
-    padding: 18,
-    justifyContent: 'space-between',
-    shadowColor: '#2563eb',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.3,
-    shadowRadius: 18,
-    marginBottom: 18,
-  },
-  cardHeader: {
+
+  // Primary 4 Action Buttons
+  actionsRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'space-around',
+    paddingVertical: 14,
+    marginBottom: 10,
+  },
+  actionItem: {
+    alignItems: 'center',
+    gap: 8,
+  },
+  actionCircle: {
+    width: 54,
+    height: 54,
+    borderRadius: 27,
+    backgroundColor: '#1c1c1e',
+    justifyContent: 'center',
     alignItems: 'center',
   },
-  cardBrandText: {
+  actionCircleActive: {
+    backgroundColor: '#2563eb',
+  },
+  actionLabel: {
+    color: '#8e8e93',
+    fontSize: 13,
+    fontWeight: '500',
+  },
+
+  // Segmented Tabs
+  segmentedRow: {
+    flexDirection: 'row',
+    backgroundColor: '#1c1c1e',
+    borderRadius: 20,
+    padding: 3,
+    marginBottom: 20,
+  },
+  segmentBtn: {
+    flex: 1,
+    paddingVertical: 8,
+    alignItems: 'center',
+    borderRadius: 17,
+  },
+  segmentBtnActive: {
+    backgroundColor: '#2c2c2e',
+  },
+  segmentText: {
+    color: '#8e8e93',
+    fontSize: 13,
+    fontWeight: '600',
+  },
+  segmentTextActive: {
+    color: '#ffffff',
+  },
+
+  // Card Preview Banner
+  cardPreviewBanner: {
+    backgroundColor: '#1c1c1e',
+    borderRadius: 20,
+    padding: 20,
+    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: '#2c2c2e',
+  },
+  cardPreviewHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 24,
+  },
+  cardPreviewBrand: {
     color: '#ffffff',
     fontSize: 20,
-    fontWeight: '900',
-    letterSpacing: -0.5,
+    fontWeight: '800',
   },
-  cardChipRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-  },
-  cardContactless: {
-    color: 'rgba(255, 255, 255, 0.4)',
-    fontSize: 16,
-    transform: [{ rotate: '90deg' }],
-  },
-  cardChipGold: {
-    width: 32,
-    height: 24,
-    borderRadius: 6,
-    backgroundColor: '#d97706',
-    borderWidth: 1,
-    borderColor: '#f59e0b',
-  },
-  cardMid: {
-    marginVertical: 4,
-  },
-  cardNumberText: {
-    color: '#cbd5e1',
-    fontSize: 15,
-    fontWeight: '600',
-    letterSpacing: 2,
-    fontFamily: 'monospace',
-  },
-  cardFooter: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-end',
-  },
-  cardHolderLabel: {
-    color: '#64748b',
-    fontSize: 8,
-    fontWeight: '700',
+  cardPreviewTier: {
+    color: '#8e8e93',
+    fontSize: 10,
+    fontWeight: '800',
     letterSpacing: 1,
   },
-  cardHolderName: {
+  cardPreviewNumber: {
+    marginBottom: 20,
+  },
+  cardPreviewMask: {
     color: '#ffffff',
-    fontSize: 12,
-    fontWeight: '700',
-    marginTop: 2,
+    fontSize: 16,
+    letterSpacing: 2,
+    fontWeight: '600',
   },
-  cardTierHighlight: {
-    color: '#60a5fa',
-    fontSize: 11,
-    fontWeight: '800',
-    letterSpacing: 0.5,
-  },
-  agentBanner: {
+  cardPreviewFooter: {
     flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    backgroundColor: 'rgba(37, 99, 235, 0.1)',
-    borderRadius: 20,
-    padding: 14,
-    borderWidth: 1,
-    borderColor: 'rgba(37, 99, 235, 0.25)',
-    marginBottom: 20,
+    justifyContent: 'space-between',
   },
-  agentBannerIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 14,
-    backgroundColor: 'rgba(37, 99, 235, 0.2)',
-    justifyContent: 'center',
-    alignItems: 'center',
+  cardPreviewHolder: {
+    color: '#8e8e93',
+    fontSize: 12,
+    fontWeight: '600',
   },
-  agentBannerContent: {
-    flex: 1,
+  cardPreviewExp: {
+    color: '#8e8e93',
+    fontSize: 12,
+    fontWeight: '600',
   },
-  agentBannerTitle: {
-    color: '#ffffff',
-    fontSize: 13,
-    fontWeight: '700',
-  },
-  agentBannerSub: {
-    color: '#94a3b8',
-    fontSize: 11,
-    lineHeight: 15,
-    marginTop: 2,
-  },
-  sectionContainer: {
-    marginBottom: 20,
+
+  // Section Blocks
+  sectionBlock: {
+    marginBottom: 24,
   },
   sectionHeaderRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 12,
-    paddingHorizontal: 4,
   },
   sectionTitle: {
     color: '#ffffff',
-    fontSize: 17,
+    fontSize: 19,
     fontWeight: '700',
     letterSpacing: -0.3,
   },
-  sectionAction: {
+  sectionActionText: {
     color: '#3b82f6',
-    fontSize: 13,
-    fontWeight: '700',
+    fontSize: 14,
+    fontWeight: '600',
   },
-  sectionSubCount: {
-    color: '#64748b',
-    fontSize: 12,
-    fontWeight: '500',
-  },
-  cryptoList: {
-    backgroundColor: 'rgba(255, 255, 255, 0.04)',
+
+  // Asset Holdings List
+  assetList: {
+    backgroundColor: '#121214',
     borderRadius: 20,
-    paddingHorizontal: 14,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.05)',
+    paddingHorizontal: 16,
   },
-  cryptoRow: {
+  assetRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 12,
+    paddingVertical: 14,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255, 255, 255, 0.04)',
+    borderBottomColor: '#1c1c1e',
   },
-  cryptoIconCol: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
-  cryptoIconCircle: {
+  assetIconCircle: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: 'rgba(255, 255, 255, 0.06)',
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 1.5,
+    marginRight: 12,
   },
-  cryptoIconSymbol: {
-    fontSize: 18,
-    fontWeight: '800',
+  assetSymbolEmoji: {
+    fontSize: 20,
+  },
+  assetDetails: {
+    flex: 1,
   },
   assetName: {
     color: '#ffffff',
-    fontSize: 15,
-    fontWeight: '700',
-  },
-  assetNetwork: {
-    color: '#64748b',
-    fontSize: 11,
-  },
-  cryptoValCol: {
-    alignItems: 'flex-end',
-    gap: 2,
-  },
-  assetFiatVal: {
-    color: '#ffffff',
-    fontSize: 15,
-    fontWeight: '700',
-  },
-  assetSubRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-  },
-  assetCryptoBal: {
-    color: '#94a3b8',
-    fontSize: 12,
-  },
-  changeText: {
-    fontSize: 11,
+    fontSize: 16,
     fontWeight: '600',
   },
-  txList: {
-    backgroundColor: 'rgba(255, 255, 255, 0.04)',
-    borderRadius: 20,
-    paddingHorizontal: 14,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.05)',
+  assetSub: {
+    color: '#8e8e93',
+    fontSize: 13,
+    marginTop: 2,
   },
-  txRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255, 255, 255, 0.04)',
-    gap: 12,
+  assetBalanceCol: {
+    alignItems: 'flex-end',
   },
-  txIconWrapper: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: 'rgba(255, 255, 255, 0.06)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  txIconText: {
+  assetFiat: {
     color: '#ffffff',
     fontSize: 16,
     fontWeight: '700',
   },
-  txInfo: {
+  assetAmount: {
+    color: '#8e8e93',
+    fontSize: 13,
+    marginTop: 2,
+  },
+
+  // Transactions Feed
+  txList: {
+    backgroundColor: '#121214',
+    borderRadius: 20,
+    paddingHorizontal: 16,
+  },
+  txRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 14,
+    borderBottomWidth: 1,
+    borderBottomColor: '#1c1c1e',
+  },
+  txIconCircle: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    backgroundColor: '#1c1c1e',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+  },
+  txArrowIcon: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: '700',
+  },
+  txInfoCol: {
     flex: 1,
   },
   txTitle: {
     color: '#ffffff',
-    fontSize: 13,
-    fontWeight: '700',
+    fontSize: 15,
+    fontWeight: '600',
   },
-  txSub: {
-    color: '#94a3b8',
-    fontSize: 11,
-  },
-  txTime: {
-    color: '#64748b',
-    fontSize: 10,
-    marginTop: 1,
+  txSubtitle: {
+    color: '#8e8e93',
+    fontSize: 12,
+    marginTop: 2,
   },
   txAmountCol: {
     alignItems: 'flex-end',
   },
   txAmountText: {
-    fontSize: 13,
+    fontSize: 16,
     fontWeight: '700',
   },
-  txFiatText: {
-    color: '#64748b',
-    fontSize: 11,
-  },
-  replayFlowButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-    backgroundColor: 'rgba(255, 255, 255, 0.05)',
-    paddingVertical: 14,
-    borderRadius: 16,
-    marginTop: 8,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.08)',
-  },
-  replayFlowText: {
-    color: '#94a3b8',
+  txCurrencySub: {
+    color: '#8e8e93',
     fontSize: 12,
-    fontWeight: '600',
+    marginTop: 2,
   },
 });

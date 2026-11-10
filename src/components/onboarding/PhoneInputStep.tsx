@@ -151,7 +151,14 @@ export const PhoneInputStep: React.FC<PhoneInputStepProps> = ({
           {isLoading ? (
             <ActivityIndicator color="#000000" />
           ) : (
-            <Text style={styles.submitButtonText}>Create account</Text>
+            <Text
+              style={[
+                styles.submitButtonText,
+                !isValid && styles.submitButtonTextDisabled,
+              ]}
+            >
+              Create account
+            </Text>
           )}
         </TouchableOpacity>
 
@@ -185,7 +192,7 @@ export const PhoneInputStep: React.FC<PhoneInputStepProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#080a10',
+    backgroundColor: '#000000',
     justifyContent: 'space-between',
   },
   topNav: {
@@ -287,12 +294,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   submitButtonDisabled: {
-    backgroundColor: 'rgba(255, 255, 255, 0.25)',
+    backgroundColor: '#3a3a3c',
   },
   submitButtonText: {
     color: '#000000',
-    fontSize: 16,
+    fontSize: 17,
     fontWeight: '700',
+  },
+  submitButtonTextDisabled: {
+    color: '#8e8e93',
   },
 });
 

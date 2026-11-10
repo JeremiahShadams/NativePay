@@ -1,4 +1,6 @@
-// High-fidelity synthesized audio feedback using Web Audio API
+import { Vibration, Platform } from 'react-native';
+
+// High-fidelity synthesized audio feedback using Web Audio API + Native Haptics
 
 class SoundManager {
   private ctx: AudioContext | null = null;
@@ -16,6 +18,15 @@ class SoundManager {
   }
 
   playKeyClick() {
+    // Native haptic feedback
+    try {
+      if (Platform.OS !== 'web') {
+        Vibration.vibrate(8);
+      }
+    } catch {
+      // Haptics unavailable
+    }
+
     try {
       this.initCtx();
       if (!this.ctx) return;
@@ -36,6 +47,15 @@ class SoundManager {
   }
 
   playScanBeep() {
+    // Native haptic feedback
+    try {
+      if (Platform.OS !== 'web') {
+        Vibration.vibrate(25);
+      }
+    } catch {
+      // Fallback
+    }
+
     try {
       this.initCtx();
       if (!this.ctx) return;
@@ -56,6 +76,15 @@ class SoundManager {
   }
 
   playSuccessChime() {
+    // Native haptic success pattern (double pulse)
+    try {
+      if (Platform.OS !== 'web') {
+        Vibration.vibrate([0, 35, 60, 45]);
+      }
+    } catch {
+      // Fallback
+    }
+
     try {
       this.initCtx();
       if (!this.ctx) return;
@@ -79,6 +108,15 @@ class SoundManager {
   }
 
   playErrorBuzzer() {
+    // Native haptic error pattern
+    try {
+      if (Platform.OS !== 'web') {
+        Vibration.vibrate([0, 50, 50, 50]);
+      }
+    } catch {
+      // Fallback
+    }
+
     try {
       this.initCtx();
       if (!this.ctx) return;

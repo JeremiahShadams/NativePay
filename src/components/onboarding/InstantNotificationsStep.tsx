@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { ArrowLeft, Bell, Zap, Shield } from 'lucide-react-native';
+import { ArrowLeft } from 'lucide-react-native';
 import { sounds } from '../../utils/soundEffects';
 
 interface InstantNotificationsStepProps {
@@ -46,17 +46,6 @@ export const InstantNotificationsStep: React.FC<InstantNotificationsStepProps> =
         <Text style={styles.subtitle}>
           Get instant payment notifications as you spend with your card and know your balance is always up to date
         </Text>
-
-        <View style={styles.perksList}>
-          <View style={styles.perkItem}>
-            <Zap size={18} color="#60a5fa" />
-            <Text style={styles.perkText}>Real-time AI payment execution alerts</Text>
-          </View>
-          <View style={styles.perkItem}>
-            <Shield size={18} color="#10b981" />
-            <Text style={styles.perkText}>Instant biometric transaction approvals</Text>
-          </View>
-        </View>
       </View>
 
       {/* Buttons */}
@@ -90,7 +79,7 @@ export const InstantNotificationsStep: React.FC<InstantNotificationsStepProps> =
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#080a10',
+    backgroundColor: '#000000',
     justifyContent: 'space-between',
     paddingHorizontal: 20,
     paddingBottom: 20,
