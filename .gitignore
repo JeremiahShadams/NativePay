@@ -36,3 +36,7 @@ Thumbs.db
 .system_generated/
 scratch/
 
+
+# Expo
+.expo/
+.expo-shared/

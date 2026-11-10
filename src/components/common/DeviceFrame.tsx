@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Platform, SafeAreaView, StatusBar } from 'react-native';
 import { Smartphone, Monitor, Sparkles } from 'lucide-react';
 
 interface DeviceFrameProps {
@@ -21,6 +21,17 @@ export const DeviceFrame: React.FC<DeviceFrameProps> = ({
   onResetOnboarding,
   isDashboardActive = false,
 }) => {
+  // On real native mobile devices (Expo Go on iOS or Android), render native full screen!
+  if (Platform.OS !== 'web') {
+    return (
+      <SafeAreaView style={styles.nativeContainer}>
+        <StatusBar barStyle="light-content" backgroundColor="#080a10" />
+        <View style={styles.nativeScreenInner}>{children}</View>
+      </SafeAreaView>
+    );
+  }
+
+  // On Web browser, render interactive chassis with desktop controls
   return (
     <View style={styles.outerWrapper}>
       {/* Top Quick Control Bar */}
@@ -110,9 +121,7 @@ export const DeviceFrame: React.FC<DeviceFrameProps> = ({
                   <View style={[styles.bar, { height: 8 }]} />
                   <View style={[styles.bar, { height: 10 }]} />
                 </View>
-                {/* 5G */}
                 <Text style={styles.statusNet}>5G</Text>
-                {/* Battery */}
                 <View style={styles.batteryOutline}>
                   <View style={styles.batteryLevel} />
                   <View style={styles.batteryNub} />
@@ -148,9 +157,16 @@ export const DeviceFrame: React.FC<DeviceFrameProps> = ({
 };
 
 const styles = StyleSheet.create({
+  nativeContainer: {
+    flex: 1,
+    backgroundColor: '#080a10',
+  },
+  nativeScreenInner: {
+    flex: 1,
+    backgroundColor: '#080a10',
+  },
   outerWrapper: {
     flex: 1,
-    minHeight: '100vh' as unknown as number,
     backgroundColor: '#05070c',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -383,4 +399,3 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
 });
-
