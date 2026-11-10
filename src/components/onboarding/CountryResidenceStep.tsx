@@ -19,19 +19,6 @@ export const CountryResidenceStep: React.FC<CountryResidenceStepProps> = ({
 
   return (
     <View style={styles.container}>
-      {/* Top Nav */}
-      <View style={styles.topNav}>
-        <TouchableOpacity
-          onPress={() => {
-            sounds.playKeyClick();
-            onBack();
-          }}
-          style={styles.backBtn}
-        >
-          <ArrowLeft size={22} color="#ffffff" />
-        </TouchableOpacity>
-      </View>
-
       {/* Content */}
       <View style={styles.content}>
         <Text style={styles.title}>Country of residence</Text>
@@ -39,7 +26,7 @@ export const CountryResidenceStep: React.FC<CountryResidenceStepProps> = ({
           The terms and services which apply to you, will depend on your country of residence
         </Text>
 
-        {/* Dropdown Selector Box */}
+        {/* Dropdown Selector Box (Revolut iOS 14.png) */}
         <TouchableOpacity
           style={styles.selectBox}
           onPress={() => {
@@ -48,10 +35,7 @@ export const CountryResidenceStep: React.FC<CountryResidenceStepProps> = ({
           }}
           activeOpacity={0.7}
         >
-          <View style={styles.countryRow}>
-            <Text style={styles.flagIcon}>{selectedCountry.flag}</Text>
-            <Text style={styles.countryName}>{selectedCountry.name}</Text>
-          </View>
+          <Text style={styles.countryName}>{selectedCountry.name}</Text>
           <ChevronDown size={20} color="#94a3b8" />
         </TouchableOpacity>
       </View>

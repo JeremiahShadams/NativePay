@@ -24,19 +24,6 @@ export const LegalNameStep: React.FC<LegalNameStepProps> = ({ onBack, onContinue
 
   return (
     <View style={styles.container}>
-      {/* Top Nav */}
-      <View style={styles.topNav}>
-        <TouchableOpacity
-          onPress={() => {
-            sounds.playKeyClick();
-            onBack();
-          }}
-          style={styles.backBtn}
-        >
-          <ArrowLeft size={22} color="#ffffff" />
-        </TouchableOpacity>
-      </View>
-
       {/* Main Content */}
       <View style={styles.content}>
         <Text style={styles.title}>Name as in ID</Text>

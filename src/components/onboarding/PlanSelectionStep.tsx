@@ -29,17 +29,8 @@ export const PlanSelectionStep: React.FC<PlanSelectionStepProps> = ({
 
   return (
     <View style={styles.container}>
-      {/* Top Nav */}
-      <View style={styles.topNav}>
-        <TouchableOpacity
-          onPress={() => {
-            sounds.playKeyClick();
-            onBack();
-          }}
-          style={styles.backBtn}
-        >
-          <ArrowLeft size={22} color="#ffffff" />
-        </TouchableOpacity>
+      {/* Top Nav - Revolut iOS 23.png: "Not now" on top right */}
+      <View style={[styles.topNav, { justifyContent: 'flex-end' }]}>
         <TouchableOpacity onPress={handleFinish}>
           <Text style={styles.notNowText}>Not now</Text>
         </TouchableOpacity>
@@ -131,9 +122,9 @@ export const PlanSelectionStep: React.FC<PlanSelectionStepProps> = ({
               <Zap size={18} color="#60a5fa" />
             </View>
             <View style={styles.featureContent}>
-              <Text style={styles.featureTitle}>Autonomous AI Payment Agent</Text>
+              <Text style={styles.featureTitle}>Currency exchange</Text>
               <Text style={styles.featureDesc}>
-                Scan QR codes, paste wallet/account numbers with verified zero-fraud routing.
+                No additional exchange fees up to $15,000 monthly allowance.
               </Text>
             </View>
           </View>
@@ -143,21 +134,21 @@ export const PlanSelectionStep: React.FC<PlanSelectionStepProps> = ({
               <Globe size={18} color="#10b981" />
             </View>
             <View style={styles.featureContent}>
-              <Text style={styles.featureTitle}>Zero-Fee Currency & Crypto Exchange</Text>
+              <Text style={styles.featureTitle}>Global medical insurance</Text>
               <Text style={styles.featureDesc}>
-                No additional exchange fees up to $15,000 monthly allowance.
+                Comprehensive international travel and medical coverage.
               </Text>
             </View>
           </View>
 
           <View style={styles.featureItem}>
             <View style={styles.featureIcon}>
-              <Award size={18} color="#f59e0b" />
+              <Shield size={18} color="#f59e0b" />
             </View>
             <View style={styles.featureContent}>
-              <Text style={styles.featureTitle}>1.0% Crypto Cashback</Text>
+              <Text style={styles.featureTitle}>Everyday protection</Text>
               <Text style={styles.featureDesc}>
-                Earn cashback in BTC, ETH, SOL, or NAT on all card spending.
+                Up to $10,000 purchase and refund protection per year.
               </Text>
             </View>
           </View>

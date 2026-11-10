@@ -14,13 +14,12 @@ interface TagItem {
   emoji: string;
 }
 
-export const PurposeTagsStep: React.FC<PurposeTagsStepProps> = ({ onBack, onContinue }) => {
-  // Preset with tags from Revolut screenshot 19
+export const PurposeTagsStep: React.FC<PurposeTagsStepProps> = ({ onContinue }) => {
+  // Preset with exact tags selected from Revolut screenshot 19
   const [selectedIds, setSelectedIds] = useState<string[]>([
     'transfers',
-    'crypto',
     'foreign_exchange',
-    'ai_agent',
+    'lounge',
   ]);
 
   const everydayNeeds: TagItem[] = [
@@ -29,8 +28,8 @@ export const PurposeTagsStep: React.FC<PurposeTagsStepProps> = ({ onBack, onCont
     { id: 'freelancer', label: 'Freelancer account', emoji: '💼' },
     { id: 'metal_card', label: 'Metal card', emoji: '💳' },
     { id: 'cashback', label: 'Cashback', emoji: '🤑' },
-    { id: 'budgeting', label: 'Budgeting', emoji: '📊' },
-    { id: 'view_accounts', label: 'View accounts in one place', emoji: '📈' },
+    { id: 'budgeting', label: 'Budgeting', emoji: '📝' },
+    { id: 'view_accounts', label: 'View accounts in one place', emoji: '📊' },
     { id: 'shopping', label: 'Shopping deals', emoji: '🎁' },
     { id: 'kids', label: 'Kids account', emoji: '🎒' },
   ];
@@ -44,9 +43,8 @@ export const PurposeTagsStep: React.FC<PurposeTagsStepProps> = ({ onBack, onCont
   ];
 
   const wealthCrypto: TagItem[] = [
-    { id: 'ai_agent', label: 'Autonomous AI Agent', emoji: '🤖' },
-    { id: 'crypto', label: 'Crypto', emoji: '🔐' },
     { id: 'stocks', label: 'Stocks', emoji: '📈' },
+    { id: 'crypto', label: 'Crypto', emoji: '🔒' },
     { id: 'gold', label: 'Invest in gold & silver', emoji: '💍' },
   ];
 
@@ -76,19 +74,6 @@ export const PurposeTagsStep: React.FC<PurposeTagsStepProps> = ({ onBack, onCont
 
   return (
     <View style={styles.container}>
-      {/* Top Nav */}
-      <View style={styles.topNav}>
-        <TouchableOpacity
-          onPress={() => {
-            sounds.playKeyClick();
-            onBack();
-          }}
-          style={styles.backBtn}
-        >
-          <ArrowLeft size={22} color="#ffffff" />
-        </TouchableOpacity>
-      </View>
-
       {/* Main Scrollable Content */}
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         <Text style={styles.title}>What do you want to use Native for?</Text>

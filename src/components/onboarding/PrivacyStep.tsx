@@ -8,27 +8,14 @@ interface PrivacyStepProps {
   onContinue: () => void;
 }
 
-export const PrivacyStep: React.FC<PrivacyStepProps> = ({ onBack, onContinue }) => {
+export const PrivacyStep: React.FC<PrivacyStepProps> = ({ onContinue }) => {
   const [isEnabled, setIsEnabled] = useState(true);
 
   return (
     <View style={styles.container}>
-      {/* Top Nav */}
-      <View style={styles.topNav}>
-        <TouchableOpacity
-          onPress={() => {
-            sounds.playKeyClick();
-            onBack();
-          }}
-          style={styles.backBtn}
-        >
-          <ArrowLeft size={22} color="#ffffff" />
-        </TouchableOpacity>
-      </View>
-
       {/* Main Graphic & Text */}
       <View style={styles.content}>
-        {/* Toggle Graphic (Screenshot 22) */}
+        {/* Toggle Graphic (Revolut iOS 22.png) */}
         <TouchableOpacity
           style={styles.toggleGraphicWrapper}
           onPress={() => {
@@ -42,7 +29,7 @@ export const PrivacyStep: React.FC<PrivacyStepProps> = ({ onBack, onContinue }) 
           </View>
         </TouchableOpacity>
 
-        <Text style={styles.title}>GET USEFUL ADS ONLY</Text>
+        <Text style={styles.title}>GET USEFUL ADS{'\n'}ONLY</Text>
         <Text style={styles.subtitle}>
           We use online ads to show you ways to get more from your money. To make sure we only show you relevant ads, we need you to allow Native to track your device activity. You can allow or deny this on the next screen.
         </Text>

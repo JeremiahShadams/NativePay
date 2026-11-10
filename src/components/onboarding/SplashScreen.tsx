@@ -25,11 +25,6 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
       </View>
 
       <View style={styles.bottomBar}>
-        <View style={styles.curatedRow}>
-          <Text style={styles.brandSmall}>Native</Text>
-          <Text style={styles.curatedText}>curated by </Text>
-          <Text style={styles.mobbinText}>Mobbin</Text>
-        </View>
         <View style={styles.homeIndicator} />
       </View>
     </TouchableOpacity>
@@ -58,28 +53,7 @@ const styles = StyleSheet.create({
   bottomBar: {
     width: '100%',
     alignItems: 'center',
-    paddingBottom: 12,
-  },
-  curatedRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    marginBottom: 16,
-  },
-  brandSmall: {
-    fontSize: 14,
-    fontWeight: '800',
-    color: '#000000',
-    marginRight: 20,
-  },
-  curatedText: {
-    fontSize: 12,
-    color: '#8e8e93',
-  },
-  mobbinText: {
-    fontSize: 13,
-    fontWeight: '700',
-    color: '#000000',
+    paddingBottom: 24,
   },
   homeIndicator: {
     width: 140,

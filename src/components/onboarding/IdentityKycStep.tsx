@@ -14,25 +14,12 @@ export const IdentityKycStep: React.FC<IdentityKycStepProps> = ({
 }) => {
   return (
     <View style={styles.container}>
-      {/* Top Nav */}
-      <View style={styles.topNav}>
-        <TouchableOpacity
-          onPress={() => {
-            sounds.playKeyClick();
-            onBack();
-          }}
-          style={styles.backBtn}
-        >
-          <ArrowLeft size={22} color="#ffffff" />
-        </TouchableOpacity>
-      </View>
-
-      {/* Main Content */}
+      {/* Main Content - Revolut iOS 17.png */}
       <View style={styles.content}>
         <Text style={styles.title}>Verify your identity</Text>
 
         <View style={styles.cardsColumn}>
-          {/* Option 1: Fast ID */}
+          {/* Option 1: Singpass MyInfo */}
           <TouchableOpacity
             style={styles.methodCard}
             onPress={() => {
@@ -46,9 +33,9 @@ export const IdentityKycStep: React.FC<IdentityKycStepProps> = ({
                 <Zap size={20} color="#000000" />
               </View>
               <View style={styles.methodTextContainer}>
-                <Text style={styles.methodTitle}>Verify using Fast ID</Text>
+                <Text style={styles.methodTitle}>Verify using Singpass MyInfo</Text>
                 <Text style={styles.methodDesc}>
-                  Instant and hassle free verification using Government Database
+                  Instant and hassle free verification using Singpass Government Database
                 </Text>
                 <View style={styles.fasterBadge}>
                   <Zap size={11} color="#000000" />
@@ -75,7 +62,7 @@ export const IdentityKycStep: React.FC<IdentityKycStepProps> = ({
               <View style={styles.methodTextContainer}>
                 <Text style={styles.methodTitle}>Verify using documents</Text>
                 <Text style={styles.methodDesc}>
-                  Enter your details and upload your documents (Passport / ID / Driver's Permit) to complete verification
+                  Enter your details and upload your documents (NRIC / Passport / Permit) to complete verification
                 </Text>
               </View>
               <ChevronRight size={20} color="#8e8e93" />

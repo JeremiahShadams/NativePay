@@ -23,10 +23,9 @@ export const DeviceFrame: React.FC<DeviceFrameProps> = ({
 }) => {
   // On real native mobile devices (Expo Go on iOS or Android), render native full screen!
   if (Platform.OS !== 'web') {
-    const topInset = Platform.OS === 'android' ? (StatusBar.currentHeight || 24) : 44;
     return (
-      <View style={[styles.nativeContainer, { paddingTop: topInset }]}>
-        <StatusBar barStyle="light-content" {...({ backgroundColor: '#000000', translucent: true } as any)} />
+      <View style={styles.nativeContainer}>
+        <StatusBar barStyle="light-content" {...({ backgroundColor: 'transparent', translucent: true } as any)} />
         <View style={styles.nativeScreenInner}>{children}</View>
       </View>
     );
