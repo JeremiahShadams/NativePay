@@ -54,17 +54,17 @@ export const PhoneInputStep: React.FC<PhoneInputStepProps> = ({
   const handleSubmit = () => {
     if (rawDigits.length >= 7) {
       sounds.playKeyClick();
-      setShowConfirmModal(true);
+      setIsLoading(true);
+      setTimeout(() => {
+        setIsLoading(false);
+        setShowConfirmModal(true);
+      }, 500);
     }
   };
 
   const handleConfirmed = () => {
     setShowConfirmModal(false);
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      onContinue(`${country.dialCode} ${formatPhoneNumber(rawDigits)}`);
-    }, 800);
+    onContinue(`${country.dialCode} ${formatPhoneNumber(rawDigits)}`);
   };
 
   const formatted = formatPhoneNumber(rawDigits);

@@ -124,26 +124,32 @@ export const OtpVerificationStep: React.FC<OtpVerificationStepProps> = ({
 
         {/* Resend Code or Timer */}
         <View style={styles.resendRow}>
-          {countdown > 0 ? (
+          {digits.length === 6 ? (
+            <TouchableOpacity onPress={() => setCountdown(30)}>
+              <Text style={styles.resendActionText}>No code received?</Text>
+            </TouchableOpacity>
+          ) : countdown > 0 ? (
             <Text style={styles.resendTimerText}>
               Resend code in 00:{countdown < 10 ? `0${countdown}` : countdown}
             </Text>
           ) : (
             <TouchableOpacity onPress={() => setCountdown(30)}>
-              <Text style={styles.resendActionText}>No code received? Resend code</Text>
+              <Text style={styles.resendActionText}>No code received?</Text>
             </TouchableOpacity>
           )}
         </View>
       </View>
 
-      {/* Numeric Keypad */}
-      <View style={styles.bottomArea}>
-        <NumericKeypad
-          onDigitPress={handleDigitPress}
-          onBackspace={handleBackspace}
-          showExtraSymbols={false}
-        />
-      </View>
+      {/* Numeric Keypad (Dismissed once 6 digits entered as in Revolut iOS 11.png) */}
+      {digits.length < 6 && (
+        <View style={styles.bottomArea}>
+          <NumericKeypad
+            onDigitPress={handleDigitPress}
+            onBackspace={handleBackspace}
+            showExtraSymbols={false}
+          />
+        </View>
+      )}
 
       {/* Error Bottom Sheet Modal (Screenshot 12) */}
       <OtpErrorModal

@@ -93,15 +93,13 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   modalContent: {
-    backgroundColor: '#121624',
+    backgroundColor: '#1c1c1e',
     borderTopLeftRadius: 28,
     borderTopRightRadius: 28,
     paddingTop: 12,
     paddingHorizontal: 16,
     paddingBottom: 32,
     maxHeight: '85%',
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.08)',
   },
   dragPill: {
     width: 36,

@@ -108,6 +108,36 @@ export const ProfileTagStep: React.FC<ProfileTagStepProps> = ({ onBack, onContin
           )}
           <Text style={styles.counterText}>{cleanHandle.length}/32</Text>
         </View>
+
+        {/* Suggestion Pills (Revolut iOS 20 & 21) */}
+        <View style={styles.suggestionsRow}>
+          {['alex', 'alexsmob', 'alex_native'].map((sug) => {
+            const isSelected = cleanHandle === sug;
+            return (
+              <TouchableOpacity
+                key={sug}
+                style={[
+                  styles.suggestionPill,
+                  isSelected && styles.suggestionPillSelected,
+                ]}
+                onPress={() => {
+                  sounds.playKeyClick();
+                  setHandle(sug);
+                }}
+                activeOpacity={0.7}
+              >
+                <Text
+                  style={[
+                    styles.suggestionPillText,
+                    isSelected && styles.suggestionPillTextSelected,
+                  ]}
+                >
+                  {sug}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
       </View>
 
       {/* Continue CTA */}
@@ -306,6 +336,30 @@ const styles = StyleSheet.create({
     color: '#60a5fa',
     fontSize: 13,
     fontWeight: '600',
+  },
+  suggestionsRow: {
+    flexDirection: 'row',
+    gap: 8,
+    marginTop: 18,
+  },
+  suggestionPill: {
+    height: 38,
+    paddingHorizontal: 16,
+    backgroundColor: '#1c1c1e',
+    borderRadius: 19,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  suggestionPillSelected: {
+    backgroundColor: '#4c82f7',
+  },
+  suggestionPillText: {
+    color: '#8e8e93',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  suggestionPillTextSelected: {
+    color: '#ffffff',
   },
   footerArea: {
     paddingTop: 16,
