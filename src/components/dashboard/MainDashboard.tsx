@@ -21,6 +21,9 @@ import {
   Lock,
   Unlock,
   Check,
+  Home,
+  ArrowLeftRight,
+  LayoutGrid,
 } from 'lucide-react-native';
 import { CryptoAsset, TransactionRecord, PaymentRequest } from '../../types';
 import { PaymentHubModal } from '../payment/PaymentHubModal';
@@ -46,6 +49,7 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
   onOpenOnboardingTour,
 }) => {
   const [activeTab, setActiveTab] = useState<'accounts' | 'cards' | 'crypto' | 'vaults'>('accounts');
+  const [activeNavTab, setActiveNavTab] = useState<'home' | 'invest' | 'transfer' | 'cards' | 'crypto'>('home');
   const [showPaymentHub, setShowPaymentHub] = useState(false);
   const [showQrDirect, setShowQrDirect] = useState(false);
   const [showReceiveQr, setShowReceiveQr] = useState(false);
@@ -474,6 +478,86 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
           setShowPaymentHub(true);
         }}
       />
+
+      {/* Revolut Bottom Navigation Tab Bar */}
+      <View style={styles.bottomTabBar}>
+        <TouchableOpacity
+          style={styles.tabItem}
+          onPress={() => {
+            sounds.playKeyClick();
+            setActiveNavTab('home');
+            setActiveTab('accounts');
+          }}
+          activeOpacity={0.7}
+        >
+          <Home size={22} color={activeNavTab === 'home' ? '#ffffff' : '#8e8e93'} />
+          <Text style={[styles.tabItemText, activeNavTab === 'home' && styles.tabItemTextActive]}>
+            Home
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.tabItem}
+          onPress={() => {
+            sounds.playKeyClick();
+            setActiveNavTab('invest');
+            setShowSwapModal(true);
+          }}
+          activeOpacity={0.7}
+        >
+          <TrendingUp size={22} color={activeNavTab === 'invest' ? '#ffffff' : '#8e8e93'} />
+          <Text style={[styles.tabItemText, activeNavTab === 'invest' && styles.tabItemTextActive]}>
+            Invest
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.tabItem}
+          onPress={() => {
+            sounds.playKeyClick();
+            setActiveNavTab('transfer');
+            setShowPaymentHub(true);
+          }}
+          activeOpacity={0.7}
+        >
+          <View style={styles.transferCenterPill}>
+            <ArrowLeftRight size={20} color="#000000" strokeWidth={2.5} />
+          </View>
+          <Text style={[styles.tabItemText, activeNavTab === 'transfer' && styles.tabItemTextActive]}>
+            Transfer
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.tabItem}
+          onPress={() => {
+            sounds.playKeyClick();
+            setActiveNavTab('cards');
+            setShowCardsManager(true);
+          }}
+          activeOpacity={0.7}
+        >
+          <CreditCard size={22} color={activeNavTab === 'cards' ? '#ffffff' : '#8e8e93'} />
+          <Text style={[styles.tabItemText, activeNavTab === 'cards' && styles.tabItemTextActive]}>
+            Cards
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.tabItem}
+          onPress={() => {
+            sounds.playKeyClick();
+            setActiveNavTab('crypto');
+            setActiveTab('crypto');
+          }}
+          activeOpacity={0.7}
+        >
+          <LayoutGrid size={22} color={activeNavTab === 'crypto' ? '#ffffff' : '#8e8e93'} />
+          <Text style={[styles.tabItemText, activeNavTab === 'crypto' && styles.tabItemTextActive]}>
+            Crypto
+          </Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -816,5 +900,45 @@ const styles = StyleSheet.create({
     color: '#8e8e93',
     fontSize: 12,
     marginTop: 2,
+  },
+  bottomTabBar: {
+    height: 70,
+    backgroundColor: '#0a0a0c',
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(255, 255, 255, 0.08)',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+    paddingHorizontal: 8,
+    paddingBottom: 6,
+  },
+  tabItem: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 4,
+  },
+  tabItemText: {
+    color: '#8e8e93',
+    fontSize: 11,
+    fontWeight: '500',
+    marginTop: 4,
+  },
+  tabItemTextActive: {
+    color: '#ffffff',
+    fontWeight: '700',
+  },
+  transferCenterPill: {
+    width: 44,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: '#ffffff',
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#ffffff',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 3,
   },
 });
