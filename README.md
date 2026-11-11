@@ -61,8 +61,9 @@ Every screen from the Mobbin Revolut iOS design system has been reconstructed:
 
 ### 3. 💳 Active Banking & Crypto Dashboard
 - **Net Worth Display**: `$48,950.40 USD` with 24h P&L indicator and balance privacy toggle.
+- **Bottom Navigation Tab Bar**: 5 interactive tabs (`Home`, `Invest`, `Transfer`, `Cards`, `Crypto`) with raised center Action pill for instant payments.
 - **Live Crypto Holdings**: Real-time asset cards for Bitcoin (BTC), Ethereum (ETH), Solana (SOL), Native Token (NAT), and USD Coin (USDC).
-- **Interactive Metal Card Widget**: Native Obsidian Titanium Card with flip animation, card freeze toggle, and cardholder details.
+- **Cards Manager**: Native Obsidian Titanium Card with flip animation, card freeze toggle, disposable virtual cards, and cardholder details.
 - **Real-Time Transaction Activity**: Sent, received, and swapped transaction receipts.
 
 ### 4. 🔊 Synthesized Web Audio System
