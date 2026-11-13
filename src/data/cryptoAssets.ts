@@ -9,7 +9,6 @@ export const INITIAL_CRYPTO_ASSETS: CryptoAsset[] = [
     fiatValue: 33649.00,
     priceUsd: 95000.00,
     change24h: 3.42,
-    icon: '₿',
     network: 'Bitcoin Native',
     color: '#F7931A'
   },
@@ -21,7 +20,6 @@ export const INITIAL_CRYPTO_ASSETS: CryptoAsset[] = [
     fiatValue: 14025.00,
     priceUsd: 3300.00,
     change24h: 5.18,
-    icon: 'Ξ',
     network: 'Ethereum Mainnet',
     color: '#627EEA'
   },
@@ -33,7 +31,6 @@ export const INITIAL_CRYPTO_ASSETS: CryptoAsset[] = [
     fiatValue: 8132.00,
     priceUsd: 190.00,
     change24h: -1.24,
-    icon: '◎',
     network: 'Solana High-Speed',
     color: '#14F195'
   },
@@ -45,7 +42,6 @@ export const INITIAL_CRYPTO_ASSETS: CryptoAsset[] = [
     fiatValue: 3080.00,
     priceUsd: 0.20,
     change24h: 18.95,
-    icon: '✦',
     network: 'Native L2 Rollup',
     color: '#3B82F6'
   },
@@ -57,7 +53,6 @@ export const INITIAL_CRYPTO_ASSETS: CryptoAsset[] = [
     fiatValue: 5210.50,
     priceUsd: 1.00,
     change24h: 0.01,
-    icon: '$',
     network: 'Multi-Chain',
     color: '#2775CA'
   }

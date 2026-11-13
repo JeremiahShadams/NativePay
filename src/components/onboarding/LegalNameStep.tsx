@@ -2,6 +2,16 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 import { ArrowLeft } from 'lucide-react-native';
 import { sounds } from '../../utils/soundEffects';
+import {
+  colors,
+  radius,
+  space,
+  type,
+  primaryButton,
+  primaryButtonText,
+  disabledButton,
+  disabledButtonText,
+} from '../../theme';
 
 interface LegalNameStepProps {
   onBack: () => void;
@@ -9,7 +19,7 @@ interface LegalNameStepProps {
 }
 
 export const LegalNameStep: React.FC<LegalNameStepProps> = ({ onBack, onContinue }) => {
-  const [firstName, setFirstName] = useState('Alex'); // preset with example
+  const [firstName, setFirstName] = useState('Alex');
   const [lastName, setLastName] = useState('Smith');
   const [alias, setAlias] = useState('');
 
@@ -24,56 +34,65 @@ export const LegalNameStep: React.FC<LegalNameStepProps> = ({ onBack, onContinue
 
   return (
     <View style={styles.container}>
-      {/* Main Content */}
+      <View style={styles.topNav}>
+        <TouchableOpacity
+          onPress={() => {
+            sounds.playKeyClick();
+            onBack();
+          }}
+          style={styles.backBtn}
+          accessibilityLabel="Go back"
+        >
+          <ArrowLeft size={22} color={colors.text} />
+        </TouchableOpacity>
+      </View>
+
       <View style={styles.content}>
-        <Text style={styles.title}>Name as in ID</Text>
-        <Text style={styles.subtitle}>Name as in your official documents</Text>
+        <Text style={styles.title}>Your legal name</Text>
+        <Text style={styles.subtitle}>
+          Enter your name exactly as it appears on your ID.
+        </Text>
 
         <View style={styles.formArea}>
-          {/* First Name */}
           <View style={styles.inputGroup}>
             <View style={styles.inputCard}>
               <TextInput
                 style={styles.textInput}
                 placeholder="First name"
-                placeholderTextColor="#64748b"
+                placeholderTextColor={colors.textMuted}
                 value={firstName}
                 onChangeText={setFirstName}
               />
             </View>
-            <Text style={styles.hintText}>e.g. Daniel, not "Dan"</Text>
+            <Text style={styles.hintText}>Use your full name, e.g. Daniel rather than Dan.</Text>
           </View>
 
-          {/* Last Name */}
           <View style={styles.inputGroup}>
             <View style={styles.inputCard}>
               <TextInput
                 style={styles.textInput}
                 placeholder="Last name"
-                placeholderTextColor="#64748b"
+                placeholderTextColor={colors.textMuted}
                 value={lastName}
                 onChangeText={setLastName}
               />
             </View>
           </View>
 
-          {/* Alias */}
           <View style={styles.inputGroup}>
             <View style={styles.inputCard}>
               <TextInput
                 style={styles.textInput}
-                placeholder="Alias"
-                placeholderTextColor="#64748b"
+                placeholder="Alias (optional)"
+                placeholderTextColor={colors.textMuted}
                 value={alias}
                 onChangeText={setAlias}
               />
             </View>
-            <Text style={styles.hintText}>Optional</Text>
           </View>
         </View>
       </View>
 
-      {/* Bottom CTA */}
       <View style={styles.footerArea}>
         <TouchableOpacity
           style={[styles.continueButton, !isValid && styles.continueButtonDisabled]}
@@ -81,7 +100,9 @@ export const LegalNameStep: React.FC<LegalNameStepProps> = ({ onBack, onContinue
           disabled={!isValid}
           activeOpacity={0.85}
         >
-          <Text style={styles.continueButtonText}>Continue</Text>
+          <Text style={[styles.continueButtonText, !isValid && styles.continueButtonTextDisabled]}>
+            Continue
+          </Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -91,83 +112,74 @@ export const LegalNameStep: React.FC<LegalNameStepProps> = ({ onBack, onContinue
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000000',
+    backgroundColor: colors.background,
     justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    paddingBottom: 20,
+    paddingHorizontal: space.xl,
+    paddingBottom: space.xl,
   },
   topNav: {
-    paddingTop: 4,
+    paddingTop: space.xs,
     height: 40,
     justifyContent: 'center',
   },
   backBtn: {
     width: 36,
     height: 36,
-    borderRadius: 18,
+    borderRadius: radius.pill,
     justifyContent: 'center',
     alignItems: 'center',
+    marginLeft: -space.sm,
   },
   content: {
     flex: 1,
-    paddingTop: 12,
+    paddingTop: space.md,
   },
   title: {
-    color: '#ffffff',
-    fontSize: 28,
-    fontWeight: '800',
-    letterSpacing: -0.5,
-    marginBottom: 8,
+    ...type.screenTitle,
+    marginBottom: space.sm,
   },
   subtitle: {
-    color: '#94a3b8',
-    fontSize: 15,
-    lineHeight: 22,
-    marginBottom: 28,
+    ...type.body,
+    marginBottom: space.xxl,
   },
   formArea: {
-    gap: 18,
+    gap: space.lg,
   },
   inputGroup: {
-    gap: 6,
+    gap: space.xs,
   },
   inputCard: {
     height: 56,
-    backgroundColor: 'rgba(255, 255, 255, 0.08)',
-    borderRadius: 16,
-    paddingHorizontal: 16,
+    backgroundColor: colors.surface,
+    borderRadius: radius.md,
+    paddingHorizontal: space.lg,
     justifyContent: 'center',
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.08)',
+    borderColor: colors.border,
   },
   textInput: {
-    color: '#ffffff',
+    color: colors.text,
     fontSize: 16,
     fontWeight: '500',
     outlineStyle: 'none' as any,
   },
   hintText: {
-    color: '#64748b',
-    fontSize: 12,
-    paddingHorizontal: 4,
+    ...type.caption,
+    paddingHorizontal: space.xs,
   },
   footerArea: {
-    paddingTop: 16,
+    paddingTop: space.lg,
   },
   continueButton: {
-    height: 52,
-    backgroundColor: '#ffffff',
-    borderRadius: 26,
-    justifyContent: 'center',
-    alignItems: 'center',
+    ...primaryButton,
   },
   continueButtonDisabled: {
-    backgroundColor: 'rgba(255, 255, 255, 0.25)',
+    ...disabledButton,
   },
   continueButtonText: {
-    color: '#000000',
-    fontSize: 16,
-    fontWeight: '700',
+    ...primaryButtonText,
+  },
+  continueButtonTextDisabled: {
+    ...disabledButtonText,
   },
 });
-

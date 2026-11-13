@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Delete } from 'lucide-react-native';
 import { sounds } from '../../utils/soundEffects';
+import { colors } from '../../theme';
 
 interface NumericKeypadProps {
   onDigitPress: (digit: string) => void;
@@ -47,18 +48,18 @@ export const NumericKeypad: React.FC<NumericKeypadProps> = ({
     <View style={styles.container}>
       {keys.map((k, index) => {
         if (!showExtraSymbols && k.special === 'extra') {
-          return <View key={index} style={styles.emptyKey} />;
+          return <View key={index} style={styles.key} />;
         }
 
         return (
           <TouchableOpacity
             key={index}
-            activeOpacity={0.65}
-            style={styles.keyButton}
+            activeOpacity={0.5}
+            style={styles.key}
             onPress={() => handlePress(k)}
           >
             {k.special === 'backspace' ? (
-              <Delete size={26} color="#ffffff" strokeWidth={1.75} />
+              <Delete size={24} color={colors.text} strokeWidth={1.75} />
             ) : (
               <View style={styles.keyContent}>
                 <Text style={styles.keyNumber}>{k.num}</Text>
@@ -77,47 +78,33 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
-    paddingHorizontal: 8,
+    paddingHorizontal: 12,
     paddingBottom: 16,
     width: '100%',
     maxWidth: 420,
     alignSelf: 'center',
   },
-  keyButton: {
+  key: {
     width: '31%',
-    height: 52,
-    backgroundColor: '#444446',
-    borderRadius: 6,
+    height: 56,
     justifyContent: 'center',
     alignItems: 'center',
-    marginVertical: 4,
-    shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.35,
-    shadowRadius: 1,
-    elevation: 2,
-  },
-  emptyKey: {
-    width: '31%',
-    height: 52,
-    marginVertical: 4,
   },
   keyContent: {
     alignItems: 'center',
     justifyContent: 'center',
   },
   keyNumber: {
-    color: '#ffffff',
-    fontSize: 24,
+    color: colors.text,
+    fontSize: 25,
     fontWeight: '400',
-    letterSpacing: -0.2,
+    letterSpacing: -0.3,
   },
   keyLetters: {
-    color: 'rgba(255, 255, 255, 0.75)',
+    color: colors.textMuted,
     fontSize: 9,
     fontWeight: '700',
     letterSpacing: 2,
-    marginTop: -2,
+    marginTop: 1,
   },
 });
-

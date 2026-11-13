@@ -9,22 +9,21 @@ import {
   ScrollView,
   ActivityIndicator,
 } from 'react-native';
-import {
-  X,
-  QrCode,
-  Wallet,
-  Building,
-  Zap,
-  Sparkles,
-  ArrowRight,
-  ShieldCheck,
-  Check,
-  AlertTriangle,
-} from 'lucide-react-native';
+import { X, QrCode, Wallet, Check, ShieldCheck } from 'lucide-react-native';
 import { PaymentDestination, PaymentRequest, CryptoAsset } from '../../types';
 import { QrScannerModal } from './QrScannerModal';
 import { PaymentApprovalSheet } from './PaymentApprovalSheet';
 import { sounds } from '../../utils/soundEffects';
+import {
+  colors,
+  radius,
+  space,
+  type,
+  primaryButton,
+  primaryButtonText,
+  disabledButton,
+  disabledButtonText,
+} from '../../theme';
 
 interface PaymentHubModalProps {
   visible: boolean;
@@ -44,66 +43,63 @@ export const PaymentHubModal: React.FC<PaymentHubModalProps> = ({
   const [amountInput, setAmountInput] = useState('0.25');
   const [selectedCurrency, setSelectedCurrency] = useState('ETH');
   const [showScanner, setShowScanner] = useState(false);
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [isPreparing, setIsPreparing] = useState(false);
   const [approvalRequest, setApprovalRequest] = useState<PaymentRequest | null>(null);
 
-  // Quick preset test addresses
-  const quickTestAddresses = [
+  const savedRecipients = [
     {
-      label: 'vitalik.eth (Ethereum L2)',
+      label: 'vitalik.eth',
       val: '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045',
       currency: 'ETH',
       amount: '0.25',
     },
     {
-      label: 'Solana Treasury Vault',
+      label: 'Solana treasury',
       val: '7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU',
       currency: 'SOL',
       amount: '2.5',
     },
     {
-      label: 'Bank Account (ACH / Wire)',
+      label: 'Bank account',
       val: 'US64SVBK0123456789',
       currency: 'USDC',
       amount: '500',
     },
     {
-      label: 'Native Merchant (@coffee)',
+      label: '@coffee_roasters',
       val: '@coffee_roasters',
       currency: 'NAT',
       amount: '45',
     },
   ];
 
-  // Helper to detect recipient type
   const detectRecipientType = (input: string) => {
     const trimmed = input.trim();
     if (trimmed.startsWith('0x') && trimmed.length === 42) {
-      return { type: 'EVM Address', network: 'Arbitrum One (L2)', resolvedName: 'vitalik.eth' };
+      return { type: 'EVM address', network: 'Arbitrum One', resolvedName: 'vitalik.eth' };
     }
     if (trimmed.startsWith('@')) {
-      return { type: 'Nativetag', network: 'Native Internal Instant', resolvedName: trimmed };
+      return { type: 'Nativetag', network: 'Native internal', resolvedName: trimmed };
     }
     if (trimmed.length > 30 && !trimmed.startsWith('0x')) {
-      return { type: 'Solana Address', network: 'Solana High-Speed', resolvedName: 'Solana Payee' };
+      return { type: 'Solana address', network: 'Solana', resolvedName: 'Solana payee' };
     }
     if (trimmed.startsWith('US') || trimmed.startsWith('GB') || trimmed.length === 10) {
-      return { type: 'Bank Account Number', network: 'FedNow / ACH Instant', resolvedName: 'Silicon Valley Bank' };
+      return { type: 'Bank account', network: 'FedNow / ACH', resolvedName: 'Silicon Valley Bank' };
     }
-    return { type: 'Wallet / Account', network: 'Universal Multi-Chain', resolvedName: trimmed || 'Custom Recipient' };
+    return { type: 'Wallet or account', network: 'Multi-chain', resolvedName: trimmed || 'Recipient' };
   };
 
   const detectedInfo = detectRecipientType(recipientInput);
 
-  const handleStartAgent = () => {
+  const handleStartReview = () => {
     if (!recipientInput.trim() || !amountInput.trim()) return;
 
     sounds.playKeyClick();
-    setIsAnalyzing(true);
+    setIsPreparing(true);
 
-    // Simulate Agent Deep Inspection
     setTimeout(() => {
-      setIsAnalyzing(false);
+      setIsPreparing(false);
       const parsedAmount = parseFloat(amountInput) || 0.1;
       const asset = cryptoAssets.find((a) => a.symbol === selectedCurrency);
       const fiatEquiv = parsedAmount * (asset ? asset.priceUsd : 1.0);
@@ -117,7 +113,8 @@ export const PaymentHubModal: React.FC<PaymentHubModalProps> = ({
           resolvedAddress: recipientInput,
           network: detectedInfo.network,
           riskScore: 'low',
-          isVerifiedMerchant: recipientInput.includes('coffee') || recipientInput.includes('vitalik'),
+          isVerifiedMerchant:
+            recipientInput.includes('coffee') || recipientInput.includes('vitalik'),
         },
         amount: parsedAmount,
         currency: selectedCurrency,
@@ -125,8 +122,8 @@ export const PaymentHubModal: React.FC<PaymentHubModalProps> = ({
         networkFeeUsd: 0.14,
         estimatedSeconds: 2,
         agentAnalysis: {
-          safetySummary: 'Counterparty verified. 0 reported exploits. Optimal L2 gas routing applied.',
-          routeDetails: 'Direct RPC atomic swap with anti-frontrunning protection.',
+          safetySummary: 'Recipient verified. No known fraud or sanctions matches.',
+          routeDetails: 'Direct transfer with front-running protection.',
           slippageEst: '0.01%',
           counterpartyTrust: '99.9%',
         },
@@ -146,11 +143,10 @@ export const PaymentHubModal: React.FC<PaymentHubModalProps> = ({
     if (scannedAmount) setAmountInput(scannedAmount.toString());
     if (scannedCurrency) setSelectedCurrency(scannedCurrency);
 
-    // Auto-trigger agent
     sounds.playScanBeep();
-    setIsAnalyzing(true);
+    setIsPreparing(true);
     setTimeout(() => {
-      setIsAnalyzing(false);
+      setIsPreparing(false);
       const parsedAmount = scannedAmount || 0.15;
       const cur = scannedCurrency || 'ETH';
       const asset = cryptoAssets.find((a) => a.symbol === cur);
@@ -165,8 +161,8 @@ export const PaymentHubModal: React.FC<PaymentHubModalProps> = ({
         networkFeeUsd: 0.08,
         estimatedSeconds: 2,
         agentAnalysis: {
-          safetySummary: 'QR payment invoice decoded. Zero malicious redirect detected.',
-          routeDetails: 'Merchant verified settlement via low-latency channel.',
+          safetySummary: 'Invoice decoded. No malicious redirect detected.',
+          routeDetails: 'Merchant settlement over a low-latency channel.',
           slippageEst: '0.00%',
           counterpartyTrust: '100%',
         },
@@ -181,38 +177,36 @@ export const PaymentHubModal: React.FC<PaymentHubModalProps> = ({
     onClose();
   };
 
+  const isDisabled = !recipientInput.trim() || !amountInput.trim() || isPreparing;
+
   return (
-    <Modal visible={visible} animationType="slide" transparent={true}>
+    <Modal visible={visible} animationType="slide" transparent>
       <View style={styles.modalOverlay}>
         <View style={styles.container}>
-          {/* Header */}
           <View style={styles.headerRow}>
-            <View style={styles.headerTitleWrap}>
-              <View style={styles.agentSparkleIcon}>
-                <Zap size={16} color="#60a5fa" />
-              </View>
-              <Text style={styles.headerTitle}>Pay with Native AI Agent</Text>
-            </View>
-            <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
-              <X size={20} color="#ffffff" />
+            <Text style={styles.headerTitle}>Send payment</Text>
+            <TouchableOpacity onPress={onClose} style={styles.closeBtn} accessibilityLabel="Close">
+              <X size={20} color={colors.text} />
             </TouchableOpacity>
           </View>
 
           <ScrollView style={styles.bodyScroll} keyboardShouldPersistTaps="handled">
-            {/* Mode Selector: Paste Address vs Scan QR */}
             <View style={styles.modeTabs}>
               <TouchableOpacity
                 style={[styles.modeTab, activeTab === 'address' && styles.modeTabActive]}
                 onPress={() => setActiveTab('address')}
               >
-                <Wallet size={16} color={activeTab === 'address' ? '#ffffff' : '#94a3b8'} />
+                <Wallet
+                  size={16}
+                  color={activeTab === 'address' ? colors.text : colors.textSecondary}
+                />
                 <Text
                   style={[
                     styles.modeTabText,
                     activeTab === 'address' && styles.modeTabTextActive,
                   ]}
                 >
-                  Paste Wallet / Account
+                  Address
                 </Text>
               </TouchableOpacity>
 
@@ -223,55 +217,52 @@ export const PaymentHubModal: React.FC<PaymentHubModalProps> = ({
                   setShowScanner(true);
                 }}
               >
-                <QrCode size={16} color={activeTab === 'qr' ? '#ffffff' : '#94a3b8'} />
+                <QrCode size={16} color={activeTab === 'qr' ? colors.text : colors.textSecondary} />
                 <Text
-                  style={[
-                    styles.modeTabText,
-                    activeTab === 'qr' && styles.modeTabTextActive,
-                  ]}
+                  style={[styles.modeTabText, activeTab === 'qr' && styles.modeTabTextActive]}
                 >
-                  Scan QR Code
+                  Scan QR
                 </Text>
               </TouchableOpacity>
             </View>
 
-            {/* Recipient Input Card */}
             <View style={styles.inputSection}>
-              <Text style={styles.sectionLabel}>Recipient (Wallet Address / Account # / Nativetag)</Text>
+              <Text style={styles.sectionLabel}>Recipient</Text>
               <View style={styles.recipientInputCard}>
                 <TextInput
                   style={styles.textInput}
-                  placeholder="Paste 0x..., Solana, IBAN, or @tag"
-                  placeholderTextColor="#64748b"
+                  placeholder="Wallet address, account number or @tag"
+                  placeholderTextColor={colors.textMuted}
                   value={recipientInput}
                   onChangeText={setRecipientInput}
                   multiline={false}
                 />
                 {recipientInput.length > 0 && (
-                  <TouchableOpacity onPress={() => setRecipientInput('')}>
-                    <X size={16} color="#94a3b8" />
+                  <TouchableOpacity
+                    onPress={() => setRecipientInput('')}
+                    accessibilityLabel="Clear recipient"
+                  >
+                    <X size={16} color={colors.textMuted} />
                   </TouchableOpacity>
                 )}
               </View>
 
-              {/* Detected Type Pill */}
               {recipientInput.trim().length > 0 && (
                 <View style={styles.detectedPill}>
-                  <Check size={12} color="#10b981" />
+                  <Check size={12} color={colors.positive} />
                   <Text style={styles.detectedText}>
-                    {detectedInfo.type} • {detectedInfo.network}
+                    {detectedInfo.type} · {detectedInfo.network}
                   </Text>
                 </View>
               )}
             </View>
 
-            {/* Quick Test Presets */}
             <View style={styles.presetsSection}>
-              <Text style={styles.presetsLabel}>Quick Test Presets (Tap to fill):</Text>
+              <Text style={styles.sectionLabel}>Saved recipients</Text>
               <View style={styles.presetsGrid}>
-                {quickTestAddresses.map((p, idx) => (
+                {savedRecipients.map((p) => (
                   <TouchableOpacity
-                    key={idx}
+                    key={p.label}
                     style={styles.presetChip}
                     onPress={() => {
                       sounds.playKeyClick();
@@ -280,16 +271,14 @@ export const PaymentHubModal: React.FC<PaymentHubModalProps> = ({
                       setAmountInput(p.amount);
                     }}
                   >
-                    <Sparkles size={11} color="#60a5fa" />
                     <Text style={styles.presetChipText}>{p.label}</Text>
                   </TouchableOpacity>
                 ))}
               </View>
             </View>
 
-            {/* Amount & Currency Section */}
             <View style={styles.amountSection}>
-              <Text style={styles.sectionLabel}>Amount to Send</Text>
+              <Text style={styles.sectionLabel}>Amount</Text>
               <View style={styles.amountRow}>
                 <TextInput
                   style={styles.amountInput}
@@ -297,18 +286,18 @@ export const PaymentHubModal: React.FC<PaymentHubModalProps> = ({
                   onChangeText={setAmountInput}
                   keyboardType="numeric"
                   placeholder="0.00"
-                  placeholderTextColor="#64748b"
+                  placeholderTextColor={colors.textMuted}
                 />
 
-                {/* Currency selector chips */}
-                <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.curScroll}>
+                <ScrollView
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  style={styles.curScroll}
+                >
                   {['ETH', 'BTC', 'SOL', 'NAT', 'USDC'].map((cur) => (
                     <TouchableOpacity
                       key={cur}
-                      style={[
-                        styles.curChip,
-                        selectedCurrency === cur && styles.curChipActive,
-                      ]}
+                      style={[styles.curChip, selectedCurrency === cur && styles.curChipActive]}
                       onPress={() => {
                         sounds.playKeyClick();
                         setSelectedCurrency(cur);
@@ -328,61 +317,45 @@ export const PaymentHubModal: React.FC<PaymentHubModalProps> = ({
               </View>
             </View>
 
-            {/* Agent Explainer Callout */}
-            <View style={styles.agentExplainer}>
-              <Zap size={18} color="#60a5fa" />
-              <View style={styles.agentExplainerText}>
-                <Text style={styles.agentExplainerTitle}>Autonomous Payment Guard</Text>
-                <Text style={styles.agentExplainerDesc}>
-                  The Agent simulates the transaction, finds the lowest gas path, verifies against fraud, and{' '}
-                  <Text style={{ color: '#ffffff', fontWeight: '700' }}>
-                    always asks for your explicit approval
-                  </Text>{' '}
-                  before broadcasting.
-                </Text>
-              </View>
+            <View style={styles.reviewNote}>
+              <ShieldCheck size={18} color={colors.textSecondary} />
+              <Text style={styles.reviewNoteText}>
+                You'll review the recipient, network and fee before anything is sent.
+              </Text>
             </View>
           </ScrollView>
 
-          {/* Bottom Action Button */}
           <View style={styles.footerArea}>
             <TouchableOpacity
               style={[
                 styles.actionBtn,
-                (!recipientInput.trim() || !amountInput.trim() || isAnalyzing) &&
-                  styles.actionBtnDisabled,
+                (!recipientInput.trim() || !amountInput.trim()) && styles.actionBtnDisabled,
               ]}
-              onPress={handleStartAgent}
-              disabled={!recipientInput.trim() || !amountInput.trim() || isAnalyzing}
+              onPress={handleStartReview}
+              disabled={isDisabled}
               activeOpacity={0.85}
             >
-              {isAnalyzing ? (
+              {isPreparing ? (
                 <View style={styles.loadingRow}>
-                  <ActivityIndicator color="#000000" />
-                  <Text style={styles.actionBtnText}>Agent Inspecting Recipient & Gas...</Text>
+                  <ActivityIndicator color={colors.onLight} />
+                  <Text style={styles.actionBtnText}>Preparing payment…</Text>
                 </View>
               ) : (
-                <View style={styles.btnRow}>
-                  <Sparkles size={18} color="#000000" />
-                  <Text style={styles.actionBtnText}>
-                    Ask Agent to Prepare & Review
-                  </Text>
-                  <ArrowRight size={18} color="#000000" />
-                </View>
+                <Text style={[styles.actionBtnText, isDisabled && styles.actionBtnTextDisabled]}>
+                  Review payment
+                </Text>
               )}
             </TouchableOpacity>
           </View>
         </View>
       </View>
 
-      {/* QR Scanner Viewfinder Modal */}
       <QrScannerModal
         visible={showScanner}
         onClose={() => setShowScanner(false)}
         onQrDetected={handleQrDetected}
       />
 
-      {/* THE APPROVAL SHEET REQUIRED BY USER */}
       <PaymentApprovalSheet
         visible={!!approvalRequest}
         paymentRequest={approvalRequest}
@@ -396,109 +369,89 @@ export const PaymentHubModal: React.FC<PaymentHubModalProps> = ({
 const styles = StyleSheet.create({
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.75)',
+    backgroundColor: colors.overlay,
     justifyContent: 'flex-end',
   },
   container: {
-    backgroundColor: '#0e121d',
-    borderTopLeftRadius: 32,
-    borderTopRightRadius: 32,
-    paddingTop: 16,
-    paddingHorizontal: 20,
-    paddingBottom: 28,
+    backgroundColor: colors.sheet,
+    borderTopLeftRadius: radius.sheet,
+    borderTopRightRadius: radius.sheet,
+    paddingTop: space.lg,
+    paddingHorizontal: space.xl,
+    paddingBottom: space.xxl,
     maxHeight: '92%',
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.08)',
+    borderTopWidth: 1,
+    borderColor: colors.border,
   },
   headerRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 16,
-  },
-  headerTitleWrap: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  agentSparkleIcon: {
-    width: 28,
-    height: 28,
-    borderRadius: 8,
-    backgroundColor: 'rgba(37, 99, 235, 0.2)',
-    justifyContent: 'center',
-    alignItems: 'center',
+    marginBottom: space.lg,
   },
   headerTitle: {
-    color: '#ffffff',
-    fontSize: 17,
-    fontWeight: '800',
-    letterSpacing: -0.3,
+    ...type.sheetTitle,
   },
   closeBtn: {
     width: 34,
     height: 34,
-    borderRadius: 17,
-    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    borderRadius: radius.pill,
+    backgroundColor: colors.surface,
     justifyContent: 'center',
     alignItems: 'center',
   },
   bodyScroll: {
-    marginBottom: 12,
+    marginBottom: space.md,
   },
   modeTabs: {
     flexDirection: 'row',
-    backgroundColor: 'rgba(255, 255, 255, 0.05)',
-    borderRadius: 16,
+    backgroundColor: colors.surfaceSunken,
+    borderRadius: radius.md,
     padding: 4,
-    gap: 6,
-    marginBottom: 18,
+    gap: space.xs,
+    marginBottom: space.lg,
   },
   modeTab: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 10,
-    borderRadius: 12,
-    gap: 8,
+    paddingVertical: space.sm,
+    borderRadius: radius.sm,
+    gap: space.sm,
   },
   modeTabActive: {
-    backgroundColor: '#2563eb',
+    backgroundColor: colors.surfaceRaised,
   },
   modeTabText: {
-    color: '#94a3b8',
+    color: colors.textSecondary,
     fontSize: 12,
     fontWeight: '600',
   },
   modeTabTextActive: {
-    color: '#ffffff',
+    color: colors.text,
     fontWeight: '700',
   },
   inputSection: {
-    marginBottom: 16,
+    marginBottom: space.lg,
   },
   sectionLabel: {
-    color: '#94a3b8',
-    fontSize: 12,
-    fontWeight: '600',
-    marginBottom: 6,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
+    ...type.overline,
+    marginBottom: space.sm,
   },
   recipientInputCard: {
-    backgroundColor: 'rgba(255, 255, 255, 0.08)',
-    borderRadius: 16,
+    backgroundColor: colors.surface,
+    borderRadius: radius.md,
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 14,
+    paddingHorizontal: space.lg,
     height: 52,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.08)',
+    borderColor: colors.border,
   },
   textInput: {
     flex: 1,
-    color: '#ffffff',
+    color: colors.text,
     fontSize: 15,
     fontWeight: '500',
     outlineStyle: 'none' as any,
@@ -506,64 +459,55 @@ const styles = StyleSheet.create({
   detectedPill: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
-    marginTop: 6,
-    paddingHorizontal: 8,
+    gap: space.xs,
+    marginTop: space.sm,
+    paddingHorizontal: space.xs,
   },
   detectedText: {
-    color: '#10b981',
+    color: colors.positive,
     fontSize: 12,
     fontWeight: '600',
   },
   presetsSection: {
-    marginBottom: 18,
-  },
-  presetsLabel: {
-    color: '#64748b',
-    fontSize: 11,
-    fontWeight: '600',
-    marginBottom: 8,
+    marginBottom: space.lg,
   },
   presetsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 8,
+    gap: space.sm,
   },
   presetChip: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    backgroundColor: 'rgba(59, 130, 246, 0.08)',
-    borderRadius: 12,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
+    backgroundColor: colors.surface,
+    borderRadius: radius.pill,
+    paddingHorizontal: space.md,
+    paddingVertical: 7,
     borderWidth: 1,
-    borderColor: 'rgba(59, 130, 246, 0.2)',
+    borderColor: colors.border,
   },
   presetChipText: {
-    color: '#60a5fa',
-    fontSize: 11,
+    color: colors.textSecondary,
+    fontSize: 12,
     fontWeight: '600',
   },
   amountSection: {
-    marginBottom: 18,
+    marginBottom: space.lg,
   },
   amountRow: {
     flexDirection: 'row',
-    gap: 12,
+    gap: space.md,
     alignItems: 'center',
   },
   amountInput: {
     flex: 1,
     height: 52,
-    backgroundColor: 'rgba(255, 255, 255, 0.08)',
-    borderRadius: 16,
-    paddingHorizontal: 16,
-    color: '#ffffff',
+    backgroundColor: colors.surface,
+    borderRadius: radius.md,
+    paddingHorizontal: space.lg,
+    color: colors.text,
     fontSize: 22,
     fontWeight: '700',
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.08)',
+    borderColor: colors.border,
     outlineStyle: 'none' as any,
   },
   curScroll: {
@@ -571,74 +515,62 @@ const styles = StyleSheet.create({
     flexGrow: 0,
   },
   curChip: {
-    paddingHorizontal: 12,
-    paddingVertical: 14,
-    borderRadius: 14,
-    backgroundColor: 'rgba(255, 255, 255, 0.06)',
-    marginRight: 6,
+    paddingHorizontal: space.md,
+    height: 40,
+    justifyContent: 'center',
+    borderRadius: radius.pill,
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.border,
+    marginRight: space.xs,
   },
   curChipActive: {
-    backgroundColor: '#2563eb',
+    backgroundColor: colors.accentSoft,
+    borderColor: colors.accent,
   },
   curChipText: {
-    color: '#94a3b8',
-    fontSize: 13,
+    color: colors.textSecondary,
+    fontSize: 12,
     fontWeight: '700',
   },
   curChipTextActive: {
-    color: '#ffffff',
+    color: colors.accent,
   },
-  agentExplainer: {
+  reviewNote: {
     flexDirection: 'row',
-    gap: 12,
-    backgroundColor: 'rgba(37, 99, 235, 0.1)',
-    borderRadius: 16,
-    padding: 14,
+    alignItems: 'center',
+    gap: space.md,
+    backgroundColor: colors.surface,
+    borderRadius: radius.md,
+    padding: space.md,
     borderWidth: 1,
-    borderColor: 'rgba(37, 99, 235, 0.25)',
-    marginBottom: 16,
+    borderColor: colors.border,
+    marginBottom: space.lg,
   },
-  agentExplainerText: {
+  reviewNoteText: {
+    ...type.caption,
     flex: 1,
-    gap: 2,
-  },
-  agentExplainerTitle: {
-    color: '#60a5fa',
-    fontSize: 13,
-    fontWeight: '700',
-  },
-  agentExplainerDesc: {
-    color: '#cbd5e1',
-    fontSize: 12,
-    lineHeight: 16,
   },
   footerArea: {
-    paddingTop: 8,
+    paddingTop: space.sm,
   },
   actionBtn: {
-    height: 54,
-    backgroundColor: '#ffffff',
-    borderRadius: 27,
-    justifyContent: 'center',
-    alignItems: 'center',
+    ...primaryButton,
   },
   actionBtnDisabled: {
-    backgroundColor: 'rgba(255, 255, 255, 0.25)',
-  },
-  btnRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+    ...disabledButton,
   },
   actionBtnText: {
-    color: '#000000',
+    ...primaryButtonText,
     fontSize: 15,
-    fontWeight: '700',
+  },
+  actionBtnTextDisabled: {
+    ...disabledButtonText,
+    fontSize: 15,
   },
   loadingRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: space.sm,
   },
 });
-

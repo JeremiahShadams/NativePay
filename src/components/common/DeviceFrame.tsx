@@ -1,12 +1,17 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Platform, StatusBar } from 'react-native';
-import { Smartphone, Monitor, Sparkles } from 'lucide-react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Platform, StatusBar, SafeAreaView } from 'react-native';
+import { Monitor, Smartphone } from 'lucide-react-native';
+import { colors, radius, space, type } from '../../theme';
+
+const ANDROID_STATUS_BAR =
+  Platform.OS === 'android'
+    ? (StatusBar.currentHeight && StatusBar.currentHeight > 0 ? StatusBar.currentHeight : 32)
+    : 0;
 
 interface DeviceFrameProps {
   children: React.ReactNode;
   isMobileFrame: boolean;
   onToggleFrame: () => void;
-  activeScreenTitle: string;
   onJumpToDashboard?: () => void;
   onResetOnboarding?: () => void;
   isDashboardActive?: boolean;
@@ -16,102 +21,86 @@ export const DeviceFrame: React.FC<DeviceFrameProps> = ({
   children,
   isMobileFrame,
   onToggleFrame,
-  activeScreenTitle,
   onJumpToDashboard,
   onResetOnboarding,
   isDashboardActive = false,
 }) => {
-  // On real native mobile devices (Expo Go on iOS or Android), render native full screen!
+  // On a real device (Expo Go on iOS or Android) render native full screen with safe area clearance.
   if (Platform.OS !== 'web') {
     return (
-      <View style={styles.nativeContainer}>
-        <StatusBar barStyle="light-content" {...({ backgroundColor: 'transparent', translucent: true } as any)} />
+      <SafeAreaView style={styles.nativeContainer}>
+        <StatusBar barStyle="light-content" {...({ backgroundColor: colors.black, translucent: true } as any)} />
         <View style={styles.nativeScreenInner}>{children}</View>
-      </View>
+      </SafeAreaView>
     );
   }
 
-  // On Web browser, render interactive chassis with desktop controls
+  // On the web, render the interactive chassis with demo controls.
   return (
     <View style={styles.outerWrapper}>
-      {/* Top Quick Control Bar */}
       <View style={styles.topControlBar}>
         <View style={styles.brandRow}>
           <View style={styles.brandBadge}>
             <Text style={styles.brandLogoText}>N</Text>
           </View>
-          <View>
-            <Text style={styles.brandTitle}>NATIVE</Text>
-            <Text style={styles.brandSubtitle}>Intelligent Crypto & Banking</Text>
-          </View>
+          <Text style={styles.brandTitle}>Native</Text>
         </View>
 
         <View style={styles.actionsRow}>
-          {/* Quick jump buttons */}
-          {onResetOnboarding && (
-            <TouchableOpacity
-              onPress={onResetOnboarding}
-              style={[
-                styles.pillBtn,
-                !isDashboardActive && styles.pillBtnActive
-              ]}
-              activeOpacity={0.7}
-            >
-              <Text style={[
-                styles.pillBtnText,
-                !isDashboardActive && styles.pillBtnTextActive
-              ]}>
-                Onboarding Flow (24 Screens)
-              </Text>
-            </TouchableOpacity>
+          {onResetOnboarding && onJumpToDashboard && (
+            <View style={styles.segmentedControl}>
+              <TouchableOpacity
+                onPress={onResetOnboarding}
+                style={[styles.segment, !isDashboardActive && styles.segmentActive]}
+                activeOpacity={0.8}
+              >
+                <Text
+                  style={[
+                    styles.segmentText,
+                    !isDashboardActive && styles.segmentTextActive,
+                  ]}
+                >
+                  Onboarding
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={onJumpToDashboard}
+                style={[styles.segment, isDashboardActive && styles.segmentActive]}
+                activeOpacity={0.8}
+              >
+                <Text
+                  style={[
+                    styles.segmentText,
+                    isDashboardActive && styles.segmentTextActive,
+                  ]}
+                >
+                  App
+                </Text>
+              </TouchableOpacity>
+            </View>
           )}
 
-          {onJumpToDashboard && (
-            <TouchableOpacity
-              onPress={onJumpToDashboard}
-              style={[
-                styles.pillBtn,
-                isDashboardActive && styles.pillBtnActive,
-                styles.aiPillBtn
-              ]}
-              activeOpacity={0.7}
-            >
-              <Sparkles size={14} color={isDashboardActive ? "#ffffff" : "#60a5fa"} />
-              <Text style={[
-                styles.pillBtnText,
-                isDashboardActive && styles.pillBtnTextActive,
-                { marginLeft: 4 }
-              ]}>
-                App & AI Payment Agent
-              </Text>
-            </TouchableOpacity>
-          )}
-
-          {/* Toggle frame button */}
           <TouchableOpacity
             onPress={onToggleFrame}
             style={styles.iconBtn}
-            accessibilityLabel={isMobileFrame ? "Switch to Fullscreen" : "Switch to Mobile Frame"}
+            accessibilityLabel={isMobileFrame ? 'Switch to fullscreen' : 'Switch to mobile frame'}
           >
             {isMobileFrame ? (
-              <Monitor size={18} color="#94a3b8" />
+              <Monitor size={18} color={colors.textSecondary} />
             ) : (
-              <Smartphone size={18} color="#94a3b8" />
+              <Smartphone size={18} color={colors.textSecondary} />
             )}
           </TouchableOpacity>
         </View>
       </View>
 
-      {/* Main Container */}
       <View style={styles.mainCanvas}>
         {isMobileFrame ? (
           <View style={styles.phoneChassis}>
-            {/* Dynamic Island / Speaker */}
             <View style={styles.dynamicIslandContainer}>
               <View style={styles.dynamicIsland} />
             </View>
 
-            {/* iOS Status Bar */}
             <View style={styles.statusBar}>
               <Text style={styles.statusTime}>9:41</Text>
               <View style={styles.statusIcons}>
@@ -129,28 +118,15 @@ export const DeviceFrame: React.FC<DeviceFrameProps> = ({
               </View>
             </View>
 
-            {/* App Screen Content */}
-            <View style={styles.screenInner}>
-              {children}
-            </View>
+            <View style={styles.screenInner}>{children}</View>
 
-            {/* Home Indicator */}
             <View style={styles.homeIndicatorWrapper}>
               <View style={styles.homeIndicator} />
             </View>
           </View>
         ) : (
-          <View style={styles.fullscreenContent}>
-            {children}
-          </View>
+          <View style={styles.fullscreenContent}>{children}</View>
         )}
-      </View>
-
-      {/* Footer Info */}
-      <View style={styles.footerInfo}>
-        <Text style={styles.footerText}>
-          Native • Rebuilt from Examples • Built with React Native • Current: <Text style={{ color: '#60a5fa' }}>{activeScreenTitle}</Text>
-        </Text>
       </View>
     </View>
   );
@@ -159,19 +135,20 @@ export const DeviceFrame: React.FC<DeviceFrameProps> = ({
 const styles = StyleSheet.create({
   nativeContainer: {
     flex: 1,
-    backgroundColor: '#000000',
+    backgroundColor: colors.black,
+    paddingTop: ANDROID_STATUS_BAR,
   },
   nativeScreenInner: {
     flex: 1,
-    backgroundColor: '#000000',
+    backgroundColor: colors.background,
   },
   outerWrapper: {
     flex: 1,
-    backgroundColor: '#05070c',
+    backgroundColor: colors.surfaceSunken,
     alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: 12,
-    paddingHorizontal: 16,
+    justifyContent: 'center',
+    paddingVertical: space.lg,
+    paddingHorizontal: space.lg,
   },
   topControlBar: {
     width: '100%',
@@ -179,82 +156,79 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    backgroundColor: 'rgba(15, 23, 42, 0.75)',
-    borderRadius: 20,
+    paddingVertical: space.sm,
+    paddingLeft: space.lg,
+    paddingRight: space.sm,
+    backgroundColor: colors.surface,
+    borderRadius: radius.lg,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.08)',
-    marginBottom: 12,
+    borderColor: colors.border,
+    marginBottom: space.lg,
   },
   brandRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
+    gap: space.sm,
   },
   brandBadge: {
-    width: 34,
-    height: 34,
-    borderRadius: 10,
-    backgroundColor: '#2563eb',
+    width: 28,
+    height: 28,
+    borderRadius: radius.sm,
+    backgroundColor: colors.white,
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#3b82f6',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.6,
-    shadowRadius: 8,
   },
   brandLogoText: {
-    color: '#ffffff',
-    fontSize: 18,
+    color: colors.onLight,
+    fontSize: 16,
     fontWeight: '800',
     letterSpacing: -0.5,
   },
   brandTitle: {
-    color: '#ffffff',
+    color: colors.text,
     fontSize: 15,
-    fontWeight: '800',
-    letterSpacing: 1.5,
-  },
-  brandSubtitle: {
-    color: '#64748b',
-    fontSize: 11,
-    fontWeight: '500',
+    fontWeight: '700',
+    letterSpacing: -0.2,
   },
   actionsRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: space.sm,
   },
-  pillBtn: {
-    paddingHorizontal: 14,
-    paddingVertical: 7,
-    borderRadius: 12,
-    backgroundColor: 'rgba(255, 255, 255, 0.06)',
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.08)',
+  segmentedControl: {
     flexDirection: 'row',
-    alignItems: 'center',
+    backgroundColor: colors.surfaceSunken,
+    borderRadius: radius.pill,
+    padding: 3,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
-  pillBtnActive: {
-    backgroundColor: '#2563eb',
-    borderColor: '#3b82f6',
+  segment: {
+    paddingHorizontal: space.md,
+    paddingVertical: 6,
+    borderRadius: radius.pill,
   },
-  aiPillBtn: {
-    borderColor: 'rgba(96, 165, 250, 0.3)',
+  segmentActive: {
+    backgroundColor: colors.surfaceRaised,
   },
-  pillBtnText: {
-    color: '#94a3b8',
+  segmentText: {
+    ...type.caption,
     fontSize: 12,
     fontWeight: '600',
+    color: colors.textMuted,
   },
-  pillBtnTextActive: {
-    color: '#ffffff',
+  segmentTextActive: {
+    color: colors.text,
   },
   iconBtn: {
-    padding: 8,
-    borderRadius: 10,
-    backgroundColor: 'rgba(255, 255, 255, 0.06)',
+    width: 34,
+    height: 34,
+    borderRadius: radius.sm,
+    backgroundColor: colors.surfaceSunken,
+    borderWidth: 1,
+    borderColor: colors.border,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   mainCanvas: {
     flex: 1,
@@ -265,16 +239,13 @@ const styles = StyleSheet.create({
   phoneChassis: {
     width: 395,
     height: 844,
-    backgroundColor: '#080a10',
-    borderRadius: 52,
-    borderWidth: 8,
-    borderColor: '#1e2433',
+    maxHeight: '100%',
+    backgroundColor: colors.background,
+    borderRadius: 46,
+    borderWidth: 7,
+    borderColor: colors.cardMetal,
     overflow: 'hidden',
     position: 'relative',
-    shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 25 },
-    shadowOpacity: 0.8,
-    shadowRadius: 40,
   },
   dynamicIslandContainer: {
     position: 'absolute',
@@ -286,10 +257,10 @@ const styles = StyleSheet.create({
     pointerEvents: 'none',
   },
   dynamicIsland: {
-    width: 120,
-    height: 32,
-    backgroundColor: '#000000',
-    borderRadius: 20,
+    width: 116,
+    height: 30,
+    backgroundColor: colors.black,
+    borderRadius: radius.pill,
   },
   statusBar: {
     position: 'absolute',
@@ -305,7 +276,7 @@ const styles = StyleSheet.create({
     pointerEvents: 'none',
   },
   statusTime: {
-    color: '#ffffff',
+    color: colors.text,
     fontSize: 14,
     fontWeight: '700',
     marginTop: 6,
@@ -324,11 +295,11 @@ const styles = StyleSheet.create({
   },
   bar: {
     width: 2.5,
-    backgroundColor: '#ffffff',
-    borderRadius: 0.8,
+    backgroundColor: colors.text,
+    borderRadius: 1,
   },
   statusNet: {
-    color: '#ffffff',
+    color: colors.text,
     fontSize: 11,
     fontWeight: '700',
   },
@@ -345,7 +316,7 @@ const styles = StyleSheet.create({
   batteryLevel: {
     width: '75%',
     height: '100%',
-    backgroundColor: '#ffffff',
+    backgroundColor: colors.text,
     borderRadius: 1.5,
   },
   batteryNub: {
@@ -358,7 +329,7 @@ const styles = StyleSheet.create({
   },
   screenInner: {
     flex: 1,
-    backgroundColor: '#080a10',
+    backgroundColor: colors.background,
     paddingTop: 46,
     paddingBottom: 24,
   },
@@ -372,30 +343,21 @@ const styles = StyleSheet.create({
     pointerEvents: 'none',
   },
   homeIndicator: {
-    width: 135,
+    width: 132,
     height: 4.5,
-    backgroundColor: 'rgba(255, 255, 255, 0.65)',
-    borderRadius: 10,
+    backgroundColor: 'rgba(255, 255, 255, 0.6)',
+    borderRadius: radius.pill,
   },
   fullscreenContent: {
     width: '100%',
     maxWidth: 600,
     minHeight: 780,
-    backgroundColor: '#080a10',
-    borderRadius: 24,
+    backgroundColor: colors.background,
+    borderRadius: radius.xl,
     borderWidth: 1,
-    borderColor: '#1e2433',
+    borderColor: colors.border,
     overflow: 'hidden',
     paddingTop: 16,
     paddingBottom: 24,
-  },
-  footerInfo: {
-    paddingVertical: 8,
-    alignItems: 'center',
-  },
-  footerText: {
-    color: '#64748b',
-    fontSize: 12,
-    fontWeight: '500',
   },
 });

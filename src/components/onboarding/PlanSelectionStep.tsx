@@ -1,7 +1,23 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
-import { ArrowLeft, Sparkles, Check, Zap, Shield, Globe, Award } from 'lucide-react-native';
+import {
+  ArrowLeft,
+  Flame,
+  Globe,
+  Moon,
+  Palette,
+  Shield,
+  Zap,
+} from 'lucide-react-native';
 import { sounds } from '../../utils/soundEffects';
+import {
+  colors,
+  radius,
+  space,
+  type,
+  primaryButton,
+  primaryButtonText,
+} from '../../theme';
 
 interface PlanSelectionStepProps {
   onBack: () => void;
@@ -15,11 +31,29 @@ export const PlanSelectionStep: React.FC<PlanSelectionStepProps> = ({
   const [selectedTab, setSelectedTab] = useState<'metal' | 'premium'>('premium');
 
   const partnerPerks = [
-    { name: 'NordVPN', desc: 'Standard VPN', icon: '🛡️' },
-    { name: 'Tinder Plus', desc: 'Subscription', icon: '🔥' },
-    { name: 'Freeletics', desc: 'Coach sub', icon: '⚡' },
-    { name: 'Picsart Pro', desc: 'Subscription', icon: '🎨' },
-    { name: 'Sleep Cycle', desc: 'Premium', icon: '🌙' },
+    { name: 'NordVPN', desc: 'Standard VPN', icon: Shield },
+    { name: 'Tinder Plus', desc: 'Subscription', icon: Flame },
+    { name: 'Freeletics', desc: 'Coach sub', icon: Zap },
+    { name: 'Picsart Pro', desc: 'Subscription', icon: Palette },
+    { name: 'Sleep Cycle', desc: 'Premium', icon: Moon },
+  ];
+
+  const features = [
+    {
+      title: 'Currency exchange',
+      desc: 'No additional exchange fees up to $15,000 monthly allowance.',
+      icon: Zap,
+    },
+    {
+      title: 'Global medical insurance',
+      desc: 'Comprehensive international travel and medical coverage.',
+      icon: Globe,
+    },
+    {
+      title: 'Everyday protection',
+      desc: 'Up to $10,000 purchase and refund protection per year.',
+      icon: Shield,
+    },
   ];
 
   const handleFinish = () => {
@@ -29,18 +63,25 @@ export const PlanSelectionStep: React.FC<PlanSelectionStepProps> = ({
 
   return (
     <View style={styles.container}>
-      {/* Top Nav - Revolut iOS 23.png: "Not now" on top right */}
-      <View style={[styles.topNav, { justifyContent: 'flex-end' }]}>
+      <View style={styles.topNav}>
+        <TouchableOpacity
+          onPress={() => {
+            sounds.playKeyClick();
+            onBack();
+          }}
+          style={styles.backBtn}
+          accessibilityLabel="Go back"
+        >
+          <ArrowLeft size={22} color={colors.text} />
+        </TouchableOpacity>
         <TouchableOpacity onPress={handleFinish}>
           <Text style={styles.notNowText}>Not now</Text>
         </TouchableOpacity>
       </View>
 
-      {/* Main Content */}
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         <Text style={styles.title}>Select plan</Text>
 
-        {/* Tab Switcher: Metal / Premium */}
         <View style={styles.tabsRow}>
           <TouchableOpacity
             style={[styles.tabPill, selectedTab === 'metal' && styles.tabPillActive]}
@@ -67,31 +108,28 @@ export const PlanSelectionStep: React.FC<PlanSelectionStepProps> = ({
           </TouchableOpacity>
         </View>
 
-        {/* Plan Card Banner */}
-        <View
-          style={[
-            styles.planBanner,
-            selectedTab === 'metal' ? styles.bannerMetal : styles.bannerPremium,
-          ]}
-        >
+        <View style={styles.planBanner}>
           <View style={styles.bannerHeader}>
             <Text style={styles.bannerTierName}>
               {selectedTab === 'metal' ? 'Metal' : 'Premium'}
             </Text>
             <View style={styles.specialBadge}>
-              <Sparkles size={11} color="#ffffff" />
-              <Text style={styles.specialBadgeText}>Special Offer</Text>
+              <Text style={styles.specialBadgeText}>1 month free</Text>
             </View>
           </View>
 
           <Text style={styles.pricingText}>
-            1 month free then {selectedTab === 'metal' ? '$16.99' : '$9.99'}/month
+            {selectedTab === 'metal' ? '$16.99' : '$9.99'}/month after the trial
           </Text>
           <Text style={styles.bannerTagline}>Ticket to a global lifestyle</Text>
 
-          {/* Card Mockup Graphic */}
           <View style={styles.cardGraphicPreview}>
-            <View style={styles.previewCardEdge}>
+            <View
+              style={[
+                styles.previewCard,
+                selectedTab === 'metal' ? styles.previewCardMetal : styles.previewCardPremium,
+              ]}
+            >
               <Text style={styles.previewCardBrand}>Native</Text>
               <Text style={styles.previewCardEdition}>
                 {selectedTab === 'metal' ? 'SOLID TITANIUM' : 'CHROME OBSIDIAN'}
@@ -100,69 +138,48 @@ export const PlanSelectionStep: React.FC<PlanSelectionStepProps> = ({
           </View>
         </View>
 
-        {/* Included with Plan Partners */}
         <Text style={styles.sectionTitle}>
           Included with {selectedTab === 'metal' ? 'Metal' : 'Premium'}
         </Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.perksRow}>
-          {partnerPerks.map((p, idx) => (
-            <View key={idx} style={styles.perkCard}>
-              <Text style={styles.perkEmoji}>{p.icon}</Text>
-              <Text style={styles.perkName}>{p.name}</Text>
-              <Text style={styles.perkSub}>{p.desc}</Text>
-            </View>
-          ))}
+          {partnerPerks.map((p) => {
+            const Icon = p.icon;
+            return (
+              <View key={p.name} style={styles.perkCard}>
+                <Icon size={22} color={colors.textSecondary} strokeWidth={1.75} />
+                <Text style={styles.perkName}>{p.name}</Text>
+                <Text style={styles.perkSub}>{p.desc}</Text>
+              </View>
+            );
+          })}
         </ScrollView>
 
-        {/* Top Features */}
         <Text style={styles.sectionTitle}>Top features</Text>
         <View style={styles.featuresList}>
-          <View style={styles.featureItem}>
-            <View style={styles.featureIcon}>
-              <Zap size={18} color="#60a5fa" />
-            </View>
-            <View style={styles.featureContent}>
-              <Text style={styles.featureTitle}>Currency exchange</Text>
-              <Text style={styles.featureDesc}>
-                No additional exchange fees up to $15,000 monthly allowance.
-              </Text>
-            </View>
-          </View>
-
-          <View style={styles.featureItem}>
-            <View style={styles.featureIcon}>
-              <Globe size={18} color="#10b981" />
-            </View>
-            <View style={styles.featureContent}>
-              <Text style={styles.featureTitle}>Global medical insurance</Text>
-              <Text style={styles.featureDesc}>
-                Comprehensive international travel and medical coverage.
-              </Text>
-            </View>
-          </View>
-
-          <View style={styles.featureItem}>
-            <View style={styles.featureIcon}>
-              <Shield size={18} color="#f59e0b" />
-            </View>
-            <View style={styles.featureContent}>
-              <Text style={styles.featureTitle}>Everyday protection</Text>
-              <Text style={styles.featureDesc}>
-                Up to $10,000 purchase and refund protection per year.
-              </Text>
-            </View>
-          </View>
+          {features.map((f) => {
+            const Icon = f.icon;
+            return (
+              <View key={f.title} style={styles.featureItem}>
+                <View style={styles.featureIcon}>
+                  <Icon size={18} color={colors.textSecondary} strokeWidth={1.75} />
+                </View>
+                <View style={styles.featureContent}>
+                  <Text style={styles.featureTitle}>{f.title}</Text>
+                  <Text style={styles.featureDesc}>{f.desc}</Text>
+                </View>
+              </View>
+            );
+          })}
         </View>
 
-        {/* Legal text */}
         <Text style={styles.disclaimerText}>
-          This is a 12 month plan charged in monthly instalments. By proceeding you have read and agree to the Promotion Terms and Plan Terms.
+          This is a 12 month plan charged in monthly instalments. By proceeding you agree
+          to the Promotion Terms and Plan Terms.
         </Text>
 
-        <View style={{ height: 24 }} />
+        <View style={styles.bottomSpacer} />
       </ScrollView>
 
-      {/* Bottom CTA */}
       <View style={styles.footerArea}>
         <TouchableOpacity
           style={styles.startTrialBtn}
@@ -179,13 +196,13 @@ export const PlanSelectionStep: React.FC<PlanSelectionStepProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000000',
+    backgroundColor: colors.background,
     justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    paddingBottom: 20,
+    paddingHorizontal: space.xl,
+    paddingBottom: space.xl,
   },
   topNav: {
-    paddingTop: 4,
+    paddingTop: space.xs,
     height: 40,
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -194,177 +211,162 @@ const styles = StyleSheet.create({
   backBtn: {
     width: 36,
     height: 36,
-    borderRadius: 18,
+    borderRadius: radius.pill,
     justifyContent: 'center',
     alignItems: 'center',
+    marginLeft: -space.sm,
   },
   notNowText: {
-    color: '#3b82f6',
+    color: colors.accent,
     fontSize: 15,
     fontWeight: '600',
   },
   scrollView: {
     flex: 1,
-    paddingTop: 8,
+    paddingTop: space.sm,
   },
   title: {
-    color: '#ffffff',
-    fontSize: 28,
-    fontWeight: '800',
-    letterSpacing: -0.5,
-    marginBottom: 16,
+    ...type.screenTitle,
+    marginBottom: space.lg,
   },
   tabsRow: {
     flexDirection: 'row',
-    gap: 8,
-    marginBottom: 16,
+    gap: space.sm,
+    marginBottom: space.lg,
   },
   tabPill: {
-    paddingHorizontal: 20,
-    paddingVertical: 8,
-    borderRadius: 20,
-    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    paddingHorizontal: space.xl,
+    paddingVertical: space.sm,
+    borderRadius: radius.pill,
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   tabPillActive: {
-    backgroundColor: '#2563eb',
+    backgroundColor: colors.surfaceRaised,
+    borderColor: colors.borderStrong,
   },
   tabText: {
-    color: '#94a3b8',
+    color: colors.textSecondary,
     fontSize: 14,
     fontWeight: '600',
   },
   tabTextActive: {
-    color: '#ffffff',
+    color: colors.text,
   },
   planBanner: {
-    borderRadius: 24,
-    padding: 20,
-    position: 'relative',
+    borderRadius: radius.xl,
+    padding: space.xl,
     overflow: 'hidden',
     borderWidth: 1,
-    marginBottom: 24,
-  },
-  bannerPremium: {
-    backgroundColor: '#131b2e',
-    borderColor: 'rgba(59, 130, 246, 0.3)',
-  },
-  bannerMetal: {
-    backgroundColor: '#1c1f2e',
-    borderColor: 'rgba(245, 158, 11, 0.3)',
+    borderColor: colors.border,
+    backgroundColor: colors.surface,
+    marginBottom: space.xxl,
   },
   bannerHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: space.sm,
   },
   bannerTierName: {
-    color: '#ffffff',
-    fontSize: 26,
-    fontWeight: '900',
+    ...type.screenTitle,
     letterSpacing: -0.5,
   },
   specialBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.4)',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 10,
-    gap: 4,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.15)',
+    backgroundColor: colors.accentSoft,
+    paddingHorizontal: space.sm,
+    paddingVertical: space.xs,
+    borderRadius: radius.pill,
   },
   specialBadgeText: {
-    color: '#ffffff',
+    color: colors.accent,
     fontSize: 11,
     fontWeight: '700',
   },
   pricingText: {
-    color: '#ffffff',
+    color: colors.text,
     fontSize: 15,
     fontWeight: '600',
-    marginBottom: 4,
+    marginBottom: space.xs,
   },
   bannerTagline: {
-    color: '#94a3b8',
-    fontSize: 13,
-    marginBottom: 16,
+    ...type.caption,
+    marginBottom: space.lg,
   },
   cardGraphicPreview: {
     alignItems: 'flex-end',
-    marginTop: -10,
+    marginTop: -space.md,
   },
-  previewCardEdge: {
+  previewCard: {
     width: 140,
     height: 80,
-    borderRadius: 12,
-    backgroundColor: '#0a0d14',
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.2)',
-    padding: 10,
+    borderRadius: radius.sm,
+    padding: space.sm,
     justifyContent: 'space-between',
+    borderWidth: 1,
+    borderColor: colors.borderStrong,
+  },
+  previewCardMetal: {
+    backgroundColor: colors.cardMetal,
+  },
+  previewCardPremium: {
+    backgroundColor: colors.black,
   },
   previewCardBrand: {
-    color: '#ffffff',
+    color: colors.text,
     fontSize: 12,
     fontWeight: '800',
   },
   previewCardEdition: {
-    color: '#60a5fa',
+    color: colors.textMuted,
     fontSize: 8,
     fontWeight: '700',
     letterSpacing: 0.5,
   },
   sectionTitle: {
-    color: '#ffffff',
-    fontSize: 16,
-    fontWeight: '700',
-    marginBottom: 12,
+    ...type.sectionTitle,
+    marginBottom: space.md,
   },
   perksRow: {
     flexDirection: 'row',
-    marginBottom: 24,
+    marginBottom: space.xxl,
   },
   perkCard: {
-    width: 90,
-    backgroundColor: 'rgba(255, 255, 255, 0.05)',
-    borderRadius: 16,
-    padding: 12,
+    width: 96,
+    backgroundColor: colors.surface,
+    borderRadius: radius.md,
+    padding: space.md,
     alignItems: 'center',
-    marginRight: 10,
+    gap: space.sm,
+    marginRight: space.sm,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.05)',
-  },
-  perkEmoji: {
-    fontSize: 24,
-    marginBottom: 8,
+    borderColor: colors.border,
   },
   perkName: {
-    color: '#ffffff',
+    color: colors.text,
     fontSize: 11,
     fontWeight: '700',
     textAlign: 'center',
-    marginBottom: 2,
   },
   perkSub: {
-    color: '#64748b',
+    color: colors.textMuted,
     fontSize: 9,
     textAlign: 'center',
   },
   featuresList: {
-    gap: 12,
-    marginBottom: 20,
+    gap: space.md,
+    marginBottom: space.xl,
   },
   featureItem: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    gap: 12,
-    backgroundColor: 'rgba(255, 255, 255, 0.04)',
-    padding: 14,
-    borderRadius: 16,
+    gap: space.md,
+    backgroundColor: colors.surface,
+    padding: space.md,
+    borderRadius: radius.md,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.05)',
+    borderColor: colors.border,
   },
   featureIcon: {
     marginTop: 2,
@@ -374,36 +376,30 @@ const styles = StyleSheet.create({
     gap: 2,
   },
   featureTitle: {
-    color: '#ffffff',
+    color: colors.text,
     fontSize: 14,
     fontWeight: '700',
   },
   featureDesc: {
-    color: '#94a3b8',
-    fontSize: 12,
-    lineHeight: 17,
+    ...type.caption,
   },
   disclaimerText: {
-    color: '#64748b',
+    ...type.caption,
     fontSize: 11,
     lineHeight: 16,
     textAlign: 'center',
-    paddingHorizontal: 8,
+    paddingHorizontal: space.sm,
+  },
+  bottomSpacer: {
+    height: space.xxl,
   },
   footerArea: {
-    paddingTop: 12,
+    paddingTop: space.md,
   },
   startTrialBtn: {
-    height: 52,
-    backgroundColor: '#ffffff',
-    borderRadius: 26,
-    justifyContent: 'center',
-    alignItems: 'center',
+    ...primaryButton,
   },
   startTrialBtnText: {
-    color: '#000000',
-    fontSize: 16,
-    fontWeight: '700',
+    ...primaryButtonText,
   },
 });
-

@@ -6,12 +6,11 @@ export const INITIAL_TRANSACTIONS: TransactionRecord[] = [
     timestamp: 'Today, 11:24 AM',
     type: 'sent',
     title: 'Sent to @vitalik.eth',
-    subtitle: 'Agent auto-routed via Arbitrum L2',
+    subtitle: 'Sent via Arbitrum',
     amount: 0.25,
     currency: 'ETH',
     fiatAmount: 825.00,
     status: 'completed',
-    icon: '↗',
     txHash: '0x8f2a...49bc'
   },
   {
@@ -24,19 +23,17 @@ export const INITIAL_TRANSACTIONS: TransactionRecord[] = [
     currency: 'USD',
     fiatAmount: 2500.00,
     status: 'completed',
-    icon: '↙'
   },
   {
     id: 'tx-3',
     timestamp: 'Yesterday, 8:40 PM',
     type: 'swapped',
     title: 'Swapped SOL to Native Token',
-    subtitle: 'Zero slippage DEX smart route',
+    subtitle: 'Swapped via Native Exchange',
     amount: 5.0,
     currency: 'SOL',
     fiatAmount: 950.00,
     status: 'completed',
-    icon: '⇄',
     txHash: '5K3d...8e21'
   },
   {
@@ -44,12 +41,11 @@ export const INITIAL_TRANSACTIONS: TransactionRecord[] = [
     timestamp: 'Nov 07, 3:12 PM',
     type: 'sent',
     title: 'QR Payment: Blue Bottle Coffee',
-    subtitle: 'Agent merchant scanner approved',
+    subtitle: 'QR payment • Blue Bottle Coffee',
     amount: 6.80,
     currency: 'USDC',
     fiatAmount: 6.80,
     status: 'completed',
-    icon: '⚡'
   }
 ];
 

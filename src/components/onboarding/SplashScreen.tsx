@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { colors } from '../../theme';
 
 interface SplashScreenProps {
   onFinish: () => void;
@@ -7,9 +8,7 @@ interface SplashScreenProps {
 
 export const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
   useEffect(() => {
-    const timer = setTimeout(() => {
-      onFinish();
-    }, 1800);
+    const timer = setTimeout(onFinish, 1800);
     return () => clearTimeout(timer);
   }, [onFinish]);
 
@@ -18,15 +17,9 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
       style={styles.container}
       activeOpacity={1}
       onPress={onFinish}
+      accessibilityLabel="Native"
     >
-      <View style={styles.centerContainer}>
-        {/* Revolut iOS 0.png Style: Clean, bold minimalist wordmark centered on pure white */}
-        <Text style={styles.brandWordmark}>Native</Text>
-      </View>
-
-      <View style={styles.bottomBar}>
-        <View style={styles.homeIndicator} />
-      </View>
+      <Text style={styles.wordmark}>Native</Text>
     </TouchableOpacity>
   );
 };
@@ -34,32 +27,14 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffffff',
-    justifyContent: 'space-between',
+    backgroundColor: colors.white,
     alignItems: 'center',
-    paddingVertical: 32,
-  },
-  centerContainer: {
-    flex: 1,
     justifyContent: 'center',
-    alignItems: 'center',
   },
-  brandWordmark: {
-    fontSize: 54,
-    fontWeight: '900',
-    color: '#000000',
-    letterSpacing: -1.5,
-  },
-  bottomBar: {
-    width: '100%',
-    alignItems: 'center',
-    paddingBottom: 24,
-  },
-  homeIndicator: {
-    width: 140,
-    height: 5,
-    backgroundColor: '#000000',
-    borderRadius: 3,
+  wordmark: {
+    fontSize: 52,
+    fontWeight: '800',
+    color: colors.onLight,
+    letterSpacing: -2,
   },
 });
-

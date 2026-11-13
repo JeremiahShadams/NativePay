@@ -1,7 +1,8 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { ArrowLeft, ChevronRight, Zap, FileText } from 'lucide-react-native';
+import { ArrowLeft, ChevronRight, FileText, Zap } from 'lucide-react-native';
 import { sounds } from '../../utils/soundEffects';
+import { colors, radius, space, type } from '../../theme';
 
 interface IdentityKycStepProps {
   onBack: () => void;
@@ -14,12 +15,26 @@ export const IdentityKycStep: React.FC<IdentityKycStepProps> = ({
 }) => {
   return (
     <View style={styles.container}>
-      {/* Main Content - Revolut iOS 17.png */}
+      <View style={styles.topNav}>
+        <TouchableOpacity
+          onPress={() => {
+            sounds.playKeyClick();
+            onBack();
+          }}
+          style={styles.backBtn}
+          accessibilityLabel="Go back"
+        >
+          <ArrowLeft size={22} color={colors.text} />
+        </TouchableOpacity>
+      </View>
+
       <View style={styles.content}>
         <Text style={styles.title}>Verify your identity</Text>
+        <Text style={styles.subtitle}>
+          Choose how you'd like to confirm who you are.
+        </Text>
 
         <View style={styles.cardsColumn}>
-          {/* Option 1: Singpass MyInfo */}
           <TouchableOpacity
             style={styles.methodCard}
             onPress={() => {
@@ -28,25 +43,18 @@ export const IdentityKycStep: React.FC<IdentityKycStepProps> = ({
             }}
             activeOpacity={0.75}
           >
-            <View style={styles.methodHeader}>
-              <View style={styles.iconCircleFast}>
-                <Zap size={20} color="#000000" />
-              </View>
-              <View style={styles.methodTextContainer}>
-                <Text style={styles.methodTitle}>Verify using Singpass MyInfo</Text>
-                <Text style={styles.methodDesc}>
-                  Instant and hassle free verification using Singpass Government Database
-                </Text>
-                <View style={styles.fasterBadge}>
-                  <Zap size={11} color="#000000" />
-                  <Text style={styles.fasterBadgeText}>Faster</Text>
-                </View>
-              </View>
-              <ChevronRight size={20} color="#8e8e93" />
+            <View style={styles.iconCircle}>
+              <Zap size={20} color={colors.text} />
             </View>
+            <View style={styles.methodTextContainer}>
+              <Text style={styles.methodTitle}>Verify with Singpass MyInfo</Text>
+              <Text style={styles.methodDesc}>
+                Instant verification using the Singpass government database.
+              </Text>
+            </View>
+            <ChevronRight size={20} color={colors.textMuted} />
           </TouchableOpacity>
 
-          {/* Option 2: Document Upload */}
           <TouchableOpacity
             style={styles.methodCard}
             onPress={() => {
@@ -55,18 +63,16 @@ export const IdentityKycStep: React.FC<IdentityKycStepProps> = ({
             }}
             activeOpacity={0.75}
           >
-            <View style={styles.methodHeader}>
-              <View style={styles.iconCircleDocs}>
-                <FileText size={20} color="#8e8e93" />
-              </View>
-              <View style={styles.methodTextContainer}>
-                <Text style={styles.methodTitle}>Verify using documents</Text>
-                <Text style={styles.methodDesc}>
-                  Enter your details and upload your documents (NRIC / Passport / Permit) to complete verification
-                </Text>
-              </View>
-              <ChevronRight size={20} color="#8e8e93" />
+            <View style={styles.iconCircle}>
+              <FileText size={20} color={colors.text} />
             </View>
+            <View style={styles.methodTextContainer}>
+              <Text style={styles.methodTitle}>Verify with documents</Text>
+              <Text style={styles.methodDesc}>
+                Enter your details and upload an NRIC, passport or permit.
+              </Text>
+            </View>
+            <ChevronRight size={20} color={colors.textMuted} />
           </TouchableOpacity>
         </View>
       </View>
@@ -77,116 +83,66 @@ export const IdentityKycStep: React.FC<IdentityKycStepProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000000',
-    paddingHorizontal: 20,
-    paddingBottom: 24,
+    backgroundColor: colors.background,
+    paddingHorizontal: space.xl,
+    paddingBottom: space.xxl,
   },
   topNav: {
-    paddingTop: 4,
+    paddingTop: space.xs,
     height: 40,
     justifyContent: 'center',
   },
   backBtn: {
     width: 36,
     height: 36,
-    borderRadius: 18,
+    borderRadius: radius.pill,
     justifyContent: 'center',
     alignItems: 'center',
+    marginLeft: -space.sm,
   },
   content: {
     flex: 1,
-    paddingTop: 12,
+    paddingTop: space.md,
   },
   title: {
-    color: '#ffffff',
-    fontSize: 28,
-    fontWeight: '800',
-    letterSpacing: -0.5,
-    marginBottom: 8,
+    ...type.screenTitle,
+    marginBottom: space.sm,
   },
   subtitle: {
-    color: '#94a3b8',
-    fontSize: 14,
-    lineHeight: 21,
-    marginBottom: 28,
+    ...type.body,
+    marginBottom: space.xxl,
   },
   cardsColumn: {
-    gap: 16,
+    gap: space.md,
   },
   methodCard: {
-    backgroundColor: 'rgba(255, 255, 255, 0.07)',
-    borderRadius: 20,
-    padding: 18,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.08)',
-  },
-  methodHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 14,
+    gap: space.md,
+    backgroundColor: colors.surface,
+    borderRadius: radius.lg,
+    padding: space.lg,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
-  iconCircleFast: {
-    width: 46,
-    height: 46,
-    borderRadius: 23,
-    backgroundColor: 'rgba(37, 99, 235, 0.2)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  iconCircleDocs: {
-    width: 46,
-    height: 46,
-    borderRadius: 23,
-    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+  iconCircle: {
+    width: 42,
+    height: 42,
+    borderRadius: radius.pill,
+    backgroundColor: colors.surfaceRaised,
     justifyContent: 'center',
     alignItems: 'center',
   },
   methodTextContainer: {
     flex: 1,
-    gap: 4,
+    gap: space.xs,
   },
   methodTitle: {
-    color: '#ffffff',
+    color: colors.text,
     fontSize: 16,
     fontWeight: '700',
   },
   methodDesc: {
-    color: '#94a3b8',
-    fontSize: 13,
-    lineHeight: 18,
-  },
-  fasterBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#ffffff',
-    alignSelf: 'flex-start',
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 14,
-    marginTop: 6,
-    gap: 4,
-  },
-  fasterBadgeText: {
-    color: '#000000',
-    fontSize: 12,
-    fontWeight: '700',
-  },
-  securityNote: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-    backgroundColor: 'rgba(16, 185, 129, 0.08)',
-    padding: 14,
-    borderRadius: 14,
-    marginTop: 'auto',
-    borderWidth: 1,
-    borderColor: 'rgba(16, 185, 129, 0.15)',
-  },
-  securityNoteText: {
-    color: '#a7f3d0',
-    fontSize: 12,
-    lineHeight: 17,
-    flex: 1,
+    ...type.caption,
   },
 });
-

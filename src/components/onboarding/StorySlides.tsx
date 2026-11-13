@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { Wifi } from 'lucide-react-native';
 import { sounds } from '../../utils/soundEffects';
+import { colors, radius, space } from '../../theme';
 
 interface StorySlidesProps {
   onCreateAccount: () => void;
@@ -13,15 +15,15 @@ export const StorySlides: React.FC<StorySlidesProps> = ({ onCreateAccount, onLog
   const slides = [
     {
       id: 0,
-      title: 'READY TO CHANGE\nTHE WAY YOU MONEY?',
+      title: 'READY TO CHANGE\nTHE WAY YOU MOVE MONEY?',
       subtitle: '',
       isDark: true,
     },
     {
       id: 1,
       title: 'EASY TO PAY AT\nHOME AND AWAY',
-      subtitle: 'Some cards available on paid plans or in certain countries only.',
-      isDark: false, // Pure white background from Revolut iOS 2.png
+      subtitle: 'Some cards are available on paid plans or in certain countries only.',
+      isDark: false,
     },
     {
       id: 2,
@@ -31,13 +33,13 @@ export const StorySlides: React.FC<StorySlidesProps> = ({ onCreateAccount, onLog
     },
   ];
 
-  // Auto-advance stories every 5 seconds
+  // Auto-advance, restarting the timer whenever the slide changes.
   useEffect(() => {
-    const timer = setInterval(() => {
+    const timer = setTimeout(() => {
       setActiveSlide((prev) => (prev + 1) % slides.length);
-    }, 5000);
-    return () => clearInterval(timer);
-  }, [slides.length]);
+    }, 6000);
+    return () => clearTimeout(timer);
+  }, [activeSlide, slides.length]);
 
   const handleNext = () => {
     sounds.playKeyClick();
@@ -50,10 +52,11 @@ export const StorySlides: React.FC<StorySlidesProps> = ({ onCreateAccount, onLog
   };
 
   const current = slides[activeSlide];
+  const fg = current.isDark ? colors.text : colors.onLight;
+  const muted = current.isDark ? colors.textSecondary : '#5F6470';
 
   return (
-    <View style={[styles.container, { backgroundColor: current.isDark ? '#000000' : '#ffffff' }]}>
-      {/* Top Segmented Story Bars (Revolut iOS 1, 2, 3) */}
+    <View style={[styles.container, { backgroundColor: current.isDark ? colors.background : colors.white }]}>
       <View style={styles.topProgressWrapper}>
         <View style={styles.progressRow}>
           {slides.map((s, i) => (
@@ -67,9 +70,8 @@ export const StorySlides: React.FC<StorySlidesProps> = ({ onCreateAccount, onLog
                 style={[
                   styles.progressBarFill,
                   {
-                    backgroundColor: current.isDark ? '#ffffff' : '#000000',
-                    width: i === activeSlide ? '100%' : i < activeSlide ? '100%' : '0%',
-                    opacity: i === activeSlide ? 1 : i < activeSlide ? 0.6 : 0.2,
+                    backgroundColor: fg,
+                    opacity: i === activeSlide ? 1 : i < activeSlide ? 0.55 : 0.2,
                   },
                 ]}
               />
@@ -77,49 +79,36 @@ export const StorySlides: React.FC<StorySlidesProps> = ({ onCreateAccount, onLog
           ))}
         </View>
 
-        {/* Header Tag: Welcome to Native */}
         <View style={styles.headerRow}>
-          <View style={[styles.logoPill, { backgroundColor: current.isDark ? '#ffffff' : '#000000' }]}>
-            <Text style={[styles.logoLetter, { color: current.isDark ? '#000000' : '#ffffff' }]}>N</Text>
+          <View style={[styles.logoPill, { backgroundColor: fg }]}>
+            <Text style={[styles.logoLetter, { color: current.isDark ? colors.onLight : colors.white }]}>
+              N
+            </Text>
           </View>
-          <Text style={[styles.headerText, { color: current.isDark ? '#ffffff' : '#000000' }]}>
-            Welcome to Native
-          </Text>
+          <Text style={[styles.headerText, { color: fg }]}>Welcome to Native</Text>
         </View>
       </View>
 
-      {/* Main Content Area with tap gestures */}
       <View style={styles.contentArea}>
         <TouchableOpacity style={styles.leftTapTarget} onPress={handlePrev} activeOpacity={1} />
         <TouchableOpacity style={styles.rightTapTarget} onPress={handleNext} activeOpacity={1} />
 
-        {/* Headline & Subtitle */}
         <View style={styles.headerTextBlock}>
-          <Text style={[styles.mainHeadline, { color: current.isDark ? '#ffffff' : '#000000' }]}>
-            {current.title}
-          </Text>
+          <Text style={[styles.mainHeadline, { color: fg }]}>{current.title}</Text>
           {current.subtitle ? (
-            <Text style={[styles.subtitleText, { color: current.isDark ? '#8e8e93' : '#666666' }]}>
-              {current.subtitle}
-            </Text>
+            <Text style={[styles.subtitleText, { color: muted }]}>{current.subtitle}</Text>
           ) : null}
         </View>
 
-        {/* Graphic Area */}
         <View style={styles.graphicStage}>
-          {/* SLIDE 0: 3D Perspective Metallic Coin in Hyperspace (Revolut iOS 1.png) */}
           {activeSlide === 0 && (
             <View style={styles.coinStage}>
-              {/* Radial Hyperspace Speedlines */}
               <View style={[styles.speedline, { transform: [{ rotate: '-45deg' }] }]} />
-              <View style={[styles.speedline, { transform: [{ rotate: '-25deg' }] }]} />
+              <View style={[styles.speedline, { transform: [{ rotate: '-22deg' }] }]} />
               <View style={[styles.speedline, { transform: [{ rotate: '0deg' }] }]} />
-              <View style={[styles.speedline, { transform: [{ rotate: '25deg' }] }]} />
+              <View style={[styles.speedline, { transform: [{ rotate: '22deg' }] }]} />
               <View style={[styles.speedline, { transform: [{ rotate: '45deg' }] }]} />
-              <View style={[styles.speedline, { transform: [{ rotate: '70deg' }] }]} />
-              <View style={[styles.speedline, { transform: [{ rotate: '-70deg' }] }]} />
 
-              {/* 3D Perspective Platinum Coin */}
               <View style={styles.coinPerspectiveWrapper}>
                 <View style={styles.coinEdge3D}>
                   <View style={styles.coinFace3D}>
@@ -130,25 +119,21 @@ export const StorySlides: React.FC<StorySlidesProps> = ({ onCreateAccount, onLog
             </View>
           )}
 
-          {/* SLIDE 1: Stacked Physical Cards (Revolut iOS 2.png) */}
           {activeSlide === 1 && (
             <View style={styles.cardsStackStage}>
-              {/* Card 1 (Back): Rose Gold Metal */}
               <View style={[styles.cardCommon, styles.roseGoldCard]}>
                 <Text style={styles.cardBrandWhite}>Native</Text>
                 <View style={styles.cardSimChip} />
               </View>
 
-              {/* Card 2 (Middle): Vibrant Rainbow Horizon */}
               <View style={[styles.cardCommon, styles.rainbowCard]}>
                 <Text style={styles.cardBrandWhite}>Native</Text>
                 <View style={styles.cardSimChipRight} />
               </View>
 
-              {/* Card 3 (Bottom Peeking): Obsidian Inverted Card with Numbers */}
               <View style={[styles.cardCommon, styles.invertedPeekingCard]}>
                 <View style={styles.peekingRow}>
-                  <Text style={styles.contactlessSymbol}>))))</Text>
+                  <Wifi size={14} color="#A1A1AA" style={styles.contactlessIcon} />
                   <Text style={styles.peekingNumbers}>5273 4620 7703 5008</Text>
                   <Text style={styles.peekingMeta}>EXP 11/25  CVC 142</Text>
                 </View>
@@ -156,41 +141,35 @@ export const StorySlides: React.FC<StorySlidesProps> = ({ onCreateAccount, onLog
             </View>
           )}
 
-          {/* SLIDE 2: 3D Stacked Discs / Assets (Revolut iOS 3.png) */}
           {activeSlide === 2 && (
             <View style={styles.discsStage}>
-              {/* Disc 1: Dark Titanium (Google / Bitcoin) */}
               <View style={[styles.discItem, styles.discTitanium]}>
                 <View style={styles.discInner}>
                   <Text style={styles.discEmboss}>G</Text>
                 </View>
               </View>
 
-              {/* Disc 2: Copper (Spotify) */}
               <View style={[styles.discItem, styles.discCopper]}>
                 <View style={styles.discInner}>
-                  <Text style={styles.discEmbossSmall}>≋</Text>
+                  <Text style={styles.discEmbossSmall}>S</Text>
                 </View>
               </View>
 
-              {/* Disc 3: Silver Platinum (Apple) */}
               <View style={[styles.discItem, styles.discSilver]}>
                 <View style={styles.discInner}>
-                  <Text style={styles.discEmbossSmall}></Text>
+                  <Text style={[styles.discEmbossSmall, { color: '#3F3F46' }]}>A</Text>
                 </View>
               </View>
 
-              {/* Disc 4: Bronze (IBM) */}
               <View style={[styles.discItem, styles.discBronze]}>
                 <View style={styles.discInner}>
                   <Text style={styles.discEmbossSmall}>IBM</Text>
                 </View>
               </View>
 
-              {/* Disc 5: Blue Steel (Microsoft) */}
               <View style={[styles.discItem, styles.discBlueSteel]}>
                 <View style={styles.discInner}>
-                  <Text style={styles.discEmbossSmall}>⊞</Text>
+                  <Text style={styles.discEmbossSmall}>M</Text>
                 </View>
               </View>
             </View>
@@ -198,15 +177,11 @@ export const StorySlides: React.FC<StorySlidesProps> = ({ onCreateAccount, onLog
         </View>
       </View>
 
-      {/* Bottom CTA Pill Buttons (Revolut iOS 1, 2, 3) */}
       <View style={styles.bottomButtonsWrapper}>
-        {/* Create account button */}
         <TouchableOpacity
           style={[
             styles.ctaButton,
-            current.isDark
-              ? styles.whitePillButton
-              : styles.lightPillButton,
+            current.isDark ? styles.primaryOnDark : styles.primaryOnLight,
           ]}
           onPress={() => {
             sounds.playKeyClick();
@@ -217,20 +192,17 @@ export const StorySlides: React.FC<StorySlidesProps> = ({ onCreateAccount, onLog
           <Text
             style={[
               styles.ctaButtonText,
-              { color: '#000000' },
+              { color: current.isDark ? colors.onLight : colors.white },
             ]}
           >
             Create account
           </Text>
         </TouchableOpacity>
 
-        {/* Log in button */}
         <TouchableOpacity
           style={[
             styles.ctaButton,
-            current.isDark
-              ? styles.translucentDarkPillButton
-              : styles.blackPillButton,
+            current.isDark ? styles.secondaryOnDark : styles.secondaryOnLight,
           ]}
           onPress={() => {
             sounds.playKeyClick();
@@ -241,62 +213,55 @@ export const StorySlides: React.FC<StorySlidesProps> = ({ onCreateAccount, onLog
           <Text
             style={[
               styles.ctaButtonText,
-              { color: '#ffffff' },
+              { color: current.isDark ? colors.text : colors.onLight },
             ]}
           >
             Log in
           </Text>
         </TouchableOpacity>
-
-        <View style={styles.bottomCuratedTag}>
-          <Text style={[styles.curatedSmallText, { color: current.isDark ? '#666666' : '#999999' }]}>
-            Native • curated by Mobbin
-          </Text>
-        </View>
       </View>
     </View>
   );
 };
 
-const { width } = Dimensions.get('window');
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    paddingTop: 12,
-    paddingBottom: 24,
+    paddingHorizontal: space.xl,
+    paddingTop: space.md,
+    paddingBottom: space.xl,
   },
   topProgressWrapper: {
     width: '100%',
-    paddingTop: 8,
+    paddingTop: space.sm,
   },
   progressRow: {
     flexDirection: 'row',
     gap: 6,
-    marginBottom: 16,
+    marginBottom: space.lg,
   },
   progressBarWrapper: {
     flex: 1,
     height: 3,
     backgroundColor: 'rgba(128, 128, 128, 0.25)',
-    borderRadius: 2,
+    borderRadius: radius.pill,
     overflow: 'hidden',
   },
   progressBarFill: {
+    width: '100%',
     height: '100%',
-    borderRadius: 2,
+    borderRadius: radius.pill,
   },
   headerRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
+    gap: space.sm,
   },
   logoPill: {
     width: 22,
     height: 22,
-    borderRadius: 5,
+    borderRadius: radius.xs,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -313,14 +278,14 @@ const styles = StyleSheet.create({
     flex: 1,
     position: 'relative',
     justifyContent: 'space-between',
-    paddingVertical: 12,
+    paddingVertical: space.md,
   },
   leftTapTarget: {
     position: 'absolute',
     left: 0,
     top: 0,
     bottom: 0,
-    width: '35%',
+    width: '34%',
     zIndex: 10,
   },
   rightTapTarget: {
@@ -328,226 +293,205 @@ const styles = StyleSheet.create({
     right: 0,
     top: 0,
     bottom: 0,
-    width: '35%',
+    width: '34%',
     zIndex: 10,
   },
   headerTextBlock: {
-    paddingTop: 8,
+    paddingTop: space.sm,
     paddingHorizontal: 4,
   },
   mainHeadline: {
-    fontSize: 34,
-    fontWeight: '900',
-    lineHeight: 40,
+    fontSize: 32,
+    fontWeight: '800',
+    lineHeight: 38,
     letterSpacing: -0.6,
   },
   subtitleText: {
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: '400',
-    lineHeight: 22,
-    marginTop: 10,
+    lineHeight: 21,
+    marginTop: space.sm,
   },
   graphicStage: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    marginVertical: 10,
+    marginVertical: space.sm,
   },
 
-  // SLIDE 0: 3D Coin & Speedlines
+  // Slide 0 — metallic coin
   coinStage: {
-    width: 320,
-    height: 260,
+    width: 300,
+    height: 240,
     justifyContent: 'center',
     alignItems: 'center',
     position: 'relative',
   },
   speedline: {
     position: 'absolute',
-    width: 2,
-    height: 300,
-    backgroundColor: 'rgba(59, 130, 246, 0.35)',
+    width: 1,
+    height: 280,
+    backgroundColor: 'rgba(255, 255, 255, 0.09)',
   },
   coinPerspectiveWrapper: {
-    width: 220,
-    height: 120,
+    width: 210,
+    height: 116,
     transform: [{ rotateX: '55deg' }, { rotateZ: '-12deg' }],
   },
   coinEdge3D: {
-    width: 220,
-    height: 120,
-    borderRadius: 110,
-    backgroundColor: '#71717a',
-    borderWidth: 4,
-    borderColor: '#d4d4d8',
+    width: 210,
+    height: 116,
+    borderRadius: 105,
+    backgroundColor: '#63666D',
+    borderWidth: 3,
+    borderColor: '#C9CBD1',
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#3b82f6',
-    shadowOffset: { width: 0, height: 16 },
-    shadowOpacity: 0.45,
-    shadowRadius: 24,
-    elevation: 20,
   },
   coinFace3D: {
-    width: 206,
+    width: 200,
     height: 106,
-    borderRadius: 103,
-    backgroundColor: '#e4e4e7',
+    borderRadius: 100,
+    backgroundColor: '#E8E9EC',
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 2,
-    borderColor: '#f4f4f5',
+    borderWidth: 1.5,
+    borderColor: '#F6F6F7',
   },
   coinLetter3D: {
-    fontSize: 72,
+    fontSize: 68,
     fontWeight: '900',
-    color: '#a1a1aa',
+    color: '#A6A8AE',
     letterSpacing: -2,
     transform: [{ scaleY: 1.1 }],
   },
 
-  // SLIDE 1: Stacked Cards (Rose Gold, Rainbow, Peeking Obsidian)
+  // Slide 1 — stacked cards
   cardsStackStage: {
     width: 290,
-    height: 270,
+    height: 262,
     position: 'relative',
     alignItems: 'center',
   },
   cardCommon: {
-    width: 270,
-    height: 150,
-    borderRadius: 16,
-    padding: 16,
+    width: 268,
+    height: 148,
+    borderRadius: radius.lg,
+    padding: space.lg,
     position: 'absolute',
-    shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.22,
-    shadowRadius: 14,
-    elevation: 8,
   },
   roseGoldCard: {
     top: 0,
-    backgroundColor: '#e0a899',
+    backgroundColor: '#DBA697',
     zIndex: 1,
   },
   rainbowCard: {
-    top: 55,
-    backgroundColor: '#ff5e3a',
+    top: 56,
+    backgroundColor: '#E45533',
     zIndex: 2,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.3)',
+    borderColor: 'rgba(255, 255, 255, 0.28)',
   },
   invertedPeekingCard: {
-    top: 130,
-    backgroundColor: '#27272a',
+    top: 128,
+    backgroundColor: '#26272B',
     zIndex: 0,
   },
   cardBrandWhite: {
-    color: '#ffffff',
-    fontSize: 22,
+    color: colors.white,
+    fontSize: 21,
     fontWeight: '800',
     letterSpacing: -0.5,
   },
   cardSimChip: {
     position: 'absolute',
-    right: 20,
-    bottom: 20,
+    right: space.xl,
+    bottom: space.xl,
     width: 32,
     height: 24,
-    backgroundColor: '#e5e7eb',
-    borderRadius: 5,
-    borderWidth: 1,
-    borderColor: '#cbd5e1',
+    backgroundColor: '#E5E7EB',
+    borderRadius: radius.xs,
   },
   cardSimChipRight: {
     position: 'absolute',
-    right: 20,
-    bottom: 20,
+    right: space.xl,
+    bottom: space.xl,
     width: 32,
     height: 24,
-    backgroundColor: '#fef08a',
-    borderRadius: 5,
-    borderWidth: 1,
-    borderColor: '#ca8a04',
+    backgroundColor: '#F2D98B',
+    borderRadius: radius.xs,
   },
   peekingRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-end',
-    marginTop: 80,
+    marginTop: 78,
   },
-  contactlessSymbol: {
-    color: '#a1a1aa',
-    fontSize: 14,
-    fontWeight: '700',
+  contactlessIcon: {
+    transform: [{ rotate: '90deg' }],
   },
   peekingNumbers: {
-    color: '#ffffff',
+    color: colors.white,
     fontSize: 11,
     fontWeight: '600',
-    letterSpacing: 1.5,
+    letterSpacing: 1.4,
   },
   peekingMeta: {
-    color: '#a1a1aa',
+    color: '#A1A1AA',
     fontSize: 9,
     fontWeight: '600',
   },
 
-  // SLIDE 2: Stacked Discs (Revolut iOS 3.png)
+  // Slide 2 — stacked discs
   discsStage: {
     width: 220,
-    height: 270,
+    height: 264,
     justifyContent: 'center',
     alignItems: 'center',
     position: 'relative',
   },
   discItem: {
-    width: 170,
-    height: 52,
-    borderRadius: 85,
+    width: 168,
+    height: 50,
+    borderRadius: radius.pill,
     position: 'absolute',
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.35,
-    shadowRadius: 8,
-    elevation: 6,
   },
   discTitanium: {
     top: 10,
-    backgroundColor: '#27272a',
+    backgroundColor: '#26272B',
     borderWidth: 2,
-    borderColor: '#3f3f46',
+    borderColor: '#3F4046',
     zIndex: 5,
   },
   discCopper: {
-    top: 60,
-    backgroundColor: '#9a3412',
+    top: 58,
+    backgroundColor: '#8F3512',
     borderWidth: 2,
-    borderColor: '#c2410c',
+    borderColor: '#B74A20',
     zIndex: 4,
   },
   discSilver: {
-    top: 110,
-    backgroundColor: '#e4e4e7',
+    top: 106,
+    backgroundColor: '#E4E5E8',
     borderWidth: 2,
-    borderColor: '#ffffff',
+    borderColor: '#FFFFFF',
     zIndex: 3,
   },
   discBronze: {
-    top: 160,
-    backgroundColor: '#78350f',
+    top: 154,
+    backgroundColor: '#6E3010',
     borderWidth: 2,
-    borderColor: '#92400e',
+    borderColor: '#8A3D15',
     zIndex: 2,
   },
   discBlueSteel: {
-    top: 210,
-    backgroundColor: '#1e3a8a',
+    top: 202,
+    backgroundColor: '#1C356E',
     borderWidth: 2,
-    borderColor: '#2563eb',
+    borderColor: '#2B4FA0',
     zIndex: 1,
   },
   discInner: {
@@ -555,58 +499,43 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   discEmboss: {
-    fontSize: 26,
+    fontSize: 24,
     fontWeight: '900',
-    color: '#a1a1aa',
+    color: '#A1A1AA',
   },
   discEmbossSmall: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: '800',
-    color: 'rgba(255, 255, 255, 0.85)',
+    color: 'rgba(255, 255, 255, 0.88)',
   },
 
-  // BOTTOM CTA PILL BUTTONS (Revolut iOS 1, 2, 3)
   bottomButtonsWrapper: {
     width: '100%',
-    gap: 12,
-    paddingTop: 10,
+    gap: space.md,
+    paddingTop: space.sm,
   },
   ctaButton: {
     width: '100%',
-    height: 56,
-    borderRadius: 28,
+    height: 54,
+    borderRadius: radius.pill,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  whitePillButton: {
-    backgroundColor: '#ffffff',
+  primaryOnDark: {
+    backgroundColor: colors.white,
   },
-  lightPillButton: {
-    backgroundColor: '#ffffff',
-    borderWidth: 1,
-    borderColor: '#e5e7eb',
-    shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 4,
-    elevation: 2,
+  primaryOnLight: {
+    backgroundColor: colors.onLight,
   },
-  translucentDarkPillButton: {
-    backgroundColor: '#1c1c1e',
+  secondaryOnDark: {
+    backgroundColor: colors.surface,
   },
-  blackPillButton: {
-    backgroundColor: '#000000',
+  secondaryOnLight: {
+    backgroundColor: '#F1F2F4',
   },
   ctaButtonText: {
-    fontSize: 17,
+    fontSize: 16,
     fontWeight: '700',
     letterSpacing: -0.2,
-  },
-  bottomCuratedTag: {
-    alignItems: 'center',
-    marginTop: 4,
-  },
-  curatedSmallText: {
-    fontSize: 12,
   },
 });

@@ -1,37 +1,42 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { ArrowLeft } from 'lucide-react-native';
 import { sounds } from '../../utils/soundEffects';
+import {
+  colors,
+  radius,
+  space,
+  type,
+  primaryButton,
+  primaryButtonText,
+} from '../../theme';
 
 interface PrivacyStepProps {
   onBack: () => void;
   onContinue: () => void;
 }
 
-export const PrivacyStep: React.FC<PrivacyStepProps> = ({ onContinue }) => {
-  const [isEnabled, setIsEnabled] = useState(true);
-
+export const PrivacyStep: React.FC<PrivacyStepProps> = ({ onBack, onContinue }) => {
   return (
     <View style={styles.container}>
-      {/* Main Graphic & Text */}
-      <View style={styles.content}>
-        {/* Toggle Graphic (Revolut iOS 22.png) */}
+      <View style={styles.topNav}>
         <TouchableOpacity
-          style={styles.toggleGraphicWrapper}
           onPress={() => {
             sounds.playKeyClick();
-            setIsEnabled(!isEnabled);
+            onBack();
           }}
-          activeOpacity={0.8}
+          style={styles.backBtn}
+          accessibilityLabel="Go back"
         >
-          <View style={[styles.toggleTrack, isEnabled ? styles.toggleTrackActive : styles.toggleTrackInactive]}>
-            <View style={[styles.toggleThumb, isEnabled ? styles.toggleThumbActive : styles.toggleThumbInactive]} />
-          </View>
+          <ArrowLeft size={22} color={colors.text} />
         </TouchableOpacity>
+      </View>
 
-        <Text style={styles.title}>GET USEFUL ADS{'\n'}ONLY</Text>
+      <View style={styles.content}>
+        <Text style={styles.title}>Personalised ads</Text>
         <Text style={styles.subtitle}>
-          We use online ads to show you ways to get more from your money. To make sure we only show you relevant ads, we need you to allow Native to track your device activity. You can allow or deny this on the next screen.
+          We use device activity to show ads that are relevant to you. You can allow or
+          deny tracking on the next screen, and change your mind at any time.
         </Text>
 
         <TouchableOpacity
@@ -42,7 +47,6 @@ export const PrivacyStep: React.FC<PrivacyStepProps> = ({ onContinue }) => {
         </TouchableOpacity>
       </View>
 
-      {/* Continue CTA */}
       <View style={styles.footerArea}>
         <TouchableOpacity
           style={styles.continueButton}
@@ -62,95 +66,55 @@ export const PrivacyStep: React.FC<PrivacyStepProps> = ({ onContinue }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000000',
+    backgroundColor: colors.background,
     justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    paddingBottom: 20,
+    paddingHorizontal: space.xl,
+    paddingBottom: space.xl,
   },
   topNav: {
-    paddingTop: 4,
+    paddingTop: space.xs,
     height: 40,
     justifyContent: 'center',
   },
   backBtn: {
     width: 36,
     height: 36,
-    borderRadius: 18,
+    borderRadius: radius.pill,
     justifyContent: 'center',
     alignItems: 'center',
+    marginLeft: -space.sm,
   },
   content: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 12,
-  },
-  toggleGraphicWrapper: {
-    marginBottom: 36,
-  },
-  toggleTrack: {
-    width: 104,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: '#ffffff',
-    padding: 5,
-    justifyContent: 'center',
-  },
-  toggleTrackActive: {
-    backgroundColor: '#ffffff',
-  },
-  toggleTrackInactive: {
-    backgroundColor: '#3a3a3c',
-  },
-  toggleThumb: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: '#000000',
-  },
-  toggleThumbActive: {
-    transform: [{ translateX: 44 }],
-  },
-  toggleThumbInactive: {
-    transform: [{ translateX: 0 }],
+    paddingHorizontal: space.md,
   },
   title: {
-    color: '#ffffff',
-    fontSize: 24,
-    fontWeight: '900',
-    letterSpacing: -0.5,
+    ...type.screenTitle,
     textAlign: 'center',
-    marginBottom: 14,
+    marginBottom: space.md,
   },
   subtitle: {
-    color: '#94a3b8',
-    fontSize: 14,
-    lineHeight: 21,
+    ...type.body,
     textAlign: 'center',
-    marginBottom: 20,
+    marginBottom: space.lg,
   },
   learnMoreLink: {
-    padding: 6,
+    padding: space.xs,
   },
   learnMoreText: {
-    color: '#3b82f6',
+    color: colors.accent,
     fontSize: 14,
     fontWeight: '600',
   },
   footerArea: {
-    paddingTop: 16,
+    paddingTop: space.lg,
   },
   continueButton: {
-    height: 52,
-    backgroundColor: '#ffffff',
-    borderRadius: 26,
-    justifyContent: 'center',
-    alignItems: 'center',
+    ...primaryButton,
   },
   continueButtonText: {
-    color: '#000000',
-    fontSize: 16,
-    fontWeight: '700',
+    ...primaryButtonText,
   },
 });
-

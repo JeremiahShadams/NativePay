@@ -1,7 +1,17 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { ArrowLeft } from 'lucide-react-native';
+import { ArrowLeft, Bell } from 'lucide-react-native';
 import { sounds } from '../../utils/soundEffects';
+import {
+  colors,
+  radius,
+  space,
+  type,
+  primaryButton,
+  primaryButtonText,
+  secondaryButton,
+  secondaryButtonText,
+} from '../../theme';
 
 interface InstantNotificationsStepProps {
   onBack: () => void;
@@ -14,7 +24,6 @@ export const InstantNotificationsStep: React.FC<InstantNotificationsStepProps> =
 }) => {
   return (
     <View style={styles.container}>
-      {/* Top Nav */}
       <View style={styles.topNav}>
         <TouchableOpacity
           onPress={() => {
@@ -22,33 +31,23 @@ export const InstantNotificationsStep: React.FC<InstantNotificationsStepProps> =
             onBack();
           }}
           style={styles.backBtn}
+          accessibilityLabel="Go back"
         >
-          <ArrowLeft size={22} color="#ffffff" />
+          <ArrowLeft size={22} color={colors.text} />
         </TouchableOpacity>
       </View>
 
-      {/* Main Illustration */}
       <View style={styles.content}>
-        <View style={styles.bannerVisual}>
-          <View style={styles.notifCard}>
-            <View style={styles.notifBadge}>
-              <Text style={styles.notifBadgeText}>N</Text>
-            </View>
-            <View style={styles.notifContent}>
-              <View style={styles.notifBarTop} />
-              <View style={styles.notifBarBottom} />
-            </View>
-          </View>
-          <View style={styles.glowAura} />
+        <View style={styles.illustration}>
+          <Bell size={36} color={colors.text} strokeWidth={1.75} />
         </View>
 
-        <Text style={styles.title}>INSTANT NOTIFICATIONS</Text>
+        <Text style={styles.title}>Stay in the loop</Text>
         <Text style={styles.subtitle}>
-          Get instant payment notifications as you spend with your card and know your balance is always up to date
+          Get a notification the moment a payment clears, so your balance is always up to date.
         </Text>
       </View>
 
-      {/* Buttons */}
       <View style={styles.buttonContainer}>
         <TouchableOpacity
           style={styles.enableBtn}
@@ -58,7 +57,7 @@ export const InstantNotificationsStep: React.FC<InstantNotificationsStepProps> =
           }}
           activeOpacity={0.85}
         >
-          <Text style={styles.enableBtnText}>Enable push notifications</Text>
+          <Text style={styles.enableBtnText}>Enable notifications</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -79,148 +78,63 @@ export const InstantNotificationsStep: React.FC<InstantNotificationsStepProps> =
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000000',
+    backgroundColor: colors.background,
     justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    paddingBottom: 20,
+    paddingHorizontal: space.xl,
+    paddingBottom: space.xl,
   },
   topNav: {
-    paddingTop: 4,
+    paddingTop: space.xs,
     height: 40,
     justifyContent: 'center',
   },
   backBtn: {
     width: 36,
     height: 36,
-    borderRadius: 18,
+    borderRadius: radius.pill,
     justifyContent: 'center',
     alignItems: 'center',
+    marginLeft: -space.sm,
   },
   content: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 8,
+    paddingHorizontal: space.sm,
   },
-  bannerVisual: {
+  illustration: {
+    width: 88,
+    height: 88,
+    borderRadius: radius.pill,
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.border,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 36,
-    position: 'relative',
-  },
-  notifCard: {
-    width: 220,
-    height: 64,
-    backgroundColor: '#ffffff',
-    borderRadius: 20,
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    gap: 14,
-    shadowColor: '#2563eb',
-    shadowOffset: { width: 0, height: 12 },
-    shadowOpacity: 0.5,
-    shadowRadius: 24,
-  },
-  notifBadge: {
-    width: 36,
-    height: 36,
-    borderRadius: 10,
-    backgroundColor: '#000000',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  notifBadgeText: {
-    color: '#ffffff',
-    fontSize: 20,
-    fontWeight: '900',
-  },
-  notifContent: {
-    flex: 1,
-    gap: 6,
-  },
-  notifBarTop: {
-    width: '70%',
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: '#cbd5e1',
-  },
-  notifBarBottom: {
-    width: '45%',
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: '#e2e8f0',
-  },
-  glowAura: {
-    position: 'absolute',
-    width: 260,
-    height: 100,
-    borderRadius: 50,
-    backgroundColor: 'rgba(37, 99, 235, 0.18)',
-    zIndex: -1,
+    marginBottom: space.xxl,
   },
   title: {
-    color: '#ffffff',
-    fontSize: 26,
-    fontWeight: '900',
-    letterSpacing: -0.5,
+    ...type.screenTitle,
     textAlign: 'center',
-    marginBottom: 12,
+    marginBottom: space.sm,
   },
   subtitle: {
-    color: '#94a3b8',
-    fontSize: 15,
-    lineHeight: 22,
+    ...type.body,
     textAlign: 'center',
-    marginBottom: 24,
-  },
-  perksList: {
-    gap: 10,
-    width: '100%',
-    maxWidth: 320,
-  },
-  perkItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-    backgroundColor: 'rgba(255, 255, 255, 0.04)',
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.05)',
-  },
-  perkText: {
-    color: '#e2e8f0',
-    fontSize: 13,
-    fontWeight: '500',
   },
   buttonContainer: {
-    gap: 10,
+    gap: space.sm,
   },
   enableBtn: {
-    height: 52,
-    backgroundColor: '#ffffff',
-    borderRadius: 26,
-    justifyContent: 'center',
-    alignItems: 'center',
+    ...primaryButton,
   },
   enableBtnText: {
-    color: '#000000',
-    fontSize: 16,
-    fontWeight: '700',
+    ...primaryButtonText,
   },
   notNowBtn: {
-    height: 50,
-    backgroundColor: 'rgba(255, 255, 255, 0.08)',
-    borderRadius: 25,
-    justifyContent: 'center',
-    alignItems: 'center',
+    ...secondaryButton,
   },
   notNowBtnText: {
-    color: '#ffffff',
-    fontSize: 15,
-    fontWeight: '600',
+    ...secondaryButtonText,
   },
 });
-

@@ -6,6 +6,16 @@ import { CountryPickerModal } from './CountryPickerModal';
 import { PhoneConfirmModal } from './PhoneConfirmModal';
 import { COUNTRIES, Country } from '../../data/countries';
 import { sounds } from '../../utils/soundEffects';
+import {
+  colors,
+  radius,
+  space,
+  type,
+  primaryButton,
+  primaryButtonText,
+  disabledButton,
+  disabledButtonText,
+} from '../../theme';
 
 interface PhoneInputStepProps {
   onBack: () => void;
@@ -18,13 +28,12 @@ export const PhoneInputStep: React.FC<PhoneInputStepProps> = ({
   onContinue,
   onLogIn,
 }) => {
-  const [country, setCountry] = useState<Country>(COUNTRIES[0]); // default US +1
-  const [rawDigits, setRawDigits] = useState('6502137390'); // preset with example from screenshot
+  const [country, setCountry] = useState<Country>(COUNTRIES[0]);
+  const [rawDigits, setRawDigits] = useState('6502137390');
   const [showCountryModal, setShowCountryModal] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Format as (XXX) XXX-XXXX for US, or generic spaced
   const formatPhoneNumber = (digits: string) => {
     if (country.code === 'US' || country.code === 'CA') {
       if (digits.length === 0) return '';
@@ -32,7 +41,6 @@ export const PhoneInputStep: React.FC<PhoneInputStepProps> = ({
       if (digits.length <= 6) return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
       return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6, 10)}`;
     }
-    // Generic format
     return digits.replace(/(\d{3})(?=\d)/g, '$1 ');
   };
 
@@ -72,7 +80,6 @@ export const PhoneInputStep: React.FC<PhoneInputStepProps> = ({
 
   return (
     <View style={styles.container}>
-      {/* Top Bar with Back Arrow */}
       <View style={styles.topNav}>
         <TouchableOpacity
           onPress={() => {
@@ -80,21 +87,19 @@ export const PhoneInputStep: React.FC<PhoneInputStepProps> = ({
             onBack();
           }}
           style={styles.backBtn}
+          accessibilityLabel="Go back"
         >
-          <ArrowLeft size={22} color="#ffffff" />
+          <ArrowLeft size={22} color={colors.text} />
         </TouchableOpacity>
       </View>
 
-      {/* Main Content */}
       <View style={styles.content}>
-        <Text style={styles.title}>Let's get started!</Text>
+        <Text style={styles.title}>Let's get started</Text>
         <Text style={styles.subtitle}>
-          Enter your phone number. We will send you a confirmation code there
+          Enter your phone number and we'll send you a confirmation code.
         </Text>
 
-        {/* Input Row */}
         <View style={styles.inputRow}>
-          {/* Country Selector Pill */}
           <TouchableOpacity
             style={styles.countryPill}
             onPress={() => {
@@ -107,25 +112,22 @@ export const PhoneInputStep: React.FC<PhoneInputStepProps> = ({
             <Text style={styles.dialCodeText}>{country.dialCode}</Text>
           </TouchableOpacity>
 
-          {/* Phone Display Box */}
           <View style={styles.phoneBox}>
-            <Text
-              style={[
-                styles.phoneText,
-                !formatted && styles.placeholderText,
-              ]}
-            >
+            <Text style={[styles.phoneText, !formatted && styles.placeholderText]}>
               {formatted || 'Enter your phone'}
             </Text>
             {rawDigits.length > 0 && (
-              <TouchableOpacity onPress={handleClear} style={styles.clearBtn}>
-                <X size={16} color="#94a3b8" />
+              <TouchableOpacity
+                onPress={handleClear}
+                style={styles.clearBtn}
+                accessibilityLabel="Clear phone number"
+              >
+                <X size={16} color={colors.textMuted} />
               </TouchableOpacity>
             )}
           </View>
         </View>
 
-        {/* Log In Link */}
         <TouchableOpacity
           onPress={() => {
             sounds.playKeyClick();
@@ -137,40 +139,29 @@ export const PhoneInputStep: React.FC<PhoneInputStepProps> = ({
         </TouchableOpacity>
       </View>
 
-      {/* Action Button & Keypad */}
       <View style={styles.bottomArea}>
         <TouchableOpacity
-          style={[
-            styles.submitButton,
-            !isValid && styles.submitButtonDisabled,
-          ]}
+          style={[styles.submitButton, !isValid && styles.submitButtonDisabled]}
           onPress={handleSubmit}
           disabled={!isValid || isLoading}
           activeOpacity={0.85}
         >
           {isLoading ? (
-            <ActivityIndicator color="#000000" />
+            <ActivityIndicator color={colors.onLight} />
           ) : (
-            <Text
-              style={[
-                styles.submitButtonText,
-                !isValid && styles.submitButtonTextDisabled,
-              ]}
-            >
+            <Text style={[styles.submitButtonText, !isValid && styles.submitButtonTextDisabled]}>
               Create account
             </Text>
           )}
         </TouchableOpacity>
 
-        {/* Numeric Keypad */}
         <NumericKeypad
           onDigitPress={handleDigitPress}
           onBackspace={handleBackspace}
-          showExtraSymbols={true}
+          showExtraSymbols
         />
       </View>
 
-      {/* Modals */}
       <CountryPickerModal
         visible={showCountryModal}
         selectedCountry={country}
@@ -192,117 +183,106 @@ export const PhoneInputStep: React.FC<PhoneInputStepProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000000',
+    backgroundColor: colors.background,
     justifyContent: 'space-between',
   },
   topNav: {
-    paddingHorizontal: 16,
-    paddingTop: 4,
+    paddingHorizontal: space.lg,
+    paddingTop: space.xs,
     height: 40,
     justifyContent: 'center',
   },
   backBtn: {
     width: 36,
     height: 36,
-    borderRadius: 18,
+    borderRadius: radius.pill,
     justifyContent: 'center',
     alignItems: 'center',
+    marginLeft: -space.sm,
   },
   content: {
-    paddingHorizontal: 20,
-    paddingTop: 8,
+    paddingHorizontal: space.xl,
+    paddingTop: space.sm,
   },
   title: {
-    color: '#ffffff',
-    fontSize: 28,
-    fontWeight: '800',
-    letterSpacing: -0.5,
-    marginBottom: 6,
+    ...type.screenTitle,
+    marginBottom: space.xs,
   },
   subtitle: {
-    color: '#94a3b8',
-    fontSize: 14,
-    lineHeight: 20,
-    marginBottom: 20,
+    ...type.body,
+    marginBottom: space.xl,
   },
   inputRow: {
     flexDirection: 'row',
-    gap: 10,
+    gap: space.sm,
     alignItems: 'center',
   },
   countryPill: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.08)',
-    borderRadius: 16,
-    paddingHorizontal: 14,
+    backgroundColor: colors.surface,
+    borderRadius: radius.md,
+    paddingHorizontal: space.md,
     height: 54,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.06)',
-    gap: 8,
+    borderColor: colors.border,
+    gap: space.sm,
   },
   flagIcon: {
     fontSize: 20,
   },
   dialCodeText: {
-    color: '#ffffff',
+    color: colors.text,
     fontSize: 16,
     fontWeight: '600',
   },
   phoneBox: {
     flex: 1,
     height: 54,
-    backgroundColor: 'rgba(255, 255, 255, 0.08)',
-    borderRadius: 16,
+    backgroundColor: colors.surface,
+    borderRadius: radius.md,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
+    paddingHorizontal: space.lg,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.06)',
+    borderColor: colors.border,
   },
   phoneText: {
-    color: '#ffffff',
+    color: colors.text,
     fontSize: 17,
     fontWeight: '500',
-    letterSpacing: 0.5,
+    letterSpacing: 0.3,
   },
   placeholderText: {
-    color: '#64748b',
+    color: colors.textMuted,
   },
   clearBtn: {
-    padding: 4,
+    padding: space.xs,
   },
   loginLink: {
-    marginTop: 16,
+    marginTop: space.lg,
   },
   loginLinkText: {
-    color: '#3b82f6',
+    color: colors.accent,
     fontSize: 14,
     fontWeight: '500',
   },
   bottomArea: {
-    paddingHorizontal: 16,
-    paddingBottom: 6,
-    gap: 12,
+    paddingHorizontal: space.lg,
+    paddingBottom: space.xs,
+    gap: space.md,
   },
   submitButton: {
-    height: 52,
-    backgroundColor: '#ffffff',
-    borderRadius: 26,
-    justifyContent: 'center',
-    alignItems: 'center',
+    ...primaryButton,
   },
   submitButtonDisabled: {
-    backgroundColor: '#3a3a3c',
+    ...disabledButton,
   },
   submitButtonText: {
-    color: '#000000',
-    fontSize: 17,
-    fontWeight: '700',
+    ...primaryButtonText,
   },
   submitButtonTextDisabled: {
-    color: '#8e8e93',
+    ...disabledButtonText,
   },
 });
-

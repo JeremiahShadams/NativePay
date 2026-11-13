@@ -2,17 +2,17 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, Modal, TouchableOpacity, ScrollView } from 'react-native';
 import {
   X,
-  CreditCard,
-  ShieldCheck,
+  Check,
   Eye,
   EyeOff,
   Lock,
   Unlock,
-  Zap,
   Smartphone,
-  ChevronRight,
+  Wifi,
+  Wallet,
 } from 'lucide-react-native';
 import { sounds } from '../../utils/soundEffects';
+import { colors, radius, space, type } from '../../theme';
 
 interface CardsManagerModalProps {
   visible: boolean;
@@ -28,7 +28,6 @@ export const CardsManagerModal: React.FC<CardsManagerModalProps> = ({
   const [selectedCardType, setSelectedCardType] = useState<'metal' | 'virtual'>('metal');
   const [showSensitive, setShowSensitive] = useState(false);
   const [isFrozen, setIsFrozen] = useState(false);
-  const [contactlessEnabled, setContactlessEnabled] = useState(true);
 
   const toggleFreeze = () => {
     sounds.playKeyClick();
@@ -40,20 +39,20 @@ export const CardsManagerModal: React.FC<CardsManagerModalProps> = ({
     setShowSensitive(!showSensitive);
   };
 
+  const cardholder = userHandle.replace(/^@/, '').replace(/[._]/g, ' ').toUpperCase();
+
   return (
-    <Modal visible={visible} animationType="slide" transparent={true}>
+    <Modal visible={visible} animationType="slide" transparent>
       <View style={styles.modalOverlay}>
         <View style={styles.container}>
-          {/* Header */}
           <View style={styles.headerRow}>
-            <Text style={styles.headerTitle}>Card Management</Text>
-            <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
-              <X size={20} color="#ffffff" />
+            <Text style={styles.headerTitle}>Cards</Text>
+            <TouchableOpacity onPress={onClose} style={styles.closeBtn} accessibilityLabel="Close">
+              <X size={20} color={colors.text} />
             </TouchableOpacity>
           </View>
 
           <ScrollView style={styles.scrollBody} showsVerticalScrollIndicator={false}>
-            {/* Card Type Selector */}
             <View style={styles.tabRow}>
               <TouchableOpacity
                 style={[styles.tabBtn, selectedCardType === 'metal' && styles.tabBtnActive]}
@@ -68,7 +67,7 @@ export const CardsManagerModal: React.FC<CardsManagerModalProps> = ({
                     selectedCardType === 'metal' && styles.tabBtnTextActive,
                   ]}
                 >
-                  Physical Metal
+                  Physical
                 </Text>
               </TouchableOpacity>
 
@@ -85,12 +84,11 @@ export const CardsManagerModal: React.FC<CardsManagerModalProps> = ({
                     selectedCardType === 'virtual' && styles.tabBtnTextActive,
                   ]}
                 >
-                  Disposable Virtual
+                  Virtual
                 </Text>
               </TouchableOpacity>
             </View>
 
-            {/* 3D Card Graphic */}
             <View
               style={[
                 styles.cardChassis,
@@ -102,14 +100,18 @@ export const CardsManagerModal: React.FC<CardsManagerModalProps> = ({
                 <Text style={styles.cardBrand}>Native</Text>
                 <View style={styles.cardBadge}>
                   <Text style={styles.cardBadgeText}>
-                    {selectedCardType === 'metal' ? 'TITANIUM METAL' : 'DISPOSABLE CYBER'}
+                    {selectedCardType === 'metal' ? 'METAL' : 'VIRTUAL'}
                   </Text>
                 </View>
               </View>
 
               <View style={styles.cardMidRow}>
                 <View style={styles.chipGraphic} />
-                <Text style={styles.contactlessSymbol}>))))</Text>
+                <Wifi
+                  size={20}
+                  color={colors.textMuted}
+                  style={styles.contactlessSymbol}
+                />
               </View>
 
               <View style={styles.cardNumberArea}>
@@ -127,17 +129,15 @@ export const CardsManagerModal: React.FC<CardsManagerModalProps> = ({
               <View style={styles.cardBottomRow}>
                 <View>
                   <Text style={styles.cardSmallLabel}>CARDHOLDER</Text>
-                  <Text style={styles.cardHolderName}>{userHandle.toUpperCase()}</Text>
+                  <Text style={styles.cardHolderName}>{cardholder}</Text>
                 </View>
 
-                <View style={{ alignItems: 'center' }}>
+                <View style={styles.cardMetaCenter}>
                   <Text style={styles.cardSmallLabel}>EXPIRES</Text>
-                  <Text style={styles.cardSmallVal}>
-                    {showSensitive ? '11/29' : '••/••'}
-                  </Text>
+                  <Text style={styles.cardSmallVal}>{showSensitive ? '11/29' : '••/••'}</Text>
                 </View>
 
-                <View style={{ alignItems: 'flex-end' }}>
+                <View style={styles.cardMetaRight}>
                   <Text style={styles.cardSmallLabel}>CVV</Text>
                   <Text style={styles.cardSmallVal}>
                     {showSensitive ? (selectedCardType === 'metal' ? '842' : '917') : '•••'}
@@ -146,76 +146,79 @@ export const CardsManagerModal: React.FC<CardsManagerModalProps> = ({
               </View>
             </View>
 
-            {/* Reveal / Hide Details Button */}
             <TouchableOpacity style={styles.revealBtn} onPress={toggleSensitive}>
               {showSensitive ? (
                 <>
-                  <EyeOff size={16} color="#94a3b8" />
-                  <Text style={styles.revealBtnText}>Hide Card Numbers & CVV</Text>
+                  <EyeOff size={16} color={colors.textSecondary} />
+                  <Text style={styles.revealBtnText}>Hide card details</Text>
                 </>
               ) : (
                 <>
-                  <Eye size={16} color="#60a5fa" />
-                  <Text style={[styles.revealBtnText, { color: '#60a5fa' }]}>
-                    Reveal Numbers, PIN & CVV
+                  <Eye size={16} color={colors.text} />
+                  <Text style={[styles.revealBtnText, { color: colors.text }]}>
+                    Reveal card details
                   </Text>
                 </>
               )}
             </TouchableOpacity>
 
-            {/* Quick Card Controls */}
             <View style={styles.controlsSection}>
-              <Text style={styles.sectionHeader}>Security & Limits</Text>
+              <Text style={styles.sectionHeader}>Security & limits</Text>
 
-              {/* Freeze Toggle */}
               <TouchableOpacity style={styles.controlRow} onPress={toggleFreeze}>
                 <View style={styles.controlIconWrap}>
-                  {isFrozen ? <Unlock size={18} color="#ef4444" /> : <Lock size={18} color="#60a5fa" />}
+                  {isFrozen ? (
+                    <Unlock size={18} color={colors.textSecondary} />
+                  ) : (
+                    <Lock size={18} color={colors.textSecondary} />
+                  )}
                 </View>
                 <View style={styles.controlInfo}>
                   <Text style={styles.controlTitle}>
-                    {isFrozen ? 'Unfreeze Card' : 'Freeze Card'}
+                    {isFrozen ? 'Unfreeze card' : 'Freeze card'}
                   </Text>
                   <Text style={styles.controlSub}>
-                    {isFrozen ? 'Card is locked against charges' : 'Lock card instantly anytime'}
+                    {isFrozen ? 'Card is locked against charges' : 'Lock the card instantly'}
                   </Text>
                 </View>
                 <View style={[styles.statusToggle, isFrozen && styles.statusToggleRed]}>
-                  <Text style={styles.statusToggleText}>{isFrozen ? 'LOCKED' : 'ACTIVE'}</Text>
+                  <Text
+                    style={[styles.statusToggleText, isFrozen && styles.statusToggleTextRed]}
+                  >
+                    {isFrozen ? 'LOCKED' : 'ACTIVE'}
+                  </Text>
                 </View>
               </TouchableOpacity>
 
-              {/* Monthly Spending Allowance */}
               <View style={styles.controlRow}>
                 <View style={styles.controlIconWrap}>
-                  <Zap size={18} color="#10b981" />
+                  <Wallet size={18} color={colors.textSecondary} />
                 </View>
                 <View style={styles.controlInfo}>
-                  <Text style={styles.controlTitle}>Monthly Spend Limit</Text>
-                  <Text style={styles.controlSub}>$1,240 of $5,000 allowance used (24.8%)</Text>
+                  <Text style={styles.controlTitle}>Monthly spend limit</Text>
+                  <Text style={styles.controlSub}>$1,240 of $5,000 used</Text>
                   <View style={styles.limitBarTrack}>
                     <View style={styles.limitBarFill} />
                   </View>
                 </View>
               </View>
 
-              {/* Apple Pay Simulator */}
-              <TouchableOpacity
-                style={styles.controlRow}
-                onPress={() => sounds.playSuccessChime()}
-              >
+              <View style={styles.controlRow}>
                 <View style={styles.controlIconWrap}>
-                  <Smartphone size={18} color="#ffffff" />
+                  <Smartphone size={18} color={colors.textSecondary} />
                 </View>
                 <View style={styles.controlInfo}>
                   <Text style={styles.controlTitle}>Apple Pay & Google Wallet</Text>
                   <Text style={styles.controlSub}>Ready for contactless payment</Text>
                 </View>
-                <Text style={styles.applePayBadge}>ADDED ✓</Text>
-              </TouchableOpacity>
+                <View style={styles.addedBadge}>
+                  <Check size={12} color={colors.positive} />
+                  <Text style={styles.addedBadgeText}>Added</Text>
+                </View>
+              </View>
             </View>
 
-            <View style={{ height: 20 }} />
+            <View style={styles.bottomSpacer} />
           </ScrollView>
         </View>
       </View>
@@ -226,94 +229,84 @@ export const CardsManagerModal: React.FC<CardsManagerModalProps> = ({
 const styles = StyleSheet.create({
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.75)',
+    backgroundColor: colors.overlay,
     justifyContent: 'flex-end',
   },
   container: {
-    backgroundColor: '#0c0f18',
-    borderTopLeftRadius: 32,
-    borderTopRightRadius: 32,
-    paddingTop: 16,
-    paddingHorizontal: 20,
-    paddingBottom: 28,
+    backgroundColor: colors.sheet,
+    borderTopLeftRadius: radius.sheet,
+    borderTopRightRadius: radius.sheet,
+    paddingTop: space.lg,
+    paddingHorizontal: space.xl,
+    paddingBottom: space.xxl,
     maxHeight: '90%',
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.08)',
+    borderTopWidth: 1,
+    borderColor: colors.border,
   },
   headerRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: space.lg,
   },
   headerTitle: {
-    color: '#ffffff',
-    fontSize: 18,
-    fontWeight: '800',
-    letterSpacing: -0.3,
+    ...type.sheetTitle,
   },
   closeBtn: {
     width: 34,
     height: 34,
-    borderRadius: 17,
-    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    borderRadius: radius.pill,
+    backgroundColor: colors.surface,
     justifyContent: 'center',
     alignItems: 'center',
   },
   scrollBody: {
-    marginBottom: 8,
+    marginBottom: space.sm,
   },
   tabRow: {
     flexDirection: 'row',
-    backgroundColor: 'rgba(255, 255, 255, 0.05)',
-    borderRadius: 16,
+    backgroundColor: colors.surfaceSunken,
+    borderRadius: radius.md,
     padding: 4,
-    gap: 6,
-    marginBottom: 18,
+    gap: space.xs,
+    marginBottom: space.lg,
   },
   tabBtn: {
     flex: 1,
-    paddingVertical: 9,
-    borderRadius: 12,
+    paddingVertical: space.sm,
+    borderRadius: radius.sm,
     alignItems: 'center',
   },
   tabBtnActive: {
-    backgroundColor: '#2563eb',
+    backgroundColor: colors.surfaceRaised,
   },
   tabBtnText: {
-    color: '#94a3b8',
+    color: colors.textSecondary,
     fontSize: 13,
     fontWeight: '600',
   },
   tabBtnTextActive: {
-    color: '#ffffff',
+    color: colors.text,
     fontWeight: '700',
   },
   cardChassis: {
     width: '100%',
     height: 200,
-    borderRadius: 22,
-    padding: 20,
+    borderRadius: radius.xl,
+    padding: space.xl,
     justifyContent: 'space-between',
-    borderWidth: 1.5,
-    marginBottom: 14,
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.5,
-    shadowRadius: 20,
+    borderWidth: 1,
+    borderColor: colors.borderStrong,
+    marginBottom: space.md,
   },
   cardChassisMetal: {
-    backgroundColor: '#0b0e17',
-    borderColor: 'rgba(59, 130, 246, 0.4)',
-    shadowColor: '#2563eb',
+    backgroundColor: colors.cardMetal,
   },
   cardChassisVirtual: {
-    backgroundColor: '#111827',
-    borderColor: 'rgba(139, 92, 246, 0.4)',
-    shadowColor: '#8b5cf6',
+    backgroundColor: colors.cardVirtual,
   },
   cardFrozen: {
-    borderColor: 'rgba(239, 68, 68, 0.5)',
-    opacity: 0.7,
+    opacity: 0.6,
   },
   cardTopRow: {
     flexDirection: 'row',
@@ -321,19 +314,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   cardBrand: {
-    color: '#ffffff',
+    color: colors.text,
     fontSize: 22,
-    fontWeight: '900',
+    fontWeight: '800',
     letterSpacing: -0.5,
   },
   cardBadge: {
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    paddingHorizontal: 8,
+    backgroundColor: colors.borderStrong,
+    paddingHorizontal: space.sm,
     paddingVertical: 3,
-    borderRadius: 8,
+    borderRadius: radius.xs,
   },
   cardBadgeText: {
-    color: '#e2e8f0',
+    color: colors.textSecondary,
     fontSize: 9,
     fontWeight: '800',
     letterSpacing: 0.5,
@@ -341,26 +334,22 @@ const styles = StyleSheet.create({
   cardMidRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
+    gap: space.md,
   },
   chipGraphic: {
     width: 36,
     height: 26,
-    borderRadius: 6,
-    backgroundColor: '#d97706',
-    borderWidth: 1,
-    borderColor: '#f59e0b',
+    borderRadius: radius.xs,
+    backgroundColor: colors.chip,
   },
   contactlessSymbol: {
-    color: 'rgba(255, 255, 255, 0.4)',
-    fontSize: 16,
     transform: [{ rotate: '90deg' }],
   },
   cardNumberArea: {
-    marginVertical: 4,
+    marginVertical: space.xs,
   },
   cardNumberText: {
-    color: '#cbd5e1',
+    color: colors.text,
     fontSize: 17,
     fontWeight: '700',
     letterSpacing: 2,
@@ -372,19 +361,25 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
   },
   cardSmallLabel: {
-    color: '#64748b',
+    color: colors.textMuted,
     fontSize: 8,
     fontWeight: '700',
     letterSpacing: 1,
   },
   cardHolderName: {
-    color: '#ffffff',
+    color: colors.text,
     fontSize: 12,
     fontWeight: '700',
     marginTop: 2,
   },
+  cardMetaCenter: {
+    alignItems: 'center',
+  },
+  cardMetaRight: {
+    alignItems: 'flex-end',
+  },
   cardSmallVal: {
-    color: '#ffffff',
+    color: colors.text,
     fontSize: 12,
     fontWeight: '700',
     marginTop: 2,
@@ -393,41 +388,42 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 8,
-    backgroundColor: 'rgba(255, 255, 255, 0.06)',
-    paddingVertical: 12,
-    borderRadius: 14,
-    marginBottom: 20,
+    gap: space.sm,
+    backgroundColor: colors.surface,
+    paddingVertical: space.md,
+    borderRadius: radius.md,
+    borderWidth: 1,
+    borderColor: colors.border,
+    marginBottom: space.xl,
   },
   revealBtnText: {
-    color: '#94a3b8',
+    color: colors.textSecondary,
     fontSize: 13,
     fontWeight: '600',
   },
   controlsSection: {
-    gap: 12,
+    gap: space.md,
   },
   sectionHeader: {
-    color: '#ffffff',
+    ...type.sectionTitle,
     fontSize: 15,
-    fontWeight: '700',
-    marginBottom: 4,
+    marginBottom: space.xs,
   },
   controlRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.04)',
-    padding: 14,
-    borderRadius: 16,
+    backgroundColor: colors.surface,
+    padding: space.md,
+    borderRadius: radius.md,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.05)',
-    gap: 12,
+    borderColor: colors.border,
+    gap: space.md,
   },
   controlIconWrap: {
     width: 38,
     height: 38,
-    borderRadius: 12,
-    backgroundColor: 'rgba(255, 255, 255, 0.06)',
+    borderRadius: radius.sm,
+    backgroundColor: colors.surfaceRaised,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -435,46 +431,56 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   controlTitle: {
-    color: '#ffffff',
+    color: colors.text,
     fontSize: 14,
     fontWeight: '700',
   },
   controlSub: {
-    color: '#94a3b8',
+    ...type.caption,
     fontSize: 12,
     marginTop: 2,
   },
   statusToggle: {
-    backgroundColor: 'rgba(16, 185, 129, 0.15)',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 8,
+    backgroundColor: colors.positiveSoft,
+    paddingHorizontal: space.sm,
+    paddingVertical: space.xs,
+    borderRadius: radius.xs,
   },
   statusToggleRed: {
-    backgroundColor: 'rgba(239, 68, 68, 0.15)',
+    backgroundColor: colors.negativeSoft,
   },
   statusToggleText: {
-    color: '#10b981',
+    color: colors.positive,
     fontSize: 10,
     fontWeight: '800',
   },
+  statusToggleTextRed: {
+    color: colors.negative,
+  },
   limitBarTrack: {
     height: 4,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    borderRadius: 2,
-    marginTop: 8,
+    backgroundColor: colors.surfaceRaised,
+    borderRadius: radius.pill,
+    marginTop: space.sm,
     overflow: 'hidden',
   },
   limitBarFill: {
     width: '24.8%',
     height: '100%',
-    backgroundColor: '#10b981',
-    borderRadius: 2,
+    backgroundColor: colors.textSecondary,
+    borderRadius: radius.pill,
   },
-  applePayBadge: {
-    color: '#10b981',
+  addedBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: space.xs,
+  },
+  addedBadgeText: {
+    color: colors.positive,
     fontSize: 11,
-    fontWeight: '800',
+    fontWeight: '700',
+  },
+  bottomSpacer: {
+    height: space.xl,
   },
 });
-

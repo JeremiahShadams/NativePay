@@ -6,7 +6,6 @@ export interface CryptoAsset {
   fiatValue: number;
   priceUsd: number;
   change24h: number;
-  icon: string;
   network: string;
   color: string;
 }
@@ -63,7 +62,6 @@ export interface TransactionRecord {
   currency: string;
   fiatAmount: number;
   status: 'completed' | 'pending' | 'failed';
-  icon: string;
   txHash?: string;
 }
 

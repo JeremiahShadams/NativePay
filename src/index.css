@@ -9,21 +9,18 @@
 body {
   margin: 0;
   padding: 0;
-  background-color: #05070c;
-  color: #ffffff;
+  background-color: #0a0b0d;
+  color: #f7f8fa;
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display",
     "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  user-select: none;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* React Native Web style overrides for seamless look */
-[data-focusable="true"]:focus {
-  outline: none !important;
+/* React Native Web renders focusable views as divs; keep a visible keyboard ring. */
+[data-focusable="true"]:focus-visible,
+input:focus-visible,
+button:focus-visible {
+  outline: 2px solid #3d7bff;
+  outline-offset: 2px;
 }
-
-input:focus {
-  outline: none !important;
-}
-

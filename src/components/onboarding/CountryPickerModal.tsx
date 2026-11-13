@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Modal, TextInput, TouchableOpacity, ScrollView } from 'react-native';
-import { Search, X } from 'lucide-react-native';
+import { Check, Search, X } from 'lucide-react-native';
 import { COUNTRIES, Country } from '../../data/countries';
 import { sounds } from '../../utils/soundEffects';
+import { colors, radius, space, type } from '../../theme';
 
 interface CountryPickerModalProps {
   visible: boolean;
@@ -18,6 +19,7 @@ export const CountryPickerModal: React.FC<CountryPickerModalProps> = ({
   selectedCountry,
 }) => {
   const [search, setSearch] = useState('');
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
 
   const filteredCountries = COUNTRIES.filter(
     (c) =>
@@ -26,27 +28,27 @@ export const CountryPickerModal: React.FC<CountryPickerModalProps> = ({
   );
 
   return (
-    <Modal visible={visible} animationType="slide" transparent={true}>
+    <Modal visible={visible} animationType="slide" transparent>
       <View style={styles.modalOverlay}>
         <View style={styles.modalContent}>
-          {/* Header */}
           <View style={styles.dragPill} />
 
-          {/* Search Box */}
           <View style={styles.searchRow}>
-            <View style={styles.searchInputContainer}>
-              <Search size={18} color="#94a3b8" />
+            <View style={[styles.searchInputContainer, isSearchFocused && styles.searchInputFocused]}>
+              <Search size={18} color={colors.textMuted} />
               <TextInput
                 style={styles.searchInput}
-                placeholder="Search country / region"
-                placeholderTextColor="#64748b"
+                placeholder="Search country or region"
+                placeholderTextColor={colors.textMuted}
                 value={search}
                 onChangeText={setSearch}
+                onFocus={() => setIsSearchFocused(true)}
+                onBlur={() => setIsSearchFocused(false)}
                 autoFocus={false}
               />
               {search.length > 0 && (
-                <TouchableOpacity onPress={() => setSearch('')}>
-                  <X size={16} color="#94a3b8" />
+                <TouchableOpacity onPress={() => setSearch('')} accessibilityLabel="Clear search">
+                  <X size={16} color={colors.textMuted} />
                 </TouchableOpacity>
               )}
             </View>
@@ -55,7 +57,6 @@ export const CountryPickerModal: React.FC<CountryPickerModalProps> = ({
             </TouchableOpacity>
           </View>
 
-          {/* Country List */}
           <ScrollView style={styles.listContainer} keyboardShouldPersistTaps="handled">
             {filteredCountries.map((country) => {
               const isSelected = country.code === selectedCountry.code;
@@ -75,7 +76,7 @@ export const CountryPickerModal: React.FC<CountryPickerModalProps> = ({
                     <Text style={styles.dialCode}>{country.dialCode}</Text>
                     <Text style={styles.countryName}>{country.name}</Text>
                   </View>
-                  {isSelected && <View style={styles.checkDot} />}
+                  {isSelected && <Check size={18} color={colors.accent} strokeWidth={2.5} />}
                 </TouchableOpacity>
               );
             })}
@@ -89,73 +90,77 @@ export const CountryPickerModal: React.FC<CountryPickerModalProps> = ({
 const styles = StyleSheet.create({
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.75)',
+    backgroundColor: colors.overlay,
     justifyContent: 'flex-end',
   },
   modalContent: {
-    backgroundColor: '#1c1c1e',
-    borderTopLeftRadius: 28,
-    borderTopRightRadius: 28,
-    paddingTop: 12,
-    paddingHorizontal: 16,
-    paddingBottom: 32,
+    backgroundColor: colors.sheet,
+    borderTopLeftRadius: radius.sheet,
+    borderTopRightRadius: radius.sheet,
+    paddingTop: space.md,
+    paddingHorizontal: space.lg,
+    paddingBottom: space.xxxl,
     maxHeight: '85%',
+    borderTopWidth: 1,
+    borderColor: colors.border,
   },
   dragPill: {
     width: 36,
     height: 4,
-    borderRadius: 2,
-    backgroundColor: 'rgba(255, 255, 255, 0.25)',
+    borderRadius: radius.pill,
+    backgroundColor: colors.borderStrong,
     alignSelf: 'center',
-    marginBottom: 14,
+    marginBottom: space.lg,
   },
   searchRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
-    marginBottom: 16,
+    gap: space.md,
+    marginBottom: space.lg,
   },
   searchInputContainer: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#1a2035',
-    borderRadius: 14,
-    paddingHorizontal: 12,
+    backgroundColor: colors.surface,
+    borderRadius: radius.sm,
+    paddingHorizontal: space.md,
     height: 44,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.06)',
+    borderColor: colors.border,
+  },
+  searchInputFocused: {
+    borderColor: colors.borderStrong,
   },
   searchInput: {
     flex: 1,
-    color: '#ffffff',
+    color: colors.text,
     fontSize: 15,
-    marginLeft: 8,
+    marginLeft: space.sm,
     outlineStyle: 'none' as any,
   },
   cancelBtn: {
-    paddingHorizontal: 4,
+    paddingHorizontal: space.xs,
   },
   cancelText: {
-    color: '#3b82f6',
+    color: colors.accent,
     fontSize: 15,
     fontWeight: '600',
   },
   listContainer: {
-    marginTop: 4,
+    marginTop: space.xs,
   },
   countryItem: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingVertical: 14,
-    paddingHorizontal: 10,
+    paddingHorizontal: space.sm,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255, 255, 255, 0.04)',
-    borderRadius: 10,
+    borderBottomColor: colors.border,
   },
   countryItemSelected: {
-    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+    backgroundColor: colors.surface,
   },
   countryInfo: {
     flexDirection: 'row',
@@ -163,24 +168,17 @@ const styles = StyleSheet.create({
   },
   flagText: {
     fontSize: 24,
-    marginRight: 12,
+    marginRight: space.md,
   },
   dialCode: {
-    color: 'rgba(255, 255, 255, 0.55)',
-    fontSize: 15,
+    ...type.body,
+    color: colors.textSecondary,
     fontWeight: '600',
     width: 50,
   },
   countryName: {
-    color: '#ffffff',
+    color: colors.text,
     fontSize: 16,
     fontWeight: '500',
   },
-  checkDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: '#3b82f6',
-  },
 });
-

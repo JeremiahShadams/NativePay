@@ -13,6 +13,7 @@ import { PurposeTagsStep } from './PurposeTagsStep';
 import { ProfileTagStep } from './ProfileTagStep';
 import { PrivacyStep } from './PrivacyStep';
 import { PlanSelectionStep } from './PlanSelectionStep';
+import { colors } from '../../theme';
 
 interface OnboardingFlowProps {
   onCompleteOnboarding: () => void;
@@ -139,7 +140,7 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000000',
+    backgroundColor: colors.background,
   },
 });
 

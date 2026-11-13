@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, Text, StyleSheet, Modal, TouchableOpacity } from 'react-native';
-import { Camera, Zap, X, Flashlight, QrCode, Sparkles, Upload } from 'lucide-react-native';
+import { X, QrCode } from 'lucide-react-native';
 import { PaymentDestination } from '../../types';
 import { sounds } from '../../utils/soundEffects';
+import { colors, radius, space, type } from '../../theme';
 
 interface QrScannerModalProps {
   visible: boolean;
@@ -15,19 +16,18 @@ export const QrScannerModal: React.FC<QrScannerModalProps> = ({
   onClose,
   onQrDetected,
 }) => {
-  const [torchOn, setTorchOn] = useState(false);
-
   const sampleQrs = [
     {
       id: 'qr-1',
-      title: 'Merchant: Blue Bottle Coffee',
-      tag: 'USDC Payment Request',
+      title: 'Blue Bottle Coffee',
+      tag: 'USDC payment request',
       destination: {
         type: 'qr_code' as const,
-        rawInput: 'solana:7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU?amount=4.50&spl-token=EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
+        rawInput:
+          'solana:7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU?amount=4.50&spl-token=EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
         resolvedName: 'Blue Bottle Coffee Roasters',
         resolvedAddress: '7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU',
-        network: 'Solana High-Speed',
+        network: 'Solana',
         riskScore: 'low' as const,
         isVerifiedMerchant: true,
       },
@@ -36,14 +36,14 @@ export const QrScannerModal: React.FC<QrScannerModalProps> = ({
     },
     {
       id: 'qr-2',
-      title: 'Alice (alice.eth)',
-      tag: 'ETH Invoice: Lunch Share',
+      title: 'Alice (@alice.eth)',
+      tag: 'ETH invoice · lunch share',
       destination: {
         type: 'qr_code' as const,
         rawInput: 'ethereum:0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045?value=0.15e18',
         resolvedName: 'Alice (@alice.eth)',
         resolvedAddress: '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045',
-        network: 'Arbitrum One L2',
+        network: 'Arbitrum One',
         riskScore: 'low' as const,
         isVerifiedMerchant: false,
       },
@@ -52,12 +52,12 @@ export const QrScannerModal: React.FC<QrScannerModalProps> = ({
     },
     {
       id: 'qr-3',
-      title: 'Swiss IBAN QR-Bill',
-      tag: 'Bank Transfer • CHF 1,200',
+      title: 'Swiss QR-Bill',
+      tag: 'Bank transfer · CHF 1,200',
       destination: {
         type: 'qr_code' as const,
         rawInput: 'SPC:CH4209000000123456789:NativeFintechAG',
-        resolvedName: 'Native Technologies AG (Zurich)',
+        resolvedName: 'Native Technologies AG',
         accountNumber: 'CH42 0900 0000 1234 5678 9',
         network: 'SEPA Instant / Swiss QR',
         riskScore: 'low' as const,
@@ -74,53 +74,39 @@ export const QrScannerModal: React.FC<QrScannerModalProps> = ({
   };
 
   return (
-    <Modal visible={visible} animationType="fade" transparent={true}>
+    <Modal visible={visible} animationType="fade" transparent>
       <View style={styles.modalOverlay}>
         <View style={styles.container}>
-          {/* Header */}
           <View style={styles.headerRow}>
-            <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
-              <X size={22} color="#ffffff" />
+            <TouchableOpacity onPress={onClose} style={styles.closeBtn} accessibilityLabel="Close">
+              <X size={22} color={colors.text} />
             </TouchableOpacity>
-            <Text style={styles.headerTitle}>Scan QR Payment Code</Text>
-            <TouchableOpacity
-              onPress={() => setTorchOn(!torchOn)}
-              style={[styles.torchBtn, torchOn && styles.torchBtnActive]}
-            >
-              <Flashlight size={18} color={torchOn ? '#ffffff' : '#94a3b8'} />
-            </TouchableOpacity>
+            <Text style={styles.headerTitle}>Scan QR code</Text>
+            <View style={styles.iconBtn}>
+              <QrCode size={18} color={colors.textSecondary} />
+            </View>
           </View>
 
-          {/* Viewfinder Area */}
           <View style={styles.viewfinderContainer}>
             <View style={styles.viewfinderFrame}>
-              {/* Corner Reticles */}
               <View style={[styles.corner, styles.cornerTL]} />
               <View style={[styles.corner, styles.cornerTR]} />
               <View style={[styles.corner, styles.cornerBL]} />
               <View style={[styles.corner, styles.cornerBR]} />
 
-              {/* Laser Scanning Line */}
-              <View style={styles.laserScanLine} />
-
-              {/* Center Guidance */}
               <View style={styles.centerGuidance}>
-                <QrCode size={40} color="rgba(255, 255, 255, 0.25)" />
-                <Text style={styles.guidanceText}>Align QR code within frame</Text>
+                <QrCode size={40} color={colors.textMuted} />
+                <Text style={styles.guidanceText}>Align the code within the frame</Text>
               </View>
             </View>
 
             <Text style={styles.subGuidanceText}>
-              Autonomous Agent will decode and verify recipient instantly
+              We'll verify the recipient before anything is sent.
             </Text>
           </View>
 
-          {/* Tap-to-Test QR Presets */}
           <View style={styles.presetsSection}>
-            <View style={styles.presetsHeader}>
-              <Sparkles size={14} color="#60a5fa" />
-              <Text style={styles.presetsTitle}>Test Invoices (Tap to Scan instantly):</Text>
-            </View>
+            <Text style={styles.presetsTitle}>Sample invoices</Text>
 
             <View style={styles.presetsList}>
               {sampleQrs.map((s) => (
@@ -131,7 +117,7 @@ export const QrScannerModal: React.FC<QrScannerModalProps> = ({
                   activeOpacity={0.7}
                 >
                   <View style={styles.presetIcon}>
-                    <QrCode size={18} color="#3b82f6" />
+                    <QrCode size={18} color={colors.textSecondary} />
                   </View>
                   <View style={styles.presetInfo}>
                     <Text style={styles.presetName}>{s.title}</Text>
@@ -153,13 +139,13 @@ export const QrScannerModal: React.FC<QrScannerModalProps> = ({
 const styles = StyleSheet.create({
   modalOverlay: {
     flex: 1,
-    backgroundColor: '#080a10',
+    backgroundColor: colors.background,
   },
   container: {
     flex: 1,
-    paddingHorizontal: 20,
-    paddingTop: 16,
-    paddingBottom: 24,
+    paddingHorizontal: space.xl,
+    paddingTop: space.lg,
+    paddingBottom: space.xxl,
     justifyContent: 'space-between',
   },
   headerRow: {
@@ -171,161 +157,135 @@ const styles = StyleSheet.create({
   closeBtn: {
     width: 38,
     height: 38,
-    borderRadius: 19,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderRadius: radius.pill,
+    backgroundColor: colors.surface,
     justifyContent: 'center',
     alignItems: 'center',
   },
   headerTitle: {
-    color: '#ffffff',
+    ...type.sectionTitle,
     fontSize: 17,
-    fontWeight: '700',
   },
-  torchBtn: {
+  iconBtn: {
     width: 38,
     height: 38,
-    borderRadius: 19,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderRadius: radius.pill,
+    backgroundColor: colors.surface,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  torchBtnActive: {
-    backgroundColor: '#2563eb',
   },
   viewfinderContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    marginVertical: 10,
+    marginVertical: space.md,
   },
   viewfinderFrame: {
     width: 240,
     height: 240,
-    borderRadius: 24,
+    borderRadius: radius.xl,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.1)',
+    borderColor: colors.border,
     position: 'relative',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.02)',
+    backgroundColor: colors.surfaceSunken,
     overflow: 'hidden',
   },
   corner: {
     position: 'absolute',
     width: 24,
     height: 24,
-    borderColor: '#3b82f6',
+    borderColor: colors.textSecondary,
   },
   cornerTL: {
-    top: 10,
-    left: 10,
-    borderTopWidth: 3,
-    borderLeftWidth: 3,
-    borderTopLeftRadius: 8,
+    top: 12,
+    left: 12,
+    borderTopWidth: 2,
+    borderLeftWidth: 2,
+    borderTopLeftRadius: radius.sm,
   },
   cornerTR: {
-    top: 10,
-    right: 10,
-    borderTopWidth: 3,
-    borderRightWidth: 3,
-    borderTopRightRadius: 8,
+    top: 12,
+    right: 12,
+    borderTopWidth: 2,
+    borderRightWidth: 2,
+    borderTopRightRadius: radius.sm,
   },
   cornerBL: {
-    bottom: 10,
-    left: 10,
-    borderBottomWidth: 3,
-    borderLeftWidth: 3,
-    borderBottomLeftRadius: 8,
+    bottom: 12,
+    left: 12,
+    borderBottomWidth: 2,
+    borderLeftWidth: 2,
+    borderBottomLeftRadius: radius.sm,
   },
   cornerBR: {
-    bottom: 10,
-    right: 10,
-    borderBottomWidth: 3,
-    borderRightWidth: 3,
-    borderBottomRightRadius: 8,
-  },
-  laserScanLine: {
-    position: 'absolute',
-    left: 10,
-    right: 10,
-    height: 2,
-    backgroundColor: '#3b82f6',
-    shadowColor: '#60a5fa',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 1,
-    shadowRadius: 10,
+    bottom: 12,
+    right: 12,
+    borderBottomWidth: 2,
+    borderRightWidth: 2,
+    borderBottomRightRadius: radius.sm,
   },
   centerGuidance: {
     alignItems: 'center',
-    gap: 8,
+    gap: space.sm,
   },
   guidanceText: {
-    color: 'rgba(255, 255, 255, 0.4)',
+    color: colors.textMuted,
     fontSize: 12,
     fontWeight: '500',
   },
   subGuidanceText: {
-    color: '#94a3b8',
-    fontSize: 13,
-    marginTop: 16,
+    ...type.caption,
+    marginTop: space.lg,
     textAlign: 'center',
   },
   presetsSection: {
-    backgroundColor: 'rgba(255, 255, 255, 0.05)',
-    borderRadius: 20,
-    padding: 14,
+    backgroundColor: colors.sheet,
+    borderRadius: radius.lg,
+    padding: space.lg,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.06)',
-  },
-  presetsHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    marginBottom: 10,
+    borderColor: colors.border,
   },
   presetsTitle: {
-    color: '#e2e8f0',
-    fontSize: 12,
-    fontWeight: '700',
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
+    ...type.overline,
+    marginBottom: space.md,
   },
   presetsList: {
-    gap: 8,
+    gap: space.sm,
   },
   presetItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.04)',
-    padding: 10,
-    borderRadius: 14,
+    backgroundColor: colors.surface,
+    padding: space.md,
+    borderRadius: radius.md,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.04)',
+    borderColor: colors.border,
   },
   presetIcon: {
     width: 34,
     height: 34,
-    borderRadius: 10,
-    backgroundColor: 'rgba(59, 130, 246, 0.15)',
+    borderRadius: radius.sm,
+    backgroundColor: colors.surfaceRaised,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 10,
+    marginRight: space.md,
   },
   presetInfo: {
     flex: 1,
   },
   presetName: {
-    color: '#ffffff',
+    color: colors.text,
     fontSize: 13,
     fontWeight: '700',
   },
   presetTag: {
-    color: '#94a3b8',
+    ...type.caption,
     fontSize: 11,
   },
   presetAmount: {
-    color: '#60a5fa',
+    color: colors.text,
     fontSize: 13,
     fontWeight: '700',
   },
 });
-

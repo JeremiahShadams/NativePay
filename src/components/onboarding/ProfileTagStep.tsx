@@ -1,7 +1,17 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
-import { ArrowLeft, Check, Camera } from 'lucide-react-native';
+import { ArrowLeft, Check } from 'lucide-react-native';
 import { sounds } from '../../utils/soundEffects';
+import {
+  colors,
+  radius,
+  space,
+  type,
+  primaryButton,
+  primaryButtonText,
+  disabledButton,
+  disabledButtonText,
+} from '../../theme';
 
 interface ProfileTagStepProps {
   onBack: () => void;
@@ -9,13 +19,12 @@ interface ProfileTagStepProps {
 }
 
 export const ProfileTagStep: React.FC<ProfileTagStepProps> = ({ onBack, onContinue }) => {
-  const [handle, setHandle] = useState('alexnative'); // preset
-  const [hasCustomAvatar, setHasCustomAvatar] = useState(false);
+  const [handle, setHandle] = useState('alexnative');
 
   const cleanHandle = handle.replace(/^@/, '').toLowerCase().trim();
   const isValid = cleanHandle.length >= 3 && cleanHandle.length <= 32;
-
-  const suggestions = ['alex_crypto', 'alex.eth', 'alex_native'];
+  const suggestions = ['alexnative', 'alex_crypto', 'alex_native'];
+  const initials = (cleanHandle.slice(0, 2) || 'NT').toUpperCase();
 
   const handleSubmit = () => {
     if (isValid) {
@@ -26,7 +35,6 @@ export const ProfileTagStep: React.FC<ProfileTagStepProps> = ({ onBack, onContin
 
   return (
     <View style={styles.container}>
-      {/* Top Nav */}
       <View style={styles.topNav}>
         <TouchableOpacity
           onPress={() => {
@@ -34,8 +42,9 @@ export const ProfileTagStep: React.FC<ProfileTagStepProps> = ({ onBack, onContin
             onBack();
           }}
           style={styles.backBtn}
+          accessibilityLabel="Go back"
         >
-          <ArrowLeft size={22} color="#ffffff" />
+          <ArrowLeft size={22} color={colors.text} />
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => {
@@ -43,43 +52,24 @@ export const ProfileTagStep: React.FC<ProfileTagStepProps> = ({ onBack, onContin
             onContinue('@alex');
           }}
         >
-          <Text style={styles.notNowText}>Not now</Text>
+          <Text style={styles.notNowText}>Skip</Text>
         </TouchableOpacity>
       </View>
 
-      {/* Main Content */}
       <View style={styles.content}>
         <View style={styles.headerRow}>
           <View style={styles.titleArea}>
             <Text style={styles.title}>Your profile</Text>
             <Text style={styles.subtitle}>
-              Set your Nativetag and profile pic to get easily paid by your friends
+              Choose a Nativetag so friends can pay you by name.
             </Text>
           </View>
 
-          {/* Profile Picture Circle with Edit Pencil */}
-          <TouchableOpacity
-            style={styles.avatarCircle}
-            onPress={() => {
-              sounds.playKeyClick();
-              setHasCustomAvatar(!hasCustomAvatar);
-            }}
-            activeOpacity={0.8}
-          >
-            {hasCustomAvatar ? (
-              <View style={styles.avatarImgMock}>
-                <Text style={{ fontSize: 28 }}>👨‍💻</Text>
-              </View>
-            ) : (
-              <Text style={styles.avatarInitials}>NT</Text>
-            )}
-            <View style={styles.editPencilBadge}>
-              <Camera size={11} color="#000000" />
-            </View>
-          </TouchableOpacity>
+          <View style={styles.avatarCircle}>
+            <Text style={styles.avatarInitials}>{initials}</Text>
+          </View>
         </View>
 
-        {/* Nativetag Input Box */}
         <View style={styles.inputCard}>
           <Text style={styles.inputLabel}>Nativetag</Text>
           <View style={styles.tagInputRow}>
@@ -89,18 +79,17 @@ export const ProfileTagStep: React.FC<ProfileTagStepProps> = ({ onBack, onContin
               value={cleanHandle}
               onChangeText={(t) => setHandle(t.replace(/[^a-zA-Z0-9_]/g, ''))}
               placeholder="yourname"
-              placeholderTextColor="#64748b"
+              placeholderTextColor={colors.textMuted}
               maxLength={32}
               autoCapitalize="none"
             />
           </View>
         </View>
 
-        {/* Status Line */}
         <View style={styles.statusRow}>
           {isValid ? (
             <View style={styles.availableRow}>
-              <Check size={14} color="#10b981" />
+              <Check size={14} color={colors.positive} />
               <Text style={styles.availableText}>Nativetag available</Text>
             </View>
           ) : (
@@ -109,17 +98,13 @@ export const ProfileTagStep: React.FC<ProfileTagStepProps> = ({ onBack, onContin
           <Text style={styles.counterText}>{cleanHandle.length}/32</Text>
         </View>
 
-        {/* Suggestion Pills (Revolut iOS 20 & 21) */}
         <View style={styles.suggestionsRow}>
-          {['alex', 'alexsmob', 'alex_native'].map((sug) => {
+          {suggestions.map((sug) => {
             const isSelected = cleanHandle === sug;
             return (
               <TouchableOpacity
                 key={sug}
-                style={[
-                  styles.suggestionPill,
-                  isSelected && styles.suggestionPillSelected,
-                ]}
+                style={[styles.suggestionPill, isSelected && styles.suggestionPillSelected]}
                 onPress={() => {
                   sounds.playKeyClick();
                   setHandle(sug);
@@ -132,7 +117,7 @@ export const ProfileTagStep: React.FC<ProfileTagStepProps> = ({ onBack, onContin
                     isSelected && styles.suggestionPillTextSelected,
                   ]}
                 >
-                  {sug}
+                  @{sug}
                 </Text>
               </TouchableOpacity>
             );
@@ -140,7 +125,6 @@ export const ProfileTagStep: React.FC<ProfileTagStepProps> = ({ onBack, onContin
         </View>
       </View>
 
-      {/* Continue CTA */}
       <View style={styles.footerArea}>
         <TouchableOpacity
           style={[styles.continueButton, !isValid && styles.continueButtonDisabled]}
@@ -148,7 +132,9 @@ export const ProfileTagStep: React.FC<ProfileTagStepProps> = ({ onBack, onContin
           disabled={!isValid}
           activeOpacity={0.85}
         >
-          <Text style={styles.continueButtonText}>Continue</Text>
+          <Text style={[styles.continueButtonText, !isValid && styles.continueButtonTextDisabled]}>
+            Continue
+          </Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -158,13 +144,13 @@ export const ProfileTagStep: React.FC<ProfileTagStepProps> = ({ onBack, onContin
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000000',
+    backgroundColor: colors.background,
     justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    paddingBottom: 20,
+    paddingHorizontal: space.xl,
+    paddingBottom: space.xl,
   },
   topNav: {
-    paddingTop: 4,
+    paddingTop: space.xs,
     height: 40,
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -173,107 +159,77 @@ const styles = StyleSheet.create({
   backBtn: {
     width: 36,
     height: 36,
-    borderRadius: 18,
+    borderRadius: radius.pill,
     justifyContent: 'center',
     alignItems: 'center',
+    marginLeft: -space.sm,
   },
   notNowText: {
-    color: '#3b82f6',
+    color: colors.accent,
     fontSize: 15,
     fontWeight: '600',
   },
   content: {
     flex: 1,
-    paddingTop: 12,
+    paddingTop: space.md,
   },
   headerRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: 24,
+    marginBottom: space.xxl,
   },
   titleArea: {
     flex: 1,
-    paddingRight: 16,
+    paddingRight: space.lg,
   },
   title: {
-    color: '#ffffff',
-    fontSize: 28,
-    fontWeight: '800',
-    letterSpacing: -0.5,
-    marginBottom: 6,
+    ...type.screenTitle,
+    marginBottom: space.xs,
   },
   subtitle: {
-    color: '#94a3b8',
-    fontSize: 14,
-    lineHeight: 20,
+    ...type.body,
   },
   avatarCircle: {
     width: 58,
     height: 58,
-    borderRadius: 29,
-    backgroundColor: '#3b82f6',
+    borderRadius: radius.pill,
+    backgroundColor: colors.surfaceRaised,
+    borderWidth: 1,
+    borderColor: colors.border,
     justifyContent: 'center',
     alignItems: 'center',
-    position: 'relative',
-    shadowColor: '#2563eb',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.5,
-    shadowRadius: 10,
   },
   avatarInitials: {
-    color: '#ffffff',
+    color: colors.text,
     fontSize: 20,
-    fontWeight: '800',
-  },
-  avatarImgMock: {
-    width: '100%',
-    height: '100%',
-    borderRadius: 29,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#1e293b',
-  },
-  editPencilBadge: {
-    position: 'absolute',
-    bottom: -2,
-    right: -2,
-    width: 22,
-    height: 22,
-    borderRadius: 11,
-    backgroundColor: '#ffffff',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 2,
-    borderColor: '#080a10',
+    fontWeight: '700',
   },
   inputCard: {
-    backgroundColor: 'rgba(255, 255, 255, 0.08)',
-    borderRadius: 18,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    backgroundColor: colors.surface,
+    borderRadius: radius.md,
+    paddingHorizontal: space.lg,
+    paddingVertical: space.md,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.08)',
+    borderColor: colors.border,
   },
   inputLabel: {
-    color: '#94a3b8',
-    fontSize: 12,
-    fontWeight: '500',
-    marginBottom: 4,
+    ...type.caption,
+    marginBottom: space.xs,
   },
   tagInputRow: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   atSymbol: {
-    color: '#ffffff',
+    color: colors.text,
     fontSize: 20,
     fontWeight: '700',
-    marginRight: 4,
+    marginRight: space.xs,
   },
   textInput: {
     flex: 1,
-    color: '#ffffff',
+    color: colors.text,
     fontSize: 20,
     fontWeight: '700',
     letterSpacing: -0.3,
@@ -283,101 +239,69 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 4,
-    marginTop: 10,
+    paddingHorizontal: space.xs,
+    marginTop: space.md,
   },
   availableRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
+    gap: space.xs,
   },
   availableText: {
-    color: '#10b981',
+    color: colors.positive,
     fontSize: 13,
     fontWeight: '600',
   },
   errorText: {
-    color: '#ef4444',
+    color: colors.negative,
     fontSize: 13,
   },
   counterText: {
-    color: '#64748b',
+    color: colors.textMuted,
     fontSize: 13,
     fontWeight: '500',
   },
-  suggestionsContainer: {
-    marginTop: 24,
-    gap: 8,
-  },
-  suggestionTitle: {
-    color: '#64748b',
-    fontSize: 12,
-    fontWeight: '600',
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-  },
-  suggestionRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-  },
-  suggestionChip: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(59, 130, 246, 0.1)',
-    borderRadius: 12,
-    paddingHorizontal: 12,
-    paddingVertical: 7,
-    borderWidth: 1,
-    borderColor: 'rgba(59, 130, 246, 0.25)',
-    gap: 6,
-  },
-  suggestionChipText: {
-    color: '#60a5fa',
-    fontSize: 13,
-    fontWeight: '600',
-  },
   suggestionsRow: {
     flexDirection: 'row',
-    gap: 8,
-    marginTop: 18,
+    flexWrap: 'wrap',
+    gap: space.sm,
+    marginTop: space.lg,
   },
   suggestionPill: {
     height: 38,
-    paddingHorizontal: 16,
-    backgroundColor: '#1c1c1e',
-    borderRadius: 19,
+    paddingHorizontal: space.lg,
+    backgroundColor: colors.surface,
+    borderRadius: radius.pill,
+    borderWidth: 1,
+    borderColor: colors.border,
     justifyContent: 'center',
     alignItems: 'center',
   },
   suggestionPillSelected: {
-    backgroundColor: '#4c82f7',
+    backgroundColor: colors.accentSoft,
+    borderColor: colors.accent,
   },
   suggestionPillText: {
-    color: '#8e8e93',
+    color: colors.textSecondary,
     fontSize: 14,
     fontWeight: '600',
   },
   suggestionPillTextSelected: {
-    color: '#ffffff',
+    color: colors.accent,
   },
   footerArea: {
-    paddingTop: 16,
+    paddingTop: space.lg,
   },
   continueButton: {
-    height: 52,
-    backgroundColor: '#ffffff',
-    borderRadius: 26,
-    justifyContent: 'center',
-    alignItems: 'center',
+    ...primaryButton,
   },
   continueButtonDisabled: {
-    backgroundColor: 'rgba(255, 255, 255, 0.25)',
+    ...disabledButton,
   },
   continueButtonText: {
-    color: '#000000',
-    fontSize: 16,
-    fontWeight: '700',
+    ...primaryButtonText,
+  },
+  continueButtonTextDisabled: {
+    ...disabledButtonText,
   },
 });
-

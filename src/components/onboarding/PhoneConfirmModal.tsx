@@ -1,6 +1,16 @@
 import React from 'react';
 import { View, Text, StyleSheet, Modal, TouchableOpacity } from 'react-native';
 import { sounds } from '../../utils/soundEffects';
+import {
+  colors,
+  radius,
+  space,
+  type,
+  primaryButton,
+  primaryButtonText,
+  secondaryButton,
+  secondaryButtonText,
+} from '../../theme';
 
 interface PhoneConfirmModalProps {
   visible: boolean;
@@ -18,21 +28,18 @@ export const PhoneConfirmModal: React.FC<PhoneConfirmModalProps> = ({
   onGoBack,
 }) => {
   return (
-    <Modal visible={visible} animationType="slide" transparent={true}>
+    <Modal visible={visible} animationType="slide" transparent>
       <View style={styles.modalOverlay}>
         <View style={styles.sheetCard}>
-          {/* Centered Phone Number Badge */}
           <View style={styles.phoneBadgeRow}>
             <Text style={styles.flagIcon}>{flag}</Text>
             <Text style={styles.phoneNumberText}>{formattedPhoneNumber}</Text>
           </View>
 
-          {/* Subtitle */}
           <Text style={styles.promptSubtitle}>
-            Is this number correct? We’ll send you a confirmation code there
+            Is this number correct? We'll send your confirmation code there.
           </Text>
 
-          {/* Action Buttons */}
           <View style={styles.btnColumn}>
             <TouchableOpacity
               style={styles.confirmBtn}
@@ -65,76 +72,61 @@ export const PhoneConfirmModal: React.FC<PhoneConfirmModalProps> = ({
 const styles = StyleSheet.create({
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    backgroundColor: colors.overlay,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 24,
+    paddingHorizontal: space.xxl,
   },
   sheetCard: {
     width: '100%',
     maxWidth: 340,
-    backgroundColor: '#2c2c2e',
-    borderRadius: 32,
-    padding: 24,
+    backgroundColor: colors.sheet,
+    borderRadius: radius.sheet,
+    padding: space.xxl,
     alignItems: 'center',
-    shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 16 },
-    shadowOpacity: 0.8,
-    shadowRadius: 30,
-    elevation: 20,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   phoneBadgeRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 12,
-    gap: 10,
+    marginBottom: space.md,
+    gap: space.sm,
   },
   flagIcon: {
     fontSize: 24,
   },
   phoneNumberText: {
-    color: '#ffffff',
+    color: colors.text,
     fontSize: 22,
     fontWeight: '700',
     letterSpacing: -0.3,
   },
   promptSubtitle: {
-    color: '#8e8e93',
-    fontSize: 15,
+    ...type.body,
     textAlign: 'center',
-    lineHeight: 22,
-    marginBottom: 24,
-    paddingHorizontal: 8,
+    marginBottom: space.xxl,
+    paddingHorizontal: space.sm,
   },
   btnColumn: {
     width: '100%',
-    gap: 12,
+    gap: space.md,
   },
   confirmBtn: {
+    ...primaryButton,
     width: '100%',
-    height: 54,
-    backgroundColor: '#ffffff',
-    borderRadius: 27,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   confirmBtnText: {
-    color: '#000000',
+    ...primaryButtonText,
     fontSize: 17,
-    fontWeight: '700',
   },
   goBackBtn: {
+    ...secondaryButton,
     width: '100%',
     height: 54,
-    backgroundColor: '#3a3a3c',
-    borderRadius: 27,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   goBackBtnText: {
-    color: '#ffffff',
+    ...secondaryButtonText,
     fontSize: 17,
-    fontWeight: '600',
   },
 });
-

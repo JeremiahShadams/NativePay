@@ -2,6 +2,14 @@ import React from 'react';
 import { View, Text, StyleSheet, Modal, TouchableOpacity } from 'react-native';
 import { X } from 'lucide-react-native';
 import { sounds } from '../../utils/soundEffects';
+import {
+  colors,
+  radius,
+  space,
+  type,
+  primaryButton,
+  primaryButtonText,
+} from '../../theme';
 
 interface OtpErrorModalProps {
   visible: boolean;
@@ -10,24 +18,18 @@ interface OtpErrorModalProps {
 
 export const OtpErrorModal: React.FC<OtpErrorModalProps> = ({ visible, onDismiss }) => {
   return (
-    <Modal visible={visible} animationType="slide" transparent={true}>
+    <Modal visible={visible} animationType="slide" transparent>
       <View style={styles.modalOverlay}>
         <View style={styles.sheetCard}>
-          {/* Grab Pill */}
           <View style={styles.dragPill} />
 
-          {/* Red X Icon Circle */}
           <View style={styles.errorIconCircle}>
-            <X size={26} color="#ef4444" strokeWidth={3} />
+            <X size={22} color={colors.negative} strokeWidth={2.5} />
           </View>
 
-          {/* Message */}
-          <Text style={styles.errorTitle}>Incorrect code entered</Text>
-          <Text style={styles.errorSubtitle}>
-            Please check the code and try again
-          </Text>
+          <Text style={styles.errorTitle}>Incorrect code</Text>
+          <Text style={styles.errorSubtitle}>Check the code and try again.</Text>
 
-          {/* Got it Button */}
           <TouchableOpacity
             style={styles.gotItBtn}
             onPress={() => {
@@ -47,59 +49,54 @@ export const OtpErrorModal: React.FC<OtpErrorModalProps> = ({ visible, onDismiss
 const styles = StyleSheet.create({
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.75)',
+    backgroundColor: colors.overlay,
     justifyContent: 'flex-end',
   },
   sheetCard: {
-    backgroundColor: '#2c2c2e',
-    borderTopLeftRadius: 32,
-    borderTopRightRadius: 32,
-    paddingTop: 12,
-    paddingHorizontal: 20,
-    paddingBottom: 40,
+    backgroundColor: colors.sheet,
+    borderTopLeftRadius: radius.sheet,
+    borderTopRightRadius: radius.sheet,
+    paddingTop: space.md,
+    paddingHorizontal: space.xl,
+    paddingBottom: space.xxxl,
     alignItems: 'center',
+    borderTopWidth: 1,
+    borderColor: colors.border,
   },
   dragPill: {
     width: 36,
     height: 4,
-    borderRadius: 2,
-    backgroundColor: 'rgba(255, 255, 255, 0.25)',
-    marginBottom: 24,
+    borderRadius: radius.pill,
+    backgroundColor: colors.borderStrong,
+    marginBottom: space.xxl,
   },
   errorIconCircle: {
     width: 48,
     height: 48,
-    borderRadius: 24,
+    borderRadius: radius.pill,
+    backgroundColor: colors.negativeSoft,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: space.lg,
   },
   errorTitle: {
-    color: '#ffffff',
+    ...type.sheetTitle,
     fontSize: 22,
-    fontWeight: '700',
-    marginBottom: 8,
+    marginBottom: space.sm,
     textAlign: 'center',
-    letterSpacing: -0.3,
   },
   errorSubtitle: {
-    color: '#8e8e93',
-    fontSize: 15,
+    ...type.body,
     textAlign: 'center',
-    marginBottom: 28,
+    marginBottom: space.xxl,
   },
   gotItBtn: {
+    ...primaryButton,
     width: '100%',
     height: 54,
-    backgroundColor: '#ffffff',
-    borderRadius: 27,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   gotItBtnText: {
-    color: '#000000',
+    ...primaryButtonText,
     fontSize: 17,
-    fontWeight: '700',
   },
 });
-
